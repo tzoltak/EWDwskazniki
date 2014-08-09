@@ -1,0 +1,15 @@
+Encoding: UTF-8
+Package: EWDwskazniki
+Version: 0.1
+Date: 2014-08-09
+Title: Functions for estimation of Educational Value-Added indicators of Polish
+    schools.
+Author: Tomasz Zoltak <tomek@zozlak.org>, Grzegorz Golonka <ggolonka@o2.pl>
+Maintainer: Tomasz Zoltak <tomek@zozlak.org>
+Description: Functions for Educational Value-Added data import/export.
+Depends:
+    plyr,
+    R (>= 2.15.0)
+License: LGPL-3
+Language: pl
+NeedsCompilation: no
