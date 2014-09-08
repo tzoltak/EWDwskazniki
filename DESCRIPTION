@@ -8,7 +8,10 @@ Author: Tomasz Zoltak <tomek@zozlak.org>, Grzegorz Golonka <ggolonka@o2.pl>
 Maintainer: Tomasz Zoltak <tomek@zozlak.org>
 Description: Functions for Educational Value-Added data import/export.
 Depends:
+    EWDogolny,
     plyr,
+    formula.tools,
+    dplyr,
     R (>= 2.15.0)
 License: LGPL-3
 Language: pl
