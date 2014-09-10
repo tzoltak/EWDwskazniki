@@ -15,7 +15,7 @@ wielomian_lmer(model, zmienna, zmiennaGr, grupa, grupowanie, indeksGrupowania,
 
 \item{grupa}{ciąg zmiennych logicznych określający, która obserwacja znajduje się w rozważanej grupie.}
 
-\item{grupowanie}{tablica, która jest efektem działania funkcji \code{\link{daj_grupowanie}}.}
+\item{grupowanie}{tablica, która jest kombinacją poziomów zmiennych wskazanych przez zmiennaGr.}
 
 \item{indeksGrupowania}{indeks tablicy podawanej w parametrze 'grupowanie'. Indeks wskazuje bierzącą grupę.}
 
@@ -26,7 +26,7 @@ Jeżeli wartość wynosi FALSE to minimum i maksimum jest liczone dla całej pop
 }
 \value{
 Funkcja zwraca ramkę danych z wartościami zmiennej, obliczeniami reszt oraz wartościami przewidywań na podstawie wielomianu.
-Atrybutami ramki danych zawierają informacje o wartościach współczynników przy kolejnych potęgach, informację czy funkcja jest roasnąca oraz
+Atrybuty ramki danych zawierają informacje o wartościach współczynników przy kolejnych potęgach, informację czy funkcja jest rosnąca oraz
 nazwy zmiennych z ramki danych, które brały udział w obliczeniach współczynnika wielomianu.
 }
 \description{

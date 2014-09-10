@@ -12,6 +12,7 @@ Depends:
     plyr,
     formula.tools,
     dplyr,
+    lme4,
     R (>= 2.15.0)
 License: LGPL-3
 Language: pl
