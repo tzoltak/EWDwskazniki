@@ -3,7 +3,7 @@
 \alias{wielomian_grupa}
 \title{Wyliczenia dla wielomianu.}
 \usage{
-wielomian_grupa(matrix, fixefModel, zmienna, poziomyGrup)
+wielomian_grupa(matrix, fixefModel, zmienna, zmiennaGr, mapowanie)
 }
 \arguments{
 \item{matrix}{macierz danych badanego modelu.}
@@ -12,8 +12,9 @@ wielomian_grupa(matrix, fixefModel, zmienna, poziomyGrup)
 
 \item{zmienna}{ciąg znaków określający zmienną wielomianu.}
 
-\item{poziomyGrup}{wiersz ramki danych z poziomami, dla której wykonywane są obliczenia.
-Nazwy kolumn opisują zmienne.}
+\item{zmiennaGr}{wektor nazw zmiennych grupowych}
+
+\item{mapowanie}{tablica opisująca mapowanie kolumn danych na zmienne modelu.}
 }
 \value{
 Funkcja zwraca ramkę danych z wartościami zmiennej, obliczeniami reszt oraz wartościami przewidywań na podstawie wielomianu.

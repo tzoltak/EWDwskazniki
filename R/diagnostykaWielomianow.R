@@ -25,12 +25,14 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
     return(invisible(FALSE))
   }
   
-  frameFull = modelFrame(model)
+  frameFull = model.frame(model)
   zmiennaOrg = wyciagnij_nazwe_zmiennej(zmienna)
   zmienna = colnames(model.matrix(model))[ grepl(paste0("^", zmiennaOrg, "$|^poly[(]", zmiennaOrg,", [[:digit:]]+(|, raw = TRUE)[)]1$") , colnames(model.matrix(model)))]
   
   zmiennaGr = wyciagnij_nazwe_zmiennej(zmiennaGr, czyJednaZmienna = FALSE)
   zmiennaZalezna = all.vars(attributes(frameFull)$terms)[1]
+  
+  mapowanie = model.map(model, zmiennaOrg)
   
   if( (!any( ktoraZmienna <- c(zmienna, zmiennaGr) %in% colnames(model.matrix(model)))) 
   ){
@@ -64,13 +66,13 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
     ranefModel = ranef(model)
     
     matrix = model.matrix(model)[grupa, ]
-    frame = modelFrame(model)[grupa, ]
+    frame = model.frame(model)[grupa, ]
     
-    wielomian = wielomian_grupa(matrix, fixefModel, zmiennaOrg, poziomyGrup)
+    wielomian = wielomian_grupa(matrix, fixefModel, zmiennaOrg, zmiennaGr, mapowanie)
     temp = reszta_grupa(wielomian, matrix, frame, ranefModel, fixefModel)
     
     wartosciZmiennejZaleznej = frame[, zmiennaZalezna]
-    if( length(unique(wartosciZmiennejZaleznej[grupa])) > 100){
+    if( length(unique(wartosciZmiennejZaleznej)) > 100){
       przewNPar = przew_npar_rpr("reszty", zmiennaOrg, dane = temp, przew_nparPar)
     } else {
       przewNPar = regr_pierw_rodz("reszty", zmiennaOrg, dane = temp)

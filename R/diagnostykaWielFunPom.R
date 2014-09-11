@@ -34,71 +34,46 @@ wyciagnij_nazwe_zmiennej <- function(formula,
 #' @param matrix macierz danych badanego modelu.
 #' @param fixefModel wektor współczynników efektów stałych modelu.
 #' @param zmienna ciąg znaków określający zmienną wielomianu.
-#' @param poziomyGrup wiersz ramki danych z poziomami, dla której wykonywane są obliczenia.
-#' Nazwy kolumn opisują zmienne.
+#' @param zmiennaGr wektor nazw zmiennych grupowych
+#' @param mapowanie tablica opisująca mapowanie kolumn danych na zmienne modelu.
 #' @return  
 #' Funkcja zwraca ramkę danych z wartościami zmiennej, obliczeniami reszt oraz wartościami przewidywań na podstawie wielomianu.
 #' Atrybuty ramki danych zawierają informacje o wartościach współczynników przy kolejnych potęgach, informację czy funkcja jest roasnąca oraz 
 #' nazwy zmiennych z ramki danych, które brały udział w obliczeniach współczynnika wielomianu.
-wielomian_grupa <- function(matrix, fixefModel, zmienna, poziomyGrup){
+wielomian_grupa <- function(matrix, fixefModel, zmienna, zmiennaGr, mapowanie){
   namesMatrix = colnames(matrix)
-  
-  if(is.null(poziomyGrup)){
-    zmiennaGr = NULL
-  } else {
-    zmiennaGr = colnames(poziomyGrup)
-  }
   
   indZmienna <- grepl(paste0("^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]1$|^", zmienna, "$"), namesMatrix)
   wartosciZmiennej = matrix[, indZmienna]
   
-  # zmienne, które zawierają zmienną z wielomianu
-  maska = paste0(
-    "^(|.+:)(|I[(]|poly[(])",
-    zmienna,
-    "(|[ ^][[:digit:]]+[)]|,.*[)][[:digit:]]+)(|:.+)$"
-  ) 
-  # zmiennaVal = grepl(maska,  namesMatrix)
-  nazwyZeZmienna = grepl(maska,  namesMatrix) & !apply(matrix, 2, function(x){ all(x==0)} )
+  czyStale = apply(mapowanie[rownames(mapowanie) %in% zmiennaGr, ], 2, function(x) any(x)) &
+    ! mapowanie[rownames(mapowanie)==zmienna, ] & !apply(matrix, 2, function(x){ all(x==0)} )
+  nazwyStale = c("(Intercept)", namesMatrix[czyStale])
   
-  # wyrażenia związane z grupowaniem. Zostawiłem je ponieważ wyłapywanie zmiennych przez grepl wiązałoby się z ryzykiem 
-  # złapania zmiennych, których nazwy zaczynają się od nazw zmiennych grupujących.
-  if(is.null(poziomyGrup)) {
-    expr =  NULL
-  } else if( length(poziomyGrup)==1 ){
-    expr = paste0(names(poziomyGrup), as.character(poziomyGrup))
-  } else{
-    expr = paste0(names(poziomyGrup), apply(poziomyGrup, 2, as.character))
-  }
+  czyWielomianowe = mapowanie[rownames(mapowanie) == zmienna, ]  & 
+    !apply(matrix, 2, function(x){ all(x==0)} )
+  nazwyWielomianowe = namesMatrix[czyWielomianowe]
   
-  maskaIntercept = ifelse(is.null(expr), "^[(]Intercept[)]$", 
-                          paste0("^[(]Intercept[)]$|^", paste0(expr, collapse= ".*$|^"), ".*$"))
+  maska1st = paste0("^", zmienna, "|^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]1")
+  nazwy1st = nazwyWielomianowe[grepl(maska1st, nazwyWielomianowe)]
   
-  nazwyIntercept = grepl(maskaIntercept,  namesMatrix) & !grepl("[:]+", namesMatrix)
-  
-  nazwy = c(namesMatrix[nazwyIntercept], namesMatrix[nazwyZeZmienna])
-  
-  wartosciWielomianu = matrix[, nazwy]%*%fixefModel[nazwy]
-  wielomianXY = unique(data.frame(x = wartosciZmiennej, y = wartosciWielomianu ))
-  wielomianXY = wielomianXY[order(wielomianXY$x), ]
-  
-  intercept = sum(fixefModel[nazwyIntercept])
-  
-  maska1st = paste0("^", zmienna, "|^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]1$")
-  zmienne1st = namesMatrix[nazwyZeZmienna][grepl(maska1st, namesMatrix[nazwyZeZmienna])]
-  
-  wspolczynniki = c(intercept, sum(fixefModel[zmienne1st]))
+  wspolczynniki = c(sum(fixefModel[nazwyStale]), sum(fixefModel[nazwy1st]))
   
   N=2
   while(TRUE){
     maskaNst = paste0("I[(]", zmienna, "\\^", N,"[)]|^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]", N)
-    zmienneNst = namesMatrix[nazwyZeZmienna][grepl(maskaNst, namesMatrix[nazwyZeZmienna])]
-    if(length(zmienneNst)==0){
-      break
+    nazwyNst = nazwyWielomianowe[grepl(maskaNst, nazwyWielomianowe)]
+    if(length(nazwyNst)==0){
+      break;
     }
-    wspolczynniki = c(wspolczynniki, sum(fixefModel[zmienneNst]))
+    wspolczynniki = c(wspolczynniki, sum(fixefModel[nazwyNst]))
     N = N + 1
   }
+  
+  nazwy = c(nazwyStale, nazwyWielomianowe)
+  wartosciWielomianu = matrix[, nazwy]%*%fixefModel[nazwy]
+  wielomianXY = unique(data.frame(x = wartosciZmiennej, y = wartosciWielomianu ))
+  wielomianXY = wielomianXY[order(wielomianXY$x), ]
   
   monot = c(wielomianXY$y[2]>wielomianXY$y[1], wielomianXY$y[-1]>wielomianXY$y[ -length(wielomianXY$y)])
   attributes(wielomianXY)$wartosciWielomianu = wartosciWielomianu
@@ -195,10 +170,11 @@ pseudoR2.lmerMod <- function(model){
   efLos = ranef(model)
   ret = c(sapply(VarCorr(model), function(x) x[[1]]), attributes(VarCorr(model))$sc^2)
   
-  dt <- data.frame(pred = predict(model, re.form = ~0), efekt =modelFrame(model)[, names(efLos)])
+  dt = data.frame(pred = predict(model, re.form = ~0), efekt =model.frame(model)[, names(efLos)])
   
   pred = NULL # aby usunąć komunikat 'note' z check.
   tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=EWDwskazniki:::biasedVar(pred), n=length(pred))
+  # tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=biasedVar(pred), n=length(pred))
   
   EEf = sum(tab$mean*tab$n)/sum(tab$n)
   varE = sum((tab$mean - EEf)^2*tab$n)/sum(tab$n)
@@ -212,18 +188,6 @@ pseudoR2.lmerMod <- function(model){
   return(ret)
 }
 
-modelFrame <- function(model){
-  return(UseMethod("modelFrame"))
-}
-
-modelFrame.lmerMod <- function(model){
-  return(model@frame)
-}
-
-modelFrame.lm <- function(model){
-  return(model$model)
-}
-
 fixef.lm<-function(model){
   return(coefficients(model))
 }
@@ -232,9 +196,19 @@ ranef.lm <- function(model){
   return(list())
 }
 
-
-
-
+model.map <- function(model, zmiennaWielomianowa){
+  mapowanie = attributes(attributes(model.frame(model))$terms)$factors # macierz zawierająca przypisanie zmiennych z formuły do efektów poszczególnych rzędów, ale jeszcze bez rozbicia factorów na dummiesy
+  mapowanie = mapowanie[!(rownames(mapowanie) %in% names(ranef(model))), ] # wykluczamy z niej zmienne definiujące efekty losowe - najpierw wiersze
+  mapowanie = mapowanie[, colSums(mapowanie) > 0] # a następnie kolumny, które były z nimi powiązane
+  maskaZmWielomian = grepl(paste0("^(|poly[(]|I[(])", zmiennaWielomianowa, "(|,.+[)]|[ ^][[:digit:]]+[)])$"), rownames(mapowanie)) # maska wskazująca na wiersze powiązane ze zmienną wprowadzaną wielomianem (gdy w formule jest poly(), wiersz jest tylko jeden, ale gdy wielomian był wprowadzany przez zm+I(zm^2)+..., to jest ich wiele)
+  mapowanie = rbind(mapowanie[!maskaZmWielomian, , drop=FALSE], zmWielomian=as.numeric(colSums(mapowanie[maskaZmWielomian, , drop=FALSE]) > 0)) # i te ew. wiele wierszy zamieniamy na jeden
+  rownames(mapowanie)[nrow(mapowanie)] = zmiennaWielomianowa
+  mapowanie = cbind(0, mapowanie) # dodajemy jeszcze kolumnę na stałą regresji
+  mapowanie = mapowanie[, 1 + attributes(model.matrix(model))$assign] # i korzystamy z faktu, że w pewnym tajemniczym miejscu zapisane jest mapowanie kolumn model.matrix na kolumny tak powstałej macierzy
+  colnames(mapowanie) = colnames(model.matrix(model)) # na koniec jeszcze przypisujemy nazwy kolumn z model.matrix
+  mapowanie = mapowanie == 1 # i żeby wygodniej było tego dalej używać, przerzucamy na macierz wartości logicznych
+  return(mapowanie)
+}
 
 
 
