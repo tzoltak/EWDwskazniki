@@ -12,9 +12,9 @@
 #' @param przew_nparPar lista z parametrami funkcji \code{\link{przew_npar}}.
 #' @param smooothScatterPar lista z parametrami funkcji \code{\link[graphics]{smoothScatter}}.
 #' @return funkcja zwraca listę z obliczeniami dla modelu.
-#' @import dplyr
 #' @import EWDogolny
 #' @import lme4
+#' @import plyr
 #' @export
 diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL, 
                                     folderWykresy = NULL, wykresyFun = png, wykresyParam = NULL,
@@ -25,12 +25,12 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
     return(invisible(FALSE))
   }
   
-  frame = modelFrame(model)
+  frameFull = modelFrame(model)
   zmiennaOrg = wyciagnij_nazwe_zmiennej(zmienna)
   zmienna = colnames(model.matrix(model))[ grepl(paste0("^", zmiennaOrg, "$|^poly[(]", zmiennaOrg,", [[:digit:]]+(|, raw = TRUE)[)]1$") , colnames(model.matrix(model)))]
   
   zmiennaGr = wyciagnij_nazwe_zmiennej(zmiennaGr, czyJednaZmienna = FALSE)
-  zmiennaZalezna = all.vars(attributes(modelFrame(model))$terms)[1]
+  zmiennaZalezna = all.vars(attributes(frameFull)$terms)[1]
   
   if( (!any( ktoraZmienna <- c(zmienna, zmiennaGr) %in% colnames(model.matrix(model)))) 
   ){
@@ -40,13 +40,13 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
   if(is.null(zmiennaGr)){
     grupowanie = NULL
   } else{
-    grupowanie = expand.grid(sapply(frame[, zmiennaGr], unique))
+    grupowanie = expand.grid(sapply(frameFull[, zmiennaGr], unique))
   }
   
   if( !is.null(grupowanie) ){
     grupowanieTab = cbind(grupowanie, grupa = 1:nrow(grupowanie))
-    tabGr = data.frame( frame[, c(zmiennaGr) ])
-    tabGr = suppressMessages(inner_join(tabGr, grupowanieTab))
+    tabGr = data.frame( frameFull[, c(zmiennaGr) ])
+    tabGr = suppressMessages(join(tabGr, grupowanieTab, type="inner"))
   }
   
   linkTest = numeric(max(1, nrow(grupowanie)))
@@ -54,14 +54,20 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
   for(indeksGrupowania in 1:max(1, nrow(grupowanie))){
     
     if( is.null(grupowanie) ){
-      grupa = rep(TRUE, nrow(frame))
+      grupa = rep(TRUE, nrow(frameFull))
     }else{
       grupa = tabGr$grupa == indeksGrupowania
     }
     
-    # if(!is.null(grupowanie)) message("\n", paste0(apply(grupowanie[indeksGrupowania,], 2, as.character),collapse=" " ))
-    wielomian = wielomian_lmer(model, zmiennaOrg, zmiennaGr, grupa, grupowanie, indeksGrupowania, nsiatka=0, czyTylkoGrupa = TRUE)
-    temp      = przewidywanie_lmer(model, wielomian, grupa, zmiennaOrg)
+    poziomyGrup = grupowanie[indeksGrupowania, ]
+    fixefModel = fixef(model)
+    ranefModel = ranef(model)
+    
+    matrix = model.matrix(model)[grupa, ]
+    frame = modelFrame(model)[grupa, ]
+    
+    wielomian = wielomian_grupa(matrix, fixefModel, zmiennaOrg, poziomyGrup)
+    temp = reszta_grupa(wielomian, matrix, frame, ranefModel, fixefModel)
     
     wartosciZmiennejZaleznej = frame[, zmiennaZalezna]
     if( length(unique(wartosciZmiennejZaleznej[grupa])) > 100){
@@ -86,7 +92,7 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
       smooothScatterPar = list(nbin=256, colramp=colorRampPalette(c("white", blues9)))
       smooothScatterPar$bandwidth = c((max(temp[, zmiennaOrg]) - min(temp[, zmiennaOrg])) / 256, (max(temp$reszty) - min(temp$reszty)) / 256)
       smooothScatterPar$xlim = range(model.matrix(model)[, zmienna], na.rm = TRUE)
-      smooothScatterPar$ylim = range(frame[, zmiennaZalezna], na.rm = TRUE)
+      smooothScatterPar$ylim = range(frameFull[, zmiennaZalezna], na.rm = TRUE)
     }
     
     smooothScatterPar$x = data.frame(x = temp[, zmiennaOrg] , y = temp$reszty)
@@ -100,7 +106,7 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
     }
     
     linkTest[indeksGrupowania] = summary(lm(reszty ~ wielomian + I(wielomian^2), data=temp))$coefficients[3, 4]
-    monotonicznosc[indeksGrupowania] = attributes(wielomian)$czyRosnaca
+    monotonicznosc[indeksGrupowania] = all(attributes(wielomian)$czyRosnaca)
   }
   
   if(is.null(grupowanie)){
@@ -109,6 +115,6 @@ diagnostyka_wielomianow <- function(model, zmienna, zmiennaGr = NULL,
     tab = data.frame(grupowanie, linkTest, monotonicznosc)
   }
   return(list(grupy = tab, 
-              bic = AIC(model, k=log(nrow(frame))), 
+              bic = AIC(model, k=log(nrow(frameFull))), 
               R2 = pseudoR2(model)))
 }

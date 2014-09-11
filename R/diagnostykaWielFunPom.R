@@ -1,20 +1,19 @@
 #' @title Pobieranie nazw zmiennych z formul
 #' @description
 #' Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły. Jeżeli formuła jest obustronna to funkcja zwraca błąd.
-#' @param formula parametr klasy 'formula'
-#' @param nazwa ciąg znaków wykorzystywany w komunikcie błędu
+#' @param formula parametr klasy 'formula'.
+#' @param nazwa ciąg znaków wykorzystywany w komunikcie błedu.
 #' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to funkcja zwraca błąd dla formuł prawostronnych, które 
 #' zawierają więcej niż jedną zmienną.
-#' @return wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
 #' @import formula.tools
+#' @return wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
 wyciagnij_nazwe_zmiennej <- function(formula, 
                                      nazwa = as.character(substitute(formula)),
-                                     czyJednaZmienna = TRUE){
-  if(is.null(formula)) {
+                                     czyJednaZmienna = TRUE
+){
+  if(is.null(formula)){
     return(formula)
-  }
-  
-  if( class(formula) == "formula" ){
+  } else if( class(formula) == "formula" ){
     if(!is.one.sided(formula)  ) {
       stop(paste0("Formuła ", nazwa, " nie jest prawostronna."))
     }
@@ -23,7 +22,7 @@ wyciagnij_nazwe_zmiennej <- function(formula,
       stop(paste0("Niepoprawna liczba zmiennych w formule ", nazwa, "."))
     }
     return(zmienne)
-  } else if (class(formula) == "character") { 
+  } else if (class(formula) == "character") {
     return(formula)
   } else {
     stop("Zmienna '", nazwa, "' nie jest ani obiektem klasy 'character', ani 'formula'." )
@@ -32,27 +31,26 @@ wyciagnij_nazwe_zmiennej <- function(formula,
 #' @title Wyliczenia dla wielomianu.
 #' @description
 #' Funkcja wykonująca wyliczenia dla wielomianowej części modelu w zadanej grupie obserwacji.
-#' @param model obiekt klasy 'lm' lub 'lmerMod'.
+#' @param matrix macierz danych badanego modelu.
+#' @param fixefModel wektor współczynników efektów stałych modelu.
 #' @param zmienna ciąg znaków określający zmienną wielomianu.
-#' @param zmiennaGr wektor ciągów znakowych okreslających zmienne modelu, na podstawie których określone są grupy, w których wykonywane są obliczenia oraz dla których są sporządzane wykresy.
-#' @param grupa ciąg zmiennych logicznych określający, która obserwacja znajduje się w rozważanej grupie.
-#' @param grupowanie tablica, która jest kombinacją poziomów zmiennych wskazanych przez zmiennaGr.
-#' @param indeksGrupowania indeks tablicy podawanej w parametrze 'grupowanie'. Indeks wskazuje bierzącą grupę.
-#' @param nsiatka liczba punktów, w której ma zostać obliczony wielomian. Domyślna wartość 0 oznacza, że wielomian będzie obliczony dla każdej występującej wartości.
-#' @param czyTylkoGrupa wartośc logiczna. Jeżeli wynosi TRUE to wartości oblicznanego wielomianu są między minimum i maksimum dla grupy.
-#' Jeżeli wartość wynosi FALSE to minimum i maksimum jest liczone dla całej populacji.
-#' @return 
+#' @param poziomyGrup wiersz ramki danych z poziomami, dla której wykonywane są obliczenia.
+#' Nazwy kolumn opisują zmienne.
+#' @return  
 #' Funkcja zwraca ramkę danych z wartościami zmiennej, obliczeniami reszt oraz wartościami przewidywań na podstawie wielomianu.
-#' Atrybuty ramki danych zawierają informacje o wartościach współczynników przy kolejnych potęgach, informację czy funkcja jest rosnąca oraz 
+#' Atrybuty ramki danych zawierają informacje o wartościach współczynników przy kolejnych potęgach, informację czy funkcja jest roasnąca oraz 
 #' nazwy zmiennych z ramki danych, które brały udział w obliczeniach współczynnika wielomianu.
-wielomian_lmer <- function(model, zmienna, zmiennaGr, grupa, grupowanie, indeksGrupowania, nsiatka=0, czyTylkoGrupa = FALSE){
-  isPoly = any(indPoly <- grepl("^poly[(]", colnames(modelFrame(model))))
+wielomian_grupa <- function(matrix, fixefModel, zmienna, poziomyGrup){
+  namesMatrix = colnames(matrix)
   
-  wartosciZmiennej = if(isPoly){
-    modelFrame(model)[, indPoly][, 1]
+  if(is.null(poziomyGrup)){
+    zmiennaGr = NULL
   } else {
-    modelFrame(model)[, zmienna]
-  } 
+    zmiennaGr = colnames(poziomyGrup)
+  }
+  
+  indZmienna <- grepl(paste0("^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]1$|^", zmienna, "$"), namesMatrix)
+  wartosciZmiennej = matrix[, indZmienna]
   
   # zmienne, które zawierają zmienną z wielomianu
   maska = paste0(
@@ -60,111 +58,60 @@ wielomian_lmer <- function(model, zmienna, zmiennaGr, grupa, grupowanie, indeksG
     zmienna,
     "(|[ ^][[:digit:]]+[)]|,.*[)][[:digit:]]+)(|:.+)$"
   ) 
-  zmiennaVal = grepl(maska,  colnames(model.matrix(model)))
+  # zmiennaVal = grepl(maska,  namesMatrix)
+  nazwyZeZmienna = grepl(maska,  namesMatrix) & !apply(matrix, 2, function(x){ all(x==0)} )
   
-  # wyrażenia związane z grupowaniem 
-  if(is.null(grupowanie)) {
-    expr = NULL
-  } else if( ncol(grupowanie)==1 ){
-    expr = paste0(names(grupowanie), as.character(grupowanie[indeksGrupowania, ]))
-  } else {
-    expr = paste0(names(grupowanie), apply(grupowanie[indeksGrupowania, ], 2, as.character))
-  }
-  # liczba dwukropków
-  colons = sapply(strsplit(colnames(model.matrix(model)), ":"), length) - 1
-  
-  # wystapieniaExpr - zawierają liczbę wystąpień w nazwach zmiennych modelu parametrow expr
-  wystapieniaExpr = numeric(length(colons))
-  for(ii in seq_along(expr)){
-    wystapieniaExpr = wystapieniaExpr + grepl(expr[ii], colnames(model.matrix(model)))
-  }
-  
-  # zmienneLegalne - to zmienne, które należy uwzględnić przy wyliczaniu wielomianu (ale bez interceptów)
-  zmienneLegalne = colnames(model.matrix(model))[zmiennaVal & wystapieniaExpr == colons]
-  
-  # wektor, dla którego chcemy obliczyć wielomian
-  siatka  = if(nsiatka <= 0){
-    if(!czyTylkoGrupa){
-      sort(unique(wartosciZmiennej))
-    } else{
-      sort(unique(wartosciZmiennej[grupa]))
-    }
+  # wyrażenia związane z grupowaniem. Zostawiłem je ponieważ wyłapywanie zmiennych przez grepl wiązałoby się z ryzykiem 
+  # złapania zmiennych, których nazwy zaczynają się od nazw zmiennych grupujących.
+  if(is.null(poziomyGrup)) {
+    expr =  NULL
+  } else if( length(poziomyGrup)==1 ){
+    expr = paste0(names(poziomyGrup), as.character(poziomyGrup))
   } else{
-    if(!czyTylkoGrupa){
-      seq(min(wartosciZmiennej),max(wartosciZmiennej), length.out= nsiatka)
-    } else{
-      seq(min(wartosciZmiennej[grupa]),max(wartosciZmiennej[grupa]), length.out= nsiatka)
-    }
-  } 
+    expr = paste0(names(poziomyGrup), apply(poziomyGrup, 2, as.character))
+  }
   
-  coefs = fixef(model)
-  # intercept uwzględnia również parametry związane z grupowaniem.
-  colCoefs = colnames(coefs) %in% expr
-  intercept = fixef(model)["(Intercept)"] + ifelse(any(colCoefs), sum(coefs[colCoefs]), 0)
+  maskaIntercept = ifelse(is.null(expr), "^[(]Intercept[)]$", 
+                          paste0("^[(]Intercept[)]$|^", paste0(expr, collapse= ".*$|^"), ".*$"))
   
-  maska1st = paste0("^", zmienna, "|^poly[(]",zmienna,",.*[)]1")
-  # zmienneLegalne[grepl(maska1st, zmienneLegalne)]
+  nazwyIntercept = grepl(maskaIntercept,  namesMatrix) & !grepl("[:]+", namesMatrix)
   
-  zmienne1st = zmienneLegalne[grepl(maska1st, zmienneLegalne)]
-  # message("\n", zmienne1st)
-  wspolczynniki = c(intercept, sum(coefs[zmienne1st]))
-  YY = sum(coefs[zmienne1st]) * siatka + intercept
+  nazwy = c(namesMatrix[nazwyIntercept], namesMatrix[nazwyZeZmienna])
+  
+  wartosciWielomianu = matrix[, nazwy]%*%fixefModel[nazwy]
+  wielomianXY = unique(data.frame(x = wartosciZmiennej, y = wartosciWielomianu ))
+  wielomianXY = wielomianXY[order(wielomianXY$x), ]
+  
+  intercept = sum(fixefModel[nazwyIntercept])
+  
+  maska1st = paste0("^", zmienna, "|^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]1$")
+  zmienne1st = namesMatrix[nazwyZeZmienna][grepl(maska1st, namesMatrix[nazwyZeZmienna])]
+  
+  wspolczynniki = c(intercept, sum(fixefModel[zmienne1st]))
   
   N=2
   while(TRUE){
-    maskaNst = paste0(zmienna, "\\^", N,"|^poly[(]",zmienna,",.*[)]",N)
-    zmienneNst = zmienneLegalne[grepl(maskaNst, zmienneLegalne)]
-    # cat("\n", zmienneNst)
+    maskaNst = paste0("I[(]", zmienna, "\\^", N,"[)]|^poly[(]", zmienna, ", [[:digit:]]+(|, raw = TRUE)[)]", N)
+    zmienneNst = namesMatrix[nazwyZeZmienna][grepl(maskaNst, namesMatrix[nazwyZeZmienna])]
     if(length(zmienneNst)==0){
       break
     }
-    wspolczynniki = c(wspolczynniki, sum(coefs[zmienneNst]))
-    YY = YY + sum(coefs[zmienneNst])*(siatka^N)
+    wspolczynniki = c(wspolczynniki, sum(fixefModel[zmienneNst]))
     N = N + 1
   }
   
-  ret = data.frame(x=siatka, y=YY)
-  
-  monot = c(YY[2]>YY[1], YY[-1]>YY[ -length(YY)])
-  attributes(ret)$czyRosnaca=all(monot)
-  attributes(ret)$wspolczynniki = wspolczynniki 
-  
-  interceptNames = if(any(colCoefs)){
-    names(coefs)[colCoefs]
-  } else{
-    NULL
-  }
-  attributes(ret)$zmienne = c("(Intercept)", interceptNames, zmienneLegalne)
-  class(ret) = "wielomian"
-  return(ret)
+  monot = c(wielomianXY$y[2]>wielomianXY$y[1], wielomianXY$y[-1]>wielomianXY$y[ -length(wielomianXY$y)])
+  attributes(wielomianXY)$wartosciWielomianu = wartosciWielomianu
+  attributes(wielomianXY)$czyRosnaca = monot
+  attributes(wielomianXY)$wspolczynniki = wspolczynniki 
+  attributes(wielomianXY)$zmienne = nazwy
+  attributes(wielomianXY)$zmiennaX = zmienna
+  class(wielomianXY) = "wielomian"
+  return(wielomianXY)
 }
-
-# oblicz_wartosci_wielomianu <- function(wektor, wielomian){
-#   wspolczynniki = attributes(wielomian)$wspolczynniki 
-#   ret = wektor*wspolczynniki[2] + wspolczynniki[1]
-#   
-#   for( i in seq_along(wspolczynniki[-1:-2])){
-#     ret = ret + wspolczynniki[2+i]*(wektor^(1+i))
-#   }
-#   return(ret)
-# }
-
-#  ktore_naleza_do_grupy(daneGrupujace = modelFrame(model)[, zmiennaGr], grupowanie, indeksGrupowania)
-# ktore_naleza_do_grupy <- function(daneGrupujace, grupowanie, indeksGrupowania){
-#   if(is.null(grupowanie) | nrow(grupowanie) ==0){
-#     return(rep(TRUE, nrow(daneGrupujace)))
-#   }
-#   
-#   if(ncol(grupowanie)==1){
-#     return( daneGrupujace==grupowanie[indeksGrupowania, ])
-#   }
-#   
-#   return( apply(daneGrupujace, 1, function(x){all(x==grupowanie[indeksGrupowania, ])}))
-# }
-
 #' @title Przeciążenie funkcji lines dla obiektu wielomian.
 #' @description
-#' Funkcja dodaje od wykresy linię wielomianu.
+#' Funkcja dodaje od wykresy linię wielomianu. 
 #' @param wielomian obielt klasy 'wielomian'.
 #' @param colRos kolor rosnącej części wykresu wielomianu.
 #' @param colMal kolor malejacej części wykresu wielomianu.
@@ -172,7 +119,7 @@ wielomian_lmer <- function(model, zmienna, zmiennaGr, grupa, grupowanie, indeksG
 #' @param lty typ linii. Patrz również \code{\link[graphics]{par}}.
 #' @return Funkcja nic nie zwraca.
 lines.wielomian <- function(wielomian, colRos=3, colMal =4, lwd=2, lty=1){
-  monot = c(wielomian$y[2]>wielomian$y[1], wielomian$y[-1]>wielomian$y[ -length(wielomian$y)])
+  monot = attributes(wielomian)$czyRosnaca
   lines(wielomian$x[monot], wielomian$y[monot], col=colRos, lwd=lwd, lty=lty)
   lines(wielomian$x[!monot], wielomian$y[!monot], col=colMal, lwd=lwd, lty=lty)
   
@@ -185,59 +132,52 @@ lines.wielomian <- function(wielomian, colRos=3, colMal =4, lwd=2, lty=1){
       lines(wielomian$x[inds[i]:(inds[i]+1)], wielomian$y[inds[i]:(inds[i]+1)], col=colMal, lwd=lwd, lty=lty)
     }
   }
-  return(invisible(TRUE))
 }
-#' @title Przeciążenie funkcji lines dla obiektu wielomian.
+#' @title Obliczanie reszt dla grupy
 #' @description
-#' Funkcja dodaje od wykresy linię wielomianu.
-#' @param model obiekt klasy 'lmerMod' lub 'lm'.
+#' Funkcja oblicza reszt związane z efektami stałymi.
 #' @param wielomian obiekt klasy 'wielomian'.
-#' @param grupa wektor wartości logiczych określający czy obserwacja należy do grupy.
-#' @param zmienna ciąg znaków określający nazwę zmiennej wielomianu.
+#' @param matrix macierz modelu.
+#' @param frame wejściowa ramka danych do modelu.
+#' @param ranefModel lista efektóe losowych modelu. 
+#' @param fixefModel lista efektów stałych
 #' @return Funkcja zwraca ramkę danych, która zawiera informacje dla obserwacji o:
-#' grupowaniu, zmiennej zależnej, zmiennej niezależnej, efektach losowych, resztach oraz efetach związanych z wielomianem.
-przewidywanie_lmer <- function(model, wielomian, grupa, zmienna){
-  isPoly = any(indPoly <- grepl("^poly[(]", colnames(modelFrame(model))))
+#' grupowaniu, zmiennej niezależnej, efektach losowych, resztach oraz efetach związanych z wielomianem.
+reszta_grupa <- function(wielomian, matrix, frame, ranefModel, fixefModel){
   
-  zmiennaZalezna = all.vars(attributes(modelFrame(model))$terms)[1]
+  zmienna = attributes(wielomian)$zmiennaX
+  namesMatrix = colnames(matrix)
+  zmiennaZalezna = all.vars(attributes(frame)$terms)[1]
+  zmiennaMatrix = namesMatrix[ grepl(paste0("^", zmienna, "$|^poly[(]", zmienna,", [[:digit:]]+(|, raw = TRUE)[)]1$") , namesMatrix)]
+  
   zm = attributes(wielomian)$zmienne
-  przewidywaniaWielomianem = (model.matrix(model)[grupa, zm] %*% (fixef(model)[zm]))
+  przewidywaniaWielomianem = attributes(wielomian)$wartosciWielomianu
   
-  zmNeg = colnames(model.matrix(model))[! colnames(model.matrix(model)) %in% zm]  
-  efStale = (model.matrix(model)[grupa, zmNeg] %*% (fixef(model)[zmNeg]))[, 1]
+  zmNeg = namesMatrix[!namesMatrix %in% zm]  
+  efStale = as.vector(matrix[, zmNeg] %*% (fixefModel[zmNeg]))
   
-  efLos = ranef(model)
   efLos = mapply(function(x, nazwa)return(setNames(data.frame(rownames(x), x$"(Intercept)"), c(nazwa, paste0("efLos_",nazwa)))),     
-                 efLos, as.list(names(efLos)), SIMPLIFY=FALSE)
+                 ranefModel, as.list(names(ranefModel)), SIMPLIFY=FALSE)
   
-  if(isPoly){
-    zmiennaX = colnames(model.matrix(model))[ grepl(paste0("^poly[(]", zmienna,", [[:digit:]]+, raw = TRUE[)]1$") , colnames(model.matrix(model)))]
-    temp = cbind( modelFrame(model)[grupa, c(names(efLos), zmiennaZalezna) ], model.matrix(model)[grupa, zmiennaX])
-    colnames(temp) = c(names(efLos), zmiennaZalezna,  zmienna)
-  } else{
-    temp = modelFrame(model)[grupa, c(names(efLos), zmiennaZalezna, zmienna) ]
-  }
-  colnames(temp)[seq_along(efLos)] = names(efLos)
-  
-  #temp = modelFrame(model)[grupa, c(names(efLos), zmiennaZalezna, zmiennaX) ] 
+  temp = data.frame( frame[, c(names(efLos)) ], matrix[, zmiennaMatrix])
+  colnames(temp) = c(names(efLos), zmienna)
   
   for (i in seq_along(efLos)) temp=merge(temp, efLos[[i]])
   
-  sumaEfLos = if( is.null(efLos) | length(efLos) ==0  ){
-    rep(0, nrow(temp))
+  if( is.null(efLos) | length(efLos) ==0  ){
+    sumaEfLos = rep(0, nrow(temp))
   } else{
-    apply(as.data.frame(temp[, paste0("efLos", "_", names(efLos) )]),1,sum)
+    sumaEfLos = apply(as.data.frame(temp[, paste0("efLos", "_", names(efLos) )]), 1, sum)
   }
   
-  reszty = modelFrame(model)[grupa, zmiennaZalezna] - (efStale) - sumaEfLos
+  reszty = frame[, zmiennaZalezna] - efStale - sumaEfLos
   temp = cbind(temp, reszty, wielomian = przewidywaniaWielomianem)
   colnames(temp)[ncol(temp)] = "wielomian"
-  # temp$wielomian = przewidywaniaWielomianem
   return(data.frame(temp))
 }
 
 pseudoR2 <- function(model){
-  UseMethod("pseudoR2")
+  return(UseMethod("pseudoR2"))
 }
 
 pseudoR2.lm <- function(model){
@@ -250,14 +190,14 @@ biasedVar <- function(x) {
   return(ret)
 }
 
-# wariancja największej wiarygodności
+#' @import plyr
 pseudoR2.lmerMod <- function(model){
   efLos = ranef(model)
   ret = c(sapply(VarCorr(model), function(x) x[[1]]), attributes(VarCorr(model))$sc^2)
   
   dt <- data.frame(pred = predict(model, re.form = ~0), efekt =modelFrame(model)[, names(efLos)])
   
-  pred <- NULL # żeby wyeliminować komunikat note w check'u
+  pred = NULL # aby usunąć komunikat 'note' z check.
   tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=EWDwskazniki:::biasedVar(pred), n=length(pred))
   
   EEf = sum(tab$mean*tab$n)/sum(tab$n)
@@ -291,6 +231,11 @@ fixef.lm<-function(model){
 ranef.lm <- function(model){
   return(list())
 }
+
+
+
+
+
 
 
 

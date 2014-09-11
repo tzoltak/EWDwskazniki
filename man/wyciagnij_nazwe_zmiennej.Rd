@@ -7,9 +7,9 @@ wyciagnij_nazwe_zmiennej(formula, nazwa = as.character(substitute(formula)),
   czyJednaZmienna = TRUE)
 }
 \arguments{
-\item{formula}{parametr klasy 'formula'}
+\item{formula}{parametr klasy 'formula'.}
 
-\item{nazwa}{ciąg znaków wykorzystywany w komunikcie błędu}
+\item{nazwa}{ciąg znaków wykorzystywany w komunikcie błedu.}
 
 \item{czyJednaZmienna}{zmienna logiczna. Jeżeli wartość jest równa TRUE, to funkcja zwraca błąd dla formuł prawostronnych, które
 zawierają więcej niż jedną zmienną.}
