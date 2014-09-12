@@ -3,16 +3,16 @@
 \alias{diagnostyka_wielomianow}
 \title{Diagnostyka wielomianow}
 \usage{
-diagnostyka_wielomianow(model, zmienna, zmiennaGr = NULL,
+diagnostyka_wielomianow(model, zmWielomian, zmGrupujace = NULL,
   folderWykresy = NULL, wykresyFun = png, wykresyParam = NULL,
   przew_nparPar = NULL, smooothScatterPar = NULL)
 }
 \arguments{
 \item{model}{obiekt klasy 'lm' lub 'lmerMod'}
 
-\item{zmienna}{ciąg znaków określający zmienną wielomianu}
+\item{zmWielomian}{ciąg znaków określający zmienną wielomianu}
 
-\item{zmiennaGr}{wektor ciągów znakowych określających zmienne modelu, na podstawie których określone są grupy, w których wykonywane są obliczenia oraz dla których są sporządzane wykresy}
+\item{zmGrupujace}{wektor ciągów znakowych określających zmienne modelu, na podstawie których określone są grupy, w których wykonywane są obliczenia oraz dla których są sporządzane wykresy}
 
 \item{folderWykresy}{ścieżka do folderu, gdzie powinny być zapisane wykresy. Jeżeli jest równa NULL to wykresy nie są zapisywane.}
 
