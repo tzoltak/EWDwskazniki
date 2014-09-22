@@ -28,6 +28,12 @@ wyciagnij_nazwe_zmiennej <- function(formula,
     stop("Zmienna '", nazwa, "' nie jest ani obiektem klasy 'character', ani 'formula'." )
   }
 }
+
+#' @title Wyliczenia do wspołczynnika R-kwadrat.
+#' @description
+#' Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod' zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
+#' @param model parametr klasy 'lmerMod' lub 'lm'.
+#' @return Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model.
 pseudoR2 <- function(model){
   return(UseMethod("pseudoR2"))
 }
@@ -48,7 +54,6 @@ pseudoR2.lmerMod <- function(model){
   ret = c(sapply(VarCorr(model), function(x) x[[1]]), attributes(VarCorr(model))$sc^2)
   
   dt = data.frame(pred = predict(model, re.form = ~0), efekt =model.frame(model)[, names(efLos)])
-  
   pred = NULL # aby usunąć komunikat 'note' z check.
   tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=EWDwskazniki:::biasedVar(pred), n=length(pred))
   # tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=biasedVar(pred), n=length(pred))
@@ -73,6 +78,13 @@ ranef.lm <- function(model){
   return(list())
 }
 
+#' @title Mapowanie zmiennych dla modelu z interakcjami
+#' @description
+#' Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki danych, na której był budowany model
+#' na nazwy współczynników modelu (i macierzy modelu). 
+#' @param model parametr klasy 'lmerMod' lub 'lm'.
+#' @param zmiennaWielomianowa nazwa zmiennej, która jest parametrem wielomianu.
+#' @return funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne ramki danych, a nazwy kolumn to nazwy współczynników modelu.
 model.map <- function(model, zmiennaWielomianowa){
   mapowanie = attributes(attributes(model.frame(model))$terms)$factors # macierz zawierająca przypisanie zmiennych z formuły do efektów poszczególnych rzędów, ale jeszcze bez rozbicia factorów na dummiesy
   mapowanie = mapowanie[!(rownames(mapowanie) %in% names(ranef(model))), ] # wykluczamy z niej zmienne definiujące efekty losowe - najpierw wiersze

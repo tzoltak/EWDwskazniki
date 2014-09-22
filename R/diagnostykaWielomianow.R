@@ -34,6 +34,10 @@ diagnostyka_wielomianow<- function(model, zmWielomian, zmGrupujace = NULL,
   maskaGrupowanie = c(TRUE, maskaGrupowanie[-1]) # i jeszcze stała
   maskaPozostale = !maskaWielomian & !maskaGrupowanie
   
+  maskaTylkoWielomian = mapowanie[rownames(mapowanie) == zmWielomian, ] &
+    apply( !mapowanie[ !rownames(mapowanie) %in% zmWielomian , ], 2, all)
+  stopien = sum(maskaTylkoWielomian)
+  
   if (class(model)=="lm") {
     modelMatrix = t(model.matrix(model)) * coef(model)  # nie transponuję z powrotem po mnożeniu, więc poniżej są colSums, a nie rowSums
     # a mapowania są po wierszach
@@ -57,11 +61,10 @@ diagnostyka_wielomianow<- function(model, zmWielomian, zmGrupujace = NULL,
       efSt[[i]] = cbind(rownames(efSt[[i]]), efSt[[i]], stringsAsFactors=FALSE) # dopiszmy sobie coś, po czym będzie można łączyć
       colnames(efSt[[i]])[1] = names(efSt)[i]
       temp = as.data.frame(lapply(model.frame(model)[, names(efSt)[i], drop=FALSE], as.character), stringsAsFactors=FALSE) # zawikłane: chcemy wydobyć z model.frame wartości zmiennej grupującej, skonwertować je na tekst (co by było kompatybilnie z tym, co wyciągnęliśmy przed chwilą z rownames() - to przecież też tekst), ale żeby na końcu cały czas mieć data.frame'a z zachowaną nazwą (jedynej) kolumny
-      efSt[[i]] = join(temp, efSt[[i]]) # ważne: korzystamy z tego, że join() zachowuje uporządkowanie wierszy pierwszego argumentu! (uwaga, merge() by tego nie zrobiła)
+      efSt[[i]] = suppressMessages(join(temp, efSt[[i]])) # ważne: korzystamy z tego, że join() zachowuje uporządkowanie wierszy pierwszego argumentu! (uwaga, merge() by tego nie zrobiła)
       efStObs = efStObs + efSt[[i]][, -1] # dodajemy
     }
     resztyCzesciowe = model.frame(model)[, 1] - (rowSums(model.matrix(model) * efStObs) )  # tu mnożenie przez macierz o takim samym wymiarze, więc bez transpozycji
-    
     rm(efSt) # to może być duże, niech nie zajmuje miejsca niepotrzebnie
   }
   
@@ -80,6 +83,8 @@ diagnostyka_wielomianow<- function(model, zmWielomian, zmGrupujace = NULL,
   
   xlimSmooth = range(danePoobliczane$zmWielomianowa, na.rm = TRUE)
   ylimSmooth = range(danePoobliczane$resztyCzesciowe, na.rm = TRUE)
+  
+  # x <- danePoobliczane
   
   wyniki = ddply(danePoobliczane, zmGrupujace,
                  function(x) {
@@ -106,9 +111,14 @@ diagnostyka_wielomianow<- function(model, zmWielomian, zmGrupujace = NULL,
                    
                    if(is.null(smooothScatterPar)){
                      smooothScatterPar = list(nbin=256, colramp=colorRampPalette(c("white", blues9)))
-                     smooothScatterPar$bandwidth = c((max(x$zmWielomianowa) - min(x$zmWielomianowa)) / 256, (max(x$resztyCzesciowe) - min(x$resztyCzesciowe)) / 256)
+                     #smooothScatterPar$bandwidth = c((max(x$zmWielomianowa) - min(x$zmWielomianowa)) / 256, (max(x$resztyCzesciowe) - min(x$resztyCzesciowe)) / 256)
                      smooothScatterPar$xlim = xlimSmooth
                      smooothScatterPar$ylim = ylimSmooth
+                     smooothScatterPar$ylab = "przewidywanie (uśrednione)"
+                     smooothScatterPar$xlab = zmWielomian
+                     main = paste0("wielomian ", stopien, ". stopnia")
+                     main = paste(main, "\n", paste0(paste(zmGrupujace, apply(x[1, zmGrupujace],2, as.character), sep=": "),collapse="\n" ))
+                     smooothScatterPar$main=main
                    }
                    
                    smooothScatterPar$x = data.frame(x =x$zmWielomianowa , y = x$resztyCzesciowe)
