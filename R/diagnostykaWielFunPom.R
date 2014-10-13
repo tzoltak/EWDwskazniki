@@ -3,11 +3,11 @@
 #' Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły. Jeżeli formuła jest obustronna to funkcja zwraca błąd.
 #' @param formula parametr klasy 'formula'.
 #' @param nazwa ciąg znaków wykorzystywany w komunikcie błedu.
-#' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to funkcja zwraca błąd dla formuł prawostronnych, które 
+#' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to funkcja zwraca błąd dla formuł prawostronnych, które
 #' zawierają więcej niż jedną zmienną.
 #' @import formula.tools
 #' @return wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
-wyciagnij_nazwe_zmiennej <- function(formula, 
+wyciagnij_nazwe_zmiennej <- function(formula,
                                      nazwa = as.character(substitute(formula)),
                                      czyJednaZmienna = TRUE
 ){
@@ -42,25 +42,21 @@ pseudoR2.lm <- function(model){
   return(summary(model)$r.squared)
 }
 
-biasedVar <- function(x) {
-  m = mean(x)
-  ret = sum((x-m)^2)/length(x)
-  return(ret)
-}
-
 #' @import plyr
 pseudoR2.lmerMod <- function(model){
   efLos = ranef(model)
   ret = c(sapply(VarCorr(model), function(x) x[[1]]), attributes(VarCorr(model))$sc^2)
-  
+
   dt = data.frame(pred = predict(model, re.form = ~0), efekt =model.frame(model)[, names(efLos)])
   pred = NULL # aby usunąć komunikat 'note' z check.
-  tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=EWDwskazniki:::biasedVar(pred), n=length(pred))
+  tab = ddply(dt, ~efekt, summarise, mean=mean(pred),
+              var=as.numeric(cov.wt(as.matrix(pred), method="ML")$cov),
+              n=length(pred))
   # tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=biasedVar(pred), n=length(pred))
-  
+
   EEf = sum(tab$mean*tab$n)/sum(tab$n)
   varE = sum((tab$mean - EEf)^2*tab$n)/sum(tab$n)
-  
+
   Evar = sum(tab$var*tab$n)/sum(tab$n)
   ret = cbind(ret, c(varE, Evar ))
   ret = cbind(ret, apply(ret, 1, sum))
@@ -81,11 +77,11 @@ ranef.lm <- function(model){
 #' @title Mapowanie zmiennych dla modelu z interakcjami
 #' @description
 #' Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki danych, na której był budowany model
-#' na nazwy współczynników modelu (i macierzy modelu). 
+#' na nazwy współczynników modelu (i macierzy modelu).
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
 #' @param zmiennaWielomianowa nazwa zmiennej, która jest parametrem wielomianu.
 #' @return funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne ramki danych, a nazwy kolumn to nazwy współczynników modelu.
-model.map <- function(model, zmiennaWielomianowa){
+model_map <- function(model, zmiennaWielomianowa){
   mapowanie = attributes(attributes(model.frame(model))$terms)$factors # macierz zawierająca przypisanie zmiennych z formuły do efektów poszczególnych rzędów, ale jeszcze bez rozbicia factorów na dummiesy
   mapowanie = mapowanie[!(rownames(mapowanie) %in% names(ranef(model))), ] # wykluczamy z niej zmienne definiujące efekty losowe - najpierw wiersze
   mapowanie = mapowanie[, colSums(mapowanie) > 0] # a następnie kolumny, które były z nimi powiązane

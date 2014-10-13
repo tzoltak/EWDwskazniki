@@ -1,8 +1,14 @@
 --------------------
-Zmiany w EWDwskazniki 0.? (rrrr-mm-dd)
+Zmiany w EWDwskazniki 0.2 (2014-10-13)
 
 - Nowe funkcje:
-  - ;
+  - diagnostykaWielomianow(), porownaj_wielomiany() - funkcje pozwalają na kompleksową
+    diagnostykę zależności nieliniowych;
+  - ewd_me(), ewd_me_ssr(), sr_wy() - funkcje służące do wyliczania wskaźników EWD na
+    podstawie modeli mieszanych efektów;
+  - wielkoscwarstwic() - wyznaczanie wielkości warstwic (w trzyletnich wskaźnikach EWD);
+  - tabelka_ld(), parametryEgz() funkcje przygotowujące rozkłady i zestawienia
+    parametrów rozkładów;
 
 - Nowe funkcjonalności:
   - ;
@@ -10,5 +16,3 @@ Zmiany w EWDwskazniki 0.? (rrrr-mm-dd)
 --------------------
 Publikacja EWDwskazniki 0.1 (2014-08-09)
 
-- Nowe funkcje:
-  - ;
