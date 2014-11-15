@@ -37,9 +37,13 @@ porownaj_wielomiany = function(x, zapis=NULL, cyfryLinkTest=5, cyfryR2=4) {
   print(czyRosnaca, row.names=FALSE)
 
   parametry = lapply(x, function(x) {
-    return(data.frame(bic=round(x$bic, cyfryR2),
-                      "R2 ind."=round(x$R2[2, 2] / x$R2[2, 3], cyfryR2),
-                      "R2 szk."=round(x$R2[1, 2] / x$R2[1, 3], cyfryR2)))
+    if (is.matrix(x$R2)) {
+      return(data.frame(bic=round(x$bic, cyfryR2),
+                        "R2 ind."=round(x$R2[2, 2] / x$R2[2, 3], cyfryR2),
+                        "R2 szk."=round(x$R2[1, 2] / x$R2[1, 3], cyfryR2)))
+    } else {
+      return(data.frame(bic=round(x$bic, cyfryR2), "R2"=round(x$R2, cyfryR2)))
+    }
   })
   parametry = t(rbind.fill(parametry))
   colnames(parametry) = names(x)

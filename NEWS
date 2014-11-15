@@ -1,17 +1,30 @@
 --------------------
+Zmiany w EWDwskazniki 0.3 (2014-11-15)
+
+- Nowe funkcje:
+  - ewd_es(): funkcja służąca do wyliczania wskaźników EWD na podstawie modeli efektów
+    stałych (do Kalkulatora);
+  - dane_do_kalkulatora(): funkcja przygotowuje zestawienia danych potrzebnych do
+    zaimplemetnowania modeli EWD w Kalkulatorze (do wklejenia do arkusza kalkulacyjnego
+    przesyłanego potem Blue Brickowi);
+  - panorama_ewd(): funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu
+    szkół ze względu na wartości średnich wyników na wyjściu (oś X) i wartości wskaźników
+    EWD (oś Y).
+
+- Nowe funkcjonalności:
+  - tabelka_ld(): kod funkcji został trochę uelastyczniony, żeby móc obsługiwać również
+    dane maturalne.
+--------------------
 Zmiany w EWDwskazniki 0.2 (2014-10-13)
 
 - Nowe funkcje:
-  - diagnostykaWielomianow(), porownaj_wielomiany() - funkcje pozwalają na kompleksową
+  - diagnostykaWielomianow(), porownaj_wielomiany(): funkcje pozwalają na kompleksową
     diagnostykę zależności nieliniowych;
-  - ewd_me(), ewd_me_ssr(), sr_wy() - funkcje służące do wyliczania wskaźników EWD na
+  - ewd_me(), ewd_me_ssr(), sr_wy(): funkcje służące do wyliczania wskaźników EWD na
     podstawie modeli mieszanych efektów;
-  - wielkoscwarstwic() - wyznaczanie wielkości warstwic (w trzyletnich wskaźnikach EWD);
-  - tabelka_ld(), parametryEgz() funkcje przygotowujące rozkłady i zestawienia
-    parametrów rozkładów;
-
-- Nowe funkcjonalności:
-  - ;
+  - wielkoscwarstwic(): wyznaczanie wielkości warstwic (w trzyletnich wskaźnikach EWD);
+  - tabelka_ld(), parametryEgz(): funkcje przygotowujące rozkłady i zestawienia
+    parametrów rozkładów.
 
 --------------------
 Publikacja EWDwskazniki 0.1 (2014-08-09)

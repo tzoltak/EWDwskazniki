@@ -2,14 +2,14 @@
 #' @description
 #' Funkcja zwraca tabelę z zestawieniem liczby podchodzących do dwóch egzaminów (na wejściu i na wyjściu), z wyszczególnieniem liczby laureatów i dyslektyków.
 #' @param x data frame z danymi potrzebnymi do przygotowania zestawienia
-#' @param nazwyZmWynikiEgzWy wektor tekstowy zawierający nazwy zmiennych zwynikami poszczególnych części egzaminu na wyjściu, dla których ma być przygotowane zestawienie
+#' @param nazwyZmWynikiEgzWy wektor tekstowy zawierający nazwy zmiennych z wynikami poszczególnych części egzaminu na wyjściu, dla których ma być przygotowane zestawienie
 #' @param sufiksEgzWe ciąg znaków (zwykle pojedynczy znak) - sufiks związany z egzaminem na wejściu (zmienne opisujące bycie laureatem czy dyslektykiem dotyczącego tego egzaminu mają nazwy kończące się na '_sufiksEgzWe')
 #' @param wydl liczba całkowita - jakie maksymalne wydłużenie toku kształcenia [lat] uwzględnić w zestawieniu
 #' @param nazwaEgzWy ciąg znaków - nazwa egzaminu na wyjściu (do nagłówka tabeli)
 #' @param nazwaEgzWe ciąg znaków - nazwa egzaminu na wejściu (do nagłówka tabeli)
 #' @details
 #' W \code{x} muszą znajdować się zmienne wymienione w \code{nazwyZmWynikiEgzWy}.
-#' Nazwy wymienione w \code{nazwyZmWynikiEgzWy} muszą pasować do maski '^(sum|norm)_sufiks$', gdzie 'sufiks' jest skrótem powiązanym z daną częścią egzaminu na wyjściu (w przyszłości zestaw prefiksów zostanie zapewne poszerzony).
+#' Nazwy wymienione w \code{nazwyZmWynikiEgzWy} muszą pasować do maski '^(sum|norm|irt|rsch)_sufiks$', gdzie 'sufiks' jest skrótem powiązanym z daną częścią egzaminu na wyjściu (w przyszłości zestaw prefiksów zostanie zapewne poszerzony).
 #' W \code{x} muszą się też znajdować zmienne o nazwach postaci 'laureat_sufiks' (dla każdego sufiksu jw.) oraz 'dysleksja_substr(sufiks, 1, 1)'.
 #' Odnośnie egzaminu na wejściu, w \code{x} muszą znajdować się zmienne o nazwach postaci: 'rok_\code{sufiksEgzWe}' oraz 'laureat_\code{sufiksEgzWe}', 'dysleksja_substr(\code{sufiksEgzWe}, 1, 1)'.
 #' @return data frame
@@ -22,11 +22,11 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, sufiksEgzWe, wydl=1, nazwaEgzWy="eg
             is.character(nazwaEgzWe), length(nazwaEgzWe) == 1
   )
   stopifnot(all(nazwyZmWynikiEgzWy %in% names(x)),
-            paste0("rok_", sufiksEgzWe) %in% names(x),
-            all(grepl("^(sum|norm)_", nazwyZmWynikiEgzWy))
+            paste0("rok_", substr(sufiksEgzWe, 1, 1)) %in% names(x),
+            all(grepl("^(sum|norm|irt|rsch)_", nazwyZmWynikiEgzWy))
   )
 
-  zmRokWe = paste0("rok_", sufiksEgzWe)
+  zmRokWe = paste0("rok_", substr(sufiksEgzWe, 1, 1))
   # przygotowujemy macierz z nazwami wierszy i kolumn
   tabelkaLD = matrix(NA, nrow=length(nazwyZmWynikiEgzWy), ncol=3 + 3 * (wydl + 1),
                      dimnames=list(
@@ -43,7 +43,7 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, sufiksEgzWe, wydl=1, nazwaEgzWy="eg
   )
   # żeby ją wypełnić
   for (i in nazwyZmWynikiEgzWy) {
-    skrot =sub("^(sum|norm)_", "", i)
+    skrot =sub("^(sum|norm|irt|rsch)_", "", i)
     temp = c(
       sum(!is.na(x[, i])),
       sum(x[, paste0("laureat_"  , skrot              )] %in% "tak" & !is.na(x[, i])),
@@ -68,7 +68,7 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, sufiksEgzWe, wydl=1, nazwaEgzWy="eg
 #' @param na.rm wartość logiczna - przekazywana do funkcji wyliczających statystyki
 #' @param digits liczba całkowita - do ilu miejsc po przecinku zaokrąglać zwracane wyniki
 #' @return wektor liczb
-mojeParametry = function(x, na.rm=TRUE, digits=2) {
+moje_parametry = function(x, na.rm=TRUE, digits=2) {
   stopifnot(is.numeric(x), is.logical(na.rm), is.numeric(digits),
             length(na.rm) == 1, length(digits) == 1)
   stopifnot(na.rm %in% c(TRUE, FALSE))
@@ -96,7 +96,7 @@ mojeParametry = function(x, na.rm=TRUE, digits=2) {
 #' @return data frame
 #' @import plyr
 #' @export
-parametryEgz = function(x, grBezLacznie, grZLacznie, nazwaPierwKol=NA) {
+parametry_egz = function(x, grBezLacznie, grZLacznie, nazwaPierwKol=NA) {
   stopifnot(is.data.frame(x) | is.list(x),
             is.character(grBezLacznie ) | is.null(grBezLacznie ),
             is.character(grZLacznie   ) | is.null(grZLacznie   ),
@@ -119,9 +119,9 @@ parametryEgz = function(x, grBezLacznie, grZLacznie, nazwaPierwKol=NA) {
             function(x, grBezLacznie, grZLacznie) {
               ddply(data.frame(x, grBezLacznie, grZLacznie), "grBezLacznie",
                     function(x) {
-                      tempOg = data.frame(grZLacznie="łącznie",   as.list(mojeParametry(x[, !(names(x) %in% c("grBezLacznie", "grZLacznie"))])), check.names=FALSE)
+                      tempOg = data.frame(grZLacznie="łącznie",   as.list(moje_parametry(x[, !(names(x) %in% c("grBezLacznie", "grZLacznie"))])), check.names=FALSE)
                       if (length(unique(x$grZLacznie)) > 1) {
-                        tempGr = ddply(x, "grZLacznie", function(x) {return(mojeParametry(x[, !(names(x) %in% c("grBezLacznie", "grZLacznie"))]))})
+                        tempGr = ddply(x, "grZLacznie", function(x) {return(moje_parametry(x[, !(names(x) %in% c("grBezLacznie", "grZLacznie"))]))})
                         return(rbind.fill(list(tempOg, tempGr)))
                       } else {
                         return(tempOg)

@@ -87,12 +87,53 @@ sr_wy = function(model, ewd) {
   ewd = within(ewd, {kor = bs_ewd / bs_sr})
   return(ewd)
 }
+#' @title Wyliczanie EWD (Kalkulator)
+#' @description
+#' Funkcja zwraca oszacowania EWD i ich błędy standardowe wyliczane jako średnia z reszt
+#' regresji MNK oraz średnie wyniki egzaminu na wyjściu i ich błędy standardowe wyliczane
+#' jako błąd standardowy średniej z prostej próby losowej.
+#' @details
+#' Ponieważ obiekt z modelem regresji MNK nie zawiera informacji o przysziale uczniów do
+#' szkół, musi ona zostać podana oddzielnym parametrem (\code{id_szkoly}). Musi to być
+#' data frame, zawierający kolumnę z id szkoły (i najlepiej tylko nią jedną), utworzony
+#' przez usunięcie kolumn z tego samego obiektu, z którego był estymowany model \code{x}.
+#' Łączenie jest przeprowadzane po nazwach wierszy (\code{model.frame(x)})
+#' i (\code{id_szkoly}).
+#' @param x model klasy \code{lm}
+#' @param idSzkoly data frame zawierający kolumnę z identyfikatorami szkół
+#' @return data frame zawierający oszacowania dla poszczególnych szkół: EWD, błędu
+#' standardowego EWD, średniego wyniku końcowegoi jego błędu standardowego
+#' @import plyr
+#' @export
+ewd_es = function(x, idSzkoly) {
+  stopifnot(
+    "lm" %in% class(x),
+    is.data.frame(idSzkoly),
+    any(grepl("^id_(szkoly|gimn|lo|t)", names(idSzkoly)))
+  )
+  zmIdSzkoly = names(idSzkoly)[grep("^id_(szkoly|gimn|lo|t)($|_)", names(idSzkoly))]
+  idSzkoly = data.frame(nrWiersza = rownames(idSzkoly),
+                         id_szkoly = idSzkoly[, grep("^id_(szkoly|gimn|lo|t)($|_)", names(idSzkoly))],
+                         stringsAsFactors=FALSE)
+  names(idSzkoly) = sub("id_szkoly", zmIdSzkoly, names(idSzkoly))
+  temp = data.frame(nrWiersza = rownames(model.frame(x)),
+                    wynik = model.frame(x)[, 1],
+                    reszta = model.frame(x)[, 1] - predict(x),
+                    stringsAsFactors=FALSE)
+  temp = suppressMessages(join(temp, idSzkoly))
+  temp = ddply(temp, zmIdSzkoly, summarise,
+               ewd = mean(get("reszta")),
+               bs_ewd = sd(get("reszta")) / sqrt(length(get("reszta"))),
+               sr = mean(get("wynik")),
+               bs_sr = sd(get("wynik")) / sqrt(length(get("reszta"))))
+  return(temp)
+}
 #' @title Wyliczanie EWD
 #' @description
 #' Funkcja zwraca "empiryczne prawdopodobieństwa" pozwalające tak dobrać wielkość wastwic,
-#' aby znajdował się w ich obrębie założony odseteke uczniów (choć z założenia, że
-#' rozkład wyników na wyjściu i EWD jest dwuwymiarowym rozkładem normalnym wynikałaby
-#' nieco inna wielkość elips).
+#' aby znajdował się w ich obrębie założony odsetek uczniów (choć z założenia, że rozkład
+#' wyników na wyjściu i EWD jest dwuwymiarowym rozkładem normalnym wynikałaby nieco inna
+#' wielkość elips).
 #' @param wyniki wektor z wartościami średnich wyników na wyjściu poszczególnych szkół
 #' @param ewd wektor z wartościami wskaźników EWD szkół
 #' @param liczbaUczniow wektor z liczbą uczniów z poszczególnych szkołach

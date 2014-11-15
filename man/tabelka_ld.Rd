@@ -9,7 +9,7 @@ tabelka_ld(x, nazwyZmWynikiEgzWy, sufiksEgzWe, wydl = 1,
 \arguments{
 \item{x}{data frame z danymi potrzebnymi do przygotowania zestawienia}
 
-\item{nazwyZmWynikiEgzWy}{wektor tekstowy zawierający nazwy zmiennych zwynikami poszczególnych części egzaminu na wyjściu, dla których ma być przygotowane zestawienie}
+\item{nazwyZmWynikiEgzWy}{wektor tekstowy zawierający nazwy zmiennych z wynikami poszczególnych części egzaminu na wyjściu, dla których ma być przygotowane zestawienie}
 
 \item{sufiksEgzWe}{ciąg znaków (zwykle pojedynczy znak) - sufiks związany z egzaminem na wejściu (zmienne opisujące bycie laureatem czy dyslektykiem dotyczącego tego egzaminu mają nazwy kończące się na '_sufiksEgzWe')}
 
@@ -27,7 +27,7 @@ Funkcja zwraca tabelę z zestawieniem liczby podchodzących do dwóch egzaminów
 }
 \details{
 W \code{x} muszą znajdować się zmienne wymienione w \code{nazwyZmWynikiEgzWy}.
-Nazwy wymienione w \code{nazwyZmWynikiEgzWy} muszą pasować do maski '^(sum|norm)_sufiks$', gdzie 'sufiks' jest skrótem powiązanym z daną częścią egzaminu na wyjściu (w przyszłości zestaw prefiksów zostanie zapewne poszerzony).
+Nazwy wymienione w \code{nazwyZmWynikiEgzWy} muszą pasować do maski '^(sum|norm|irt|rsch)_sufiks$', gdzie 'sufiks' jest skrótem powiązanym z daną częścią egzaminu na wyjściu (w przyszłości zestaw prefiksów zostanie zapewne poszerzony).
 W \code{x} muszą się też znajdować zmienne o nazwach postaci 'laureat_sufiks' (dla każdego sufiksu jw.) oraz 'dysleksja_substr(sufiks, 1, 1)'.
 Odnośnie egzaminu na wejściu, w \code{x} muszą znajdować się zmienne o nazwach postaci: 'rok_\code{sufiksEgzWe}' oraz 'laureat_\code{sufiksEgzWe}', 'dysleksja_substr(\code{sufiksEgzWe}, 1, 1)'.
 }
