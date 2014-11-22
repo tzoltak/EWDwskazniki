@@ -29,7 +29,7 @@ dane_do_kalkulatora = function(modele, mapowanie, dane) {
     temp = lapply(temp,
                   function(x, dane, model) {
                     x= cbind(x,
-                             plec = factor("kobieta", levels=levels(model.frame(model)$plec)),
+                             plec = factor("mężczyzna", levels=levels(model.frame(model)$plec)),
                              dysleksja_m = factor("nie", levels=levels(model.frame(model)$dysleksja_m)),
                              dysleksja_g = factor("nie", levels=levels(model.frame(model)$dysleksja_g)))
                     x$wydl = factor(max(dane$rok_g, na.rm=TRUE) - x$wydl, levels=levels(model.frame(model)$wydl))
