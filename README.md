@@ -12,7 +12,7 @@ Instalacja możliwa jest w dwóch wariantach:
 
 1) Z użyciem pakietu devtools:
 ```r
-install.packages('devtools') # potrzbne tylko gdy nie jest jeszcze zainstalowany
+install.packages('devtools') # potrzbne tylko, gdy nie jest jeszcze zainstalowany
 devtools::install_github('tzoltak/EWDwskazniki')
 ```
 
