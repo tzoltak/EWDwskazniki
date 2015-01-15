@@ -25,15 +25,24 @@ ewd_me = function(x) {
 #' \code{ranef(., condVar=TRUE)} nie dawało dobrych oszacowań "błędów standardowych"
 #' ze względu na błąd autorów pakietu \code{lme4}.
 #' @param x model klasy \code{lmerMod}
-#' @return data frame
-#' @export
-ewd_me_ssr = function(x) {
+#' @param noweDane ramka danych z danymi uczniów dla szkół. Jeżeli NULL to funkcja liczy EWD na danych pobranych z modelu.
+#' @return data frame z potencjalnym atrybutem 'noweDane', który zawiera parametr noweDane.
+#' @import plyr
+#' @export 
+ewd_me_ssr = function(x, noweDane = NULL) {
   stopifnot(
     length(VarCorr(x))==1,
     all(grepl("^id_(szkoly|gimn|lo|t)", names(VarCorr(x))))
   )
-
-  resztySt = model.frame(x)[, 1] - predict(x, re.form=~0)
+  
+  if(is.null(noweDane)){
+    resztySt = model.frame(x)[, 1] - predict(x, re.form=~0)
+    grupa = model.frame(x)[, names(VarCorr(x))[1]]
+  } else{
+    resztySt = noweDane[, names(attributes(x)$frame)[1]] - predict(x, newdata = noweDane, re.form = ~0)
+    grupa = noweDane[, names(VarCorr(x))[1]]
+  }
+  
   sigma2E = sigma(x)^2
   sigma2U = VarCorr(x)[[1]]
   # średnie reszt ściągnięte o czynnik: 1/(1+sigma2E/sigma2U/n)
@@ -41,29 +50,34 @@ ewd_me_ssr = function(x) {
   # po kilku przekształceniach: post_sd=1/( n/sigma2E + 1/sigma2U)
   temp = merge(
     aggregate(data.frame(efLos=resztySt),
-              list(grupa=model.frame(x)[, names(VarCorr(x))[1]]),
+              list(grupa=grupa),
               function(x, stosWar) {
                 return( mean(x) / (1 + stosWar / length(x)) )
               },
               stosWar = sigma2E / sigma2U),
     aggregate(data.frame(csd_efLos=resztySt),
-              list(grupa=model.frame(x)[, names(VarCorr(x))[1]]),
+              list(grupa=grupa),
               function(x, sigma2E, sigma2U) {
                 return( 1 / sqrt( length(x) / sigma2E + 1 / sigma2U ) )
               },
               sigma2E = sigma2E, sigma2U = sigma2U),
     by="grupa"
   )
+  
   names(temp) = c(names(VarCorr(x))[1], "ewd", "bs_ewd")
+  attributes(temp)$noweDane = noweDane
+  
   return(temp)
 }
 #' @title Wyliczanie EWD
 #' @description
 #' Funkcja zwraca oszacowania średnich wyników na wyjściu i ich "błędy standardowe"
-#' oraz korelacje z EWD wykorzystując metodę "z jednego modelu".
+#' oraz korelacje z EWD wykorzystując metodę "z jednego modelu". 
 #' @param model model klasy \code{lmerMod}
-#' @param ewd data frame będący wynikiem działania funkcji \code{\link{ewd_me}} lub \code{\link{ewd_me_ssr}}
+#' @param ewd data frame będący wynikiem działania funkcji \code{\link{ewd_me}} lub \code{\link{ewd_me_ssr}}. 
+#' Jeżeli ten parametr zawiera atrybut noweDane to funkcja wykonuje wyliczenia na tym atrybucie. 
 #' @return data frame
+#' @import plyr
 #' @export
 sr_wy = function(model, ewd) {
   stopifnot(
@@ -71,17 +85,31 @@ sr_wy = function(model, ewd) {
     all(grepl("^id_(szkoly|gimn|lo|t)", names(ewd)[1])),
     all(c("ewd", "bs_ewd") %in% names(ewd))
   )
+  
+  noweDane = attributes(ewd)$noweDane
+  
+  if(is.null(noweDane)){
+    fit = fitted(model)
+    grupa = model.frame(model)[, names(ewd)[1]]
+  } else{
+    grupa = noweDane[, names(ewd)[1]] 
+    predSt = data.frame(grupa, pred = predict(model, newdata = daneEWD, re.form = ~0))
+    names(predSt)[1] = names(ewd)[1]
+    pred_ewd = join(predSt, ewd )
+    fit = pred_ewd$pred + pred_ewd$ewd
+  }
+  
   sr = merge(
-    aggregate(data.frame(sr   =fitted(model)),
-              list(grupa=model.frame(model)[, names(ewd)[1]]),
+    aggregate(data.frame(sr  = fit),
+              list(grupa=grupa),
               mean),
-    aggregate(data.frame(bs_sr=fitted(model)),
-              list(grupa=model.frame(model)[, names(ewd)[1]]),
+    aggregate(data.frame(bs_sr=fit),
+              list(grupa=grupa),
               function(x) {return( sd(x) / sqrt(length(x)) )})
   )
   names(sr)[names(sr) == "grupa"] = names(ewd)[1]
   nrowPrzedPolaczeniemZeSr = nrow(ewd)
-  ewd = merge(sr, ewd)
+  ewd = join(sr, ewd)
   stopifnot(nrowPrzedPolaczeniemZeSr == nrow(ewd))
   ewd = within(ewd, {bs_sr = (bs_sr^2 + bs_ewd^2)^0.5 })
   ewd = within(ewd, {kor = bs_ewd / bs_sr})
