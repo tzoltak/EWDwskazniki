@@ -23,7 +23,7 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
   zmGrupujace = wyciagnij_nazwe_zmiennej(zmGrupujace, czyJednaZmienna=FALSE)
   # trzeba tu dopisać jakieś sprawdzanie warunków, czy zmWielomian i zmGrupujace są w modelu (czy tam w danych)
 
-  zmWielomianMacierz = colnames(model.matrix(model))[ grepl(paste0("^", zmWielomian, "$|^poly[(]", zmWielomian,", [[:digit:]]+(|, raw = TRUE)[)]1$") , colnames(model.matrix(model)))]
+  zmWielomianMacierz = colnames(model.matrix(model))[ grepl(paste0("^", zmWielomian, "$|^poly[(]", zmWielomian,", [[:digit:]]+(|, raw = TRUE)[)][1]{0,1}$") , colnames(model.matrix(model)))]
 
   mapowanie = model_map(model, zmWielomian)
   # Teraz wykorzystując mapowanie możemy przygotować maski:

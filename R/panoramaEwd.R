@@ -15,11 +15,13 @@
 #' \code{wskaznik}
 #' @param paleta funkcja definiująca paletę kolorów do wykorzystania przy rysowaniu
 #' wykresów, typowo wynik wywołania funkcji \code{\link[grDevices]{colorRampPalette}}
+#' @param prElips wektor liczb z przedziału (0;1), które oznaczają  odsetek szkół, które mają się znaleźć w elipsie.
 #' @return funkcja nic nie zwraca.
+#' @import car
 #' @export
 panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng=NULL,
                         xlab = wskaznik,
-                        paleta=colorRampPalette(c("white", blues9))) {
+                        paleta=colorRampPalette(c("white", blues9)), prElips = NULL) {
   stopifnot(is.numeric(sr), is.numeric(ewd),
             length(sr) == length(ewd),
             is.character(egzamin)   , length(egzamin   ) == 1,
@@ -27,14 +29,20 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng=
             is.character(wskaznik)  , length(wskaznik  ) == 1,
             is.character(lata)      , length(lata      ) == 1,
             is.null(zapiszPng) | is.character(zapiszPng))
-
+  
   parametryGraficzne = par(no.readonly=TRUE)
   par(bg="white")
   smoothScatter(sr, ewd, nbin=256, bandwidth=0.2,
                 main = paste0("Śr. wyniki ", egzamin, " a EWD ",
                               typ_szkoly, "\n",
                               wskaznik, " ", lata),
-                xlab = xlab, ylab = paste0("EWD ", wskaznik))
+                xlab = xlab, ylab = paste0("EWD ", wskaznik), add = TRUE)
+  
+  if(!is.null(prElips)){
+    pWarst = suppressMessages(wielkoscWarstwic(sr, ewd, lu, pr=prElips)) 
+    dataEllipse(sr, ewd, levels = pWarst, plot.points = FALSE, center.pch = NULL, fill = TRUE, fill.alpha = 0.1, segments = 200, col = c("blue", "blue"))
+  }
+  
   grid(col=grey(0.5))
   abline(h=0)
   abline(v=100)

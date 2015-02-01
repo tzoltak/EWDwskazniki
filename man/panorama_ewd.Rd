@@ -5,7 +5,8 @@
 \title{Diagnostyka wskaźników EWD}
 \usage{
 panorama_ewd(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng = NULL,
-  xlab = wskaznik, paleta = colorRampPalette(c("white", blues9)))
+  xlab = wskaznik, paleta = colorRampPalette(c("white", blues9)),
+  prElips = NULL)
 }
 \arguments{
 \item{sr}{wektor liczbowy z wartościami średnich wyników egzaminu na wyjściu
@@ -29,6 +30,8 @@ PNG z wykresami lub NULL, jeśli wykresy mają nie być zapisywane}
 
 \item{paleta}{funkcja definiująca paletę kolorów do wykorzystania przy rysowaniu
 wykresów, typowo wynik wywołania funkcji \code{\link[grDevices]{colorRampPalette}}}
+
+\item{prElips}{wektor liczb z przedziału (0;1), które oznaczają  odsetek szkół, które mają się znaleźć w elipsie.}
 }
 \value{
 funkcja nic nie zwraca.

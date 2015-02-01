@@ -93,7 +93,7 @@ sr_wy = function(model, ewd) {
     grupa = model.frame(model)[, names(ewd)[1]]
   } else{
     grupa = noweDane[, names(ewd)[1]] 
-    predSt = data.frame(grupa, pred = predict(model, newdata = daneEWD, re.form = ~0))
+    predSt = data.frame(grupa, pred = predict(model, newdata = noweDane, re.form = ~0))
     names(predSt)[1] = names(ewd)[1]
     pred_ewd = join(predSt, ewd )
     fit = pred_ewd$pred + pred_ewd$ewd
