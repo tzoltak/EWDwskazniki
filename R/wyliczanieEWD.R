@@ -35,36 +35,27 @@ ewd_me_ssr = function(x, noweDane = NULL) {
     all(grepl("^id_(szkoly|gimn|lo|t)", names(VarCorr(x))))
   )
 
-  if(is.null(noweDane)){
+  if (is.null(noweDane)) {
     resztySt = model.frame(x)[, 1] - predict(x, re.form=~0)
     grupa = model.frame(x)[, names(VarCorr(x))[1]]
-  } else{
+  } else {
     resztySt = noweDane[, names(attributes(x)$frame)[1]] - predict(x, newdata = noweDane, re.form = ~0)
+    maska = !is.na(resztySt)
+    noweDane = noweDane[maska, names(noweDane) %in% all.vars(formula(x))]
     grupa = noweDane[, names(VarCorr(x))[1]]
+    resztySt = resztySt[maska]
+
   }
 
   sigma2E = sigma(x)^2
-  sigma2U = VarCorr(x)[[1]]
+  sigma2U = as.numeric(VarCorr(x)[[1]])
   # średnie reszt ściągnięte o czynnik: 1/(1+sigma2E/sigma2U/n)
   # warunkowe odchylenia standardowe to pierwiastek z: wariancja błędów indywidualnych ściągnięta o czynnik j.w., podzielona przez n
   # po kilku przekształceniach: post_sd=1/( n/sigma2E + 1/sigma2U)
-  temp = merge(
-    aggregate(data.frame(efLos=resztySt),
-              list(grupa=grupa),
-              function(x, stosWar) {
-                return( mean(x) / (1 + stosWar / length(x)) )
-              },
-              stosWar = sigma2E / sigma2U),
-    aggregate(data.frame(csd_efLos=resztySt),
-              list(grupa=grupa),
-              function(x, sigma2E, sigma2U) {
-                return( 1 / sqrt( length(x) / sigma2E + 1 / sigma2U ) )
-              },
-              sigma2E = sigma2E, sigma2U = sigma2U),
-    by="grupa"
-  )
-
-  names(temp) = c(names(VarCorr(x))[1], "ewd", "bs_ewd")
+  temp = ddply(data.frame(resztySt, grupa, sigma2E, sigma2U), ~grupa, summarise,
+               ewd = mean(resztySt) / (1 + sigma2E[1] / sigma2U[1] / length(resztySt)),
+               bs_ewd = 1 / sqrt( length(resztySt) / sigma2E[1] + 1 / sigma2U[1] ))
+  names(temp)[1] = names(VarCorr(x))[1]
   attributes(temp)$noweDane = noweDane
 
   return(temp)

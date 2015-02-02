@@ -13,6 +13,7 @@ Depends:
     plyr,
     formula.tools,
     lme4,
+    car,
     R (>= 2.15.0)
 License: LGPL-3
 Language: pl
