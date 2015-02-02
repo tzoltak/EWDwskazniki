@@ -96,9 +96,8 @@ sr_wy = function(model, ewd) {
   nrowPrzedPolaczeniemZeSr = nrow(ewd)
   ewd = suppressMessages(join(sr, ewd))
   stopifnot(nrowPrzedPolaczeniemZeSr == nrow(ewd))
-  ewd = within(ewd, {
-    kor = bs_ewd / bs_sr
-    bs_sr = (bs_sr^2 + bs_ewd^2)^0.5 })
+  ewd = within(ewd, {bs_sr = (bs_sr^2 + bs_ewd^2)^0.5 })
+  ewd = within(ewd, {kor = bs_ewd / bs_sr})
   return(ewd)
 }
 #' @title Wyliczanie EWD (Kalkulator)
