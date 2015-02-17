@@ -7,6 +7,10 @@
 #' @import EWDogolny
 #' @export
 ewd_me = function(x) {
+  if(class(x)=="lmeEWD"){
+    stop("Użycie obiektu 'lmeEWD' tylko z funkcją ewd_me_ssr().")
+  }
+  
   temp = ranef_ddf(x)
   temp = temp[grepl("^id_(szkoly|gimn|lo|t)", names(temp))][[1]]
   stopifnot(
@@ -32,21 +36,26 @@ ewd_me = function(x) {
 ewd_me_ssr = function(x, noweDane = NULL) {
   stopifnot(
     length(VarCorr(x))==1,
-    all(grepl("^id_(szkoly|gimn|lo|t)", names(VarCorr(x))))
+    all(grepl("^id_(szkoly|gimn|lo|t)", names(VarCorr(x)))),
+    class(x) %in% c("lmerMod", "lmeEWD")
   )
-
+  
   if (is.null(noweDane)) {
     resztySt = model.frame(x)[, 1] - predict(x, re.form=~0)
     grupa = model.frame(x)[, names(VarCorr(x))[1]]
   } else {
-    resztySt = noweDane[, names(attributes(x)$frame)[1]] - predict(x, newdata = noweDane, re.form = ~0)
+    if(class(x)=="lmerMod"){
+      resztySt = noweDane[, names(attributes(x)$frame)[1]] - predict(x, newdata = noweDane, re.form = ~0)
+    } else if(class(x)=="lmeEWD"){
+      resztySt = noweDane[, as.character(x$formula[[2]])] - predict(x, newdata = noweDane, zLosowymi = FALSE)
+    }
     maska = !is.na(resztySt)
     noweDane = noweDane[maska, names(noweDane) %in% all.vars(formula(x))]
     grupa = noweDane[, names(VarCorr(x))[1]]
     resztySt = resztySt[maska]
-
+    
   }
-
+  
   sigma2E = sigma(x)^2
   sigma2U = as.numeric(VarCorr(x)[[1]])
   # średnie reszt ściągnięte o czynnik: 1/(1+sigma2E/sigma2U/n)
@@ -57,7 +66,7 @@ ewd_me_ssr = function(x, noweDane = NULL) {
                bs_ewd = 1 / sqrt( length(resztySt) / sigma2E[1] + 1 / sigma2U[1] ))
   names(temp)[1] = names(VarCorr(x))[1]
   attributes(temp)$noweDane = noweDane
-
+  
   return(temp)
 }
 #' @title Wyliczanie EWD
@@ -77,19 +86,23 @@ sr_wy = function(model, ewd) {
     all(c("ewd", "bs_ewd") %in% names(ewd))
   )
   if (is.factor(ewd[, 1])) ewd[, 1] = as.numeric(levels(ewd[, 1]))[ewd[, 1]]
-
+  
   noweDane = attributes(ewd)$noweDane
   if (is.null(noweDane)) {
     fit = fitted(model)
     grupa = model.frame(model)[, names(ewd)[1]]
   } else {
     grupa = noweDane[, names(ewd)[1]]
-    predSt = data.frame(grupa, pred = predict(model, newdata = noweDane, re.form = ~0))
+    if(class(model) =="lmerMod"){
+      predSt = data.frame(grupa, pred = predict(model, newdata = noweDane, re.form = ~0))
+    } else if(class(model)=="lmeEWD"){
+      predSt = data.frame(grupa, pred = predict(model, newdata = noweDane, zLosowymi = FALSE))
+    }
     names(predSt)[1] = names(ewd)[1]
     pred_ewd = suppressMessages(join(predSt, ewd ))
     fit = pred_ewd$pred + pred_ewd$ewd
   }
-
+  
   sr = ddply(data.frame(fit, grupa), ~grupa, summarise,
              sr = mean(fit), bs_sr = sd(fit) / sqrt(length(fit)))
   names(sr)[names(sr) == "grupa"] = names(ewd)[1]
@@ -126,8 +139,8 @@ ewd_es = function(x, idSzkoly) {
   )
   zmIdSzkoly = names(idSzkoly)[grep("^id_(szkoly|gimn|lo|t)($|_)", names(idSzkoly))]
   idSzkoly = data.frame(nrWiersza = rownames(idSzkoly),
-                         id_szkoly = idSzkoly[, grep("^id_(szkoly|gimn|lo|t)($|_)", names(idSzkoly))],
-                         stringsAsFactors=FALSE)
+                        id_szkoly = idSzkoly[, grep("^id_(szkoly|gimn|lo|t)($|_)", names(idSzkoly))],
+                        stringsAsFactors=FALSE)
   names(idSzkoly) = sub("id_szkoly", zmIdSzkoly, names(idSzkoly))
   temp = data.frame(nrWiersza = rownames(model.frame(x)),
                     wynik = model.frame(x)[, 1],
