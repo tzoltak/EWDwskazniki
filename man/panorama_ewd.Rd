@@ -6,7 +6,7 @@
 \usage{
 panorama_ewd(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng = NULL,
   xlab = wskaznik, paleta = colorRampPalette(c("white", blues9)),
-  prElips = NULL)
+  prElips = NULL, lu = NULL, kolory = NULL)
 }
 \arguments{
 \item{sr}{wektor liczbowy z wartościami średnich wyników egzaminu na wyjściu
@@ -32,6 +32,10 @@ PNG z wykresami lub NULL, jeśli wykresy mają nie być zapisywane}
 wykresów, typowo wynik wywołania funkcji \code{\link[grDevices]{colorRampPalette}}}
 
 \item{prElips}{wektor liczb z przedziału (0;1), które oznaczają  odsetek szkół, które mają się znaleźć w elipsie.}
+
+\item{lu}{wektor liczbowy zawierający liczbę uczniów w poszczególnych szkołach. Wymagany do wyznaczenia elips.}
+
+\item{kolory}{- wektor zawierający informację o kolorach elips. Domyślnie elipsy są niebieskie.}
 }
 \value{
 funkcja nic nie zwraca.

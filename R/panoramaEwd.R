@@ -16,19 +16,25 @@
 #' @param paleta funkcja definiująca paletę kolorów do wykorzystania przy rysowaniu
 #' wykresów, typowo wynik wywołania funkcji \code{\link[grDevices]{colorRampPalette}}
 #' @param prElips wektor liczb z przedziału (0;1), które oznaczają  odsetek szkół, które mają się znaleźć w elipsie.
+#' @param lu wektor liczbowy zawierający liczbę uczniów w poszczególnych szkołach. Wymagany do wyznaczenia elips.
+#' @param kolory wektor zawierający informację o kolorach elips. Domyślnie elipsy są niebieskie.
 #' @return funkcja nic nie zwraca.
 #' @import car
 #' @export
 panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng=NULL,
                         xlab = wskaznik,
-                        paleta=colorRampPalette(c("white", blues9)), prElips = NULL) {
+                        paleta=colorRampPalette(c("white", blues9)), prElips = NULL, lu = NULL, kolory = NULL) {
   stopifnot(is.numeric(sr), is.numeric(ewd),
             length(sr) == length(ewd),
             is.character(egzamin)   , length(egzamin   ) == 1,
             is.character(typ_szkoly), length(typ_szkoly) == 1,
             is.character(wskaznik)  , length(wskaznik  ) == 1,
             is.character(lata)      , length(lata      ) == 1,
-            is.null(zapiszPng) | is.character(zapiszPng))
+            is.null(zapiszPng) | is.character(zapiszPng), 
+            is.null(prElips) | is.numeric(prElips), 
+            is.null(lu) | is.numeric(lu),
+            is.null(kolory) | length(kolory) == length(prElips)
+            )
   
   parametryGraficzne = par(no.readonly=TRUE)
   par(bg="white")
@@ -36,11 +42,18 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng=
                 main = paste0("Śr. wyniki ", egzamin, " a EWD ",
                               typ_szkoly, "\n",
                               wskaznik, " ", lata),
-                xlab = xlab, ylab = paste0("EWD ", wskaznik), add = TRUE)
+                xlab = xlab, ylab = paste0("EWD ", wskaznik))
   
-  if(!is.null(prElips)){
+  if(!is.null(prElips) & !is.null(lu)){
     pWarst = suppressMessages(wielkoscWarstwic(sr, ewd, lu, pr=prElips)) 
-    dataEllipse(sr, ewd, levels = pWarst, plot.points = FALSE, center.pch = NULL, fill = TRUE, fill.alpha = 0.1, segments = 200, col = c("blue", "blue"))
+    if(is.null(kolory)){
+      kolory = rep("blue", length(pWarst))
+    }
+    dataEllipse(sr, ewd, levels = pWarst, plot.points = FALSE, center.pch = NULL, 
+                fill = TRUE, fill.alpha = 0.1, segments = 200, 
+                col = kolory)
+  } else if(!is.null(prElips) | !is.null(lu)){
+    message("Jeżeli potrzebujesz użyć elips to oba parametry: prElips i lu muszą być różne od NULL.")
   }
   
   grid(col=grey(0.5))
