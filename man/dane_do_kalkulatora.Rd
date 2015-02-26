@@ -4,12 +4,16 @@
 \alias{dane_do_kalkulatora}
 \title{Kalkulator EWD}
 \usage{
-dane_do_kalkulatora(modele, mapowanie, dane)
+dane_do_kalkulatora(modele, mapowanieWe, mapowanieWy, dane)
 }
 \arguments{
 \item{modele}{lista modeli regresji MNK}
 
-\item{mapowanie}{lista zawierająca mapowania wyników surowych egzaminów na skalę 100;15}
+\item{mapowanieWe}{lista zawierająca mapowania wyników surowych egzaminów na wejściu
+na skalę 100;15}
+
+\item{mapowanieWy}{lista zawierająca mapowania wyników surowych egzaminów na wyjściu
+na skalę 100;15}
 
 \item{dane}{data frame z danymi używanymi do estymacji ww. modeli}
 }

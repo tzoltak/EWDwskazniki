@@ -35,7 +35,7 @@ wykresów, typowo wynik wywołania funkcji \code{\link[grDevices]{colorRampPalet
 
 \item{lu}{wektor liczbowy zawierający liczbę uczniów w poszczególnych szkołach. Wymagany do wyznaczenia elips.}
 
-\item{kolory}{- wektor zawierający informację o kolorach elips. Domyślnie elipsy są niebieskie.}
+\item{kolory}{wektor zawierający informację o kolorach elips. Domyślnie elipsy są niebieskie.}
 }
 \value{
 funkcja nic nie zwraca.

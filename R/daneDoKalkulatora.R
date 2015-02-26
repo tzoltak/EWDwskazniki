@@ -4,7 +4,10 @@
 #' arkusza kalkulacyjnego i przesłać do Blue Bricka, aby mogli zaimplementować modele
 #' w Kalkulatorze.
 #' @param modele lista modeli regresji MNK
-#' @param mapowanie lista zawierająca mapowania wyników surowych egzaminów na skalę 100;15
+#' @param mapowanieWe lista zawierająca mapowania wyników surowych egzaminów na wejściu
+#' na skalę 100;15
+#' @param mapowanieWy lista zawierająca mapowania wyników surowych egzaminów na wyjściu
+#' na skalę 100;15
 #' @param dane data frame z danymi używanymi do estymacji ww. modeli
 #' @details
 #' Dane muszą być przekazane oddzielnym argumentem, aby uprościć sobie sprawę
@@ -12,16 +15,15 @@
 #' (jeśli w formule modelu użyto funkcji \code{poly()}, jest to niebanalne).
 #' @return lista
 #' @export
-dane_do_kalkulatora = function(modele, mapowanie, dane) {
-  stopifnot(is.list(modele), is.list(mapowanie), is.list(mapowanie))
+dane_do_kalkulatora = function(modele, mapowanieWe, mapowanieWy, dane) {
+  stopifnot(is.list(modele), is.list(mapowanieWe), is.list(mapowanieWy))
 
   # przeliczenie egz. na wejściu na 100;15
   przew = setNames(vector(mode="list", length=length(modele)), names(modele))
   for (i in 1:length(modele)) {
-    maska = grep("^gm_r_", names(mapowanie))
-    lata = as.numeric(gsub("[^[:digit:]]", "", names(mapowanie)[maska]))
+    lata = as.numeric(gsub("[^[:digit:]]", "", names(mapowanieWe)))
     temp = mapply(function(x, y) {return(cbind(x, wydl=y))},
-                  mapowanie[maska],
+                  mapowanieWe,
                   as.list(lata),
                   SIMPLIFY = FALSE)
     rokEgStd = max(lata)
@@ -63,7 +65,6 @@ dane_do_kalkulatora = function(modele, mapowanie, dane) {
                     names(przew)[!grepl("^suma$|^przew_", names(przew))],
                     names(przew)[ grepl("^przew_", names(przew))])]
   # przeliczenie egz. na wyjściu na 100;15
-  mapowanieWy = mapowanie[czesciMatury]
   mapowanieWy = lapply(mapowanieWy,
                        function(x) {
                          x = dlply(x, names(x)[grep("^suma_", names(x))],
