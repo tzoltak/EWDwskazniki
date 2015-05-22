@@ -1,4 +1,20 @@
 --------------------
+Zmiany w EWDwskazniki 0.4 (2015-05-22)
+
+ZMiana licencji na MIT.
+- Nowe funkcje:
+  - diagnostyka_pelna(): funkcja zamykająca w sobie procedurę analizy związaną
+    z wyborem stopnia wielomianu;
+  - panorama_elips(): funkcja rysująca "panoramę edkacji", tj. wykres rozrzutu szkół
+    w przestrzeni wyznaczonej przez wartości wskaźników EWD i śrenie wyniki na wyjściu;
+
+- Nowe funckjonalności:
+  - ewd_me_ssr(): funkcja otrzymała nowy agrument 'noweDane', który pozwala wyliczyć
+    wskaźniki na podstawie modelu na innych danych (ale o tej samej strukturze co
+    zbiór wykorzystany do estymacji modelu);
+  - sr_wy(): dostosowanie do nowej struktury obiektów zwracanych przez ewd_me_ssr();
+
+--------------------
 Zmiany w EWDwskazniki 0.3 (2014-11-15)
 
 - Nowe funkcje:
