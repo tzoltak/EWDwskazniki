@@ -1,4 +1,12 @@
 --------------------
+Zmiany w EWDwskazniki 0.4.1 (2015-08-06)
+
+- Nowe funkcje:
+  - sklej_normy(): funkcja przeniesiona z pakietu EWDdane, wykorzystywana przy
+    wyliczaniu modeli do Kalkulatora, aby usunąć problem jednostek odstających
+    o okołozerowych wynikach sprawdzianu;
+
+--------------------
 Zmiany w EWDwskazniki 0.4 (2015-05-22)
 
 ZMiana licencji na MIT.
