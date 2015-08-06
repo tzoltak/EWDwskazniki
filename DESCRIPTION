@@ -1,9 +1,9 @@
 Encoding: UTF-8
 Package: EWDwskazniki
-Version: 0.4
+Version: 0.4.1
 Title: Functions for estimation of Educational Value-Added indicators of Polish
     schools
-Author: @R: c(
+Authors@R: c(
   person("Tomasz", "Zoltak", , "tomek@zozlak.org", role = c("aut", "cre")),
   person("Grzegorz", "Golonka", , "ggolonka@o2.pl", role = c("aut")))
 Description: Functions for estimation of Educational Value-Added indicators of
