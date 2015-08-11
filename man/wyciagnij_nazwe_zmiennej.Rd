@@ -12,13 +12,15 @@ wyciagnij_nazwe_zmiennej(formula, nazwa = as.character(substitute(formula)),
 
 \item{nazwa}{ciąg znaków wykorzystywany w komunikcie błedu.}
 
-\item{czyJednaZmienna}{zmienna logiczna. Jeżeli wartość jest równa TRUE, to funkcja zwraca błąd dla formuł prawostronnych, które
+\item{czyJednaZmienna}{zmienna logiczna. Jeżeli wartość jest równa TRUE, to
+funkcja zwraca błąd dla formuł prawostronnych, które
 zawierają więcej niż jedną zmienną.}
 }
 \value{
 wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
 }
 \description{
-Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły. Jeżeli formuła jest obustronna to funkcja zwraca błąd.
+Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły.
+Jeżeli formuła jest obustronna to funkcja zwraca błąd.
 }
 

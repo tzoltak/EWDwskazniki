@@ -12,10 +12,12 @@ model_map(model, zmiennaWielomianowa)
 \item{zmiennaWielomianowa}{nazwa zmiennej, która jest parametrem wielomianu.}
 }
 \value{
-funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne ramki danych, a nazwy kolumn to nazwy współczynników modelu.
+funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne
+ramki danych, a nazwy kolumn to nazwy współczynników modelu.
 }
 \description{
-Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki danych, na której był budowany model
-na nazwy współczynników modelu (i macierzy modelu).
+Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki
+danych, na której był budowany model na nazwy współczynników modelu
+(i macierzy modelu).
 }
 
