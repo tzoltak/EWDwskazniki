@@ -7,19 +7,20 @@
 porownaj_wielomiany(x, zapis = NULL, cyfryLinkTest = 5, cyfryR2 = 4)
 }
 \arguments{
-\item{x}{lista obiektów zwracanych przez funkcję \code{\link{diagnostyka_wielomianow}}}
+\item{x}{lista obiektów zwracanych przez funkcję
+\code{\link{diagnostyka_wielomianow}}}
 
 \item{zapis}{opcjonalnie nazwa pliku, do którego ma zostać zapisane zestawienie}
 
 \item{cyfryLinkTest}{liczba cyfr po przecinku, do której zostaną zaokrąglone
 istotności "linktestu"}
 
-\item{cyfryR2}{liczba cyfr po przecinku, do której zostaną zaokrąglone wartości R2
-(i BIC)}
+\item{cyfryR2}{liczba cyfr po przecinku, do której zostaną zaokrąglone
+wartości R2 (i BIC)}
 }
 \value{
-Funkcja zwraca listę z zestawieniami: 1) wyników "linktestu", 2) sprawdzenia
-monotoniczności, 3) parametrami BIC i R2 modeli.
+Funkcja zwraca listę z zestawieniami: 1) wyników "linktestu",
+2) sprawdzenia monotoniczności, 3) parametrami BIC i R2 modeli.
 }
 \description{
 Funkcja przygotowuje zestawienie porównujące modele z wielomianami różnych stopni.

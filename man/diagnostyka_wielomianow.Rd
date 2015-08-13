@@ -13,9 +13,12 @@ diagnostyka_wielomianow(model, zmWielomian, zmGrupujace = NULL,
 
 \item{zmWielomian}{ciąg znaków określający zmienną wielomianu}
 
-\item{zmGrupujace}{wektor ciągów znakowych określających zmienne modelu, na podstawie których określone są grupy, w których wykonywane są obliczenia oraz dla których są sporządzane wykresy}
+\item{zmGrupujace}{wektor ciągów znakowych określających zmienne modelu, na
+podstawie których określone są grupy, w których wykonywane są obliczenia oraz
+dla których są sporządzane wykresy}
 
-\item{folderWykresy}{ścieżka do folderu, gdzie powinny być zapisane wykresy. Jeżeli jest równa NULL to wykresy nie są zapisywane.}
+\item{folderWykresy}{ścieżka do folderu, gdzie powinny być zapisane wykresy.
+Jeżeli jest równa NULL to wykresy nie są zapisywane.}
 
 \item{wykresyFun}{funkcja rysująca wykresy. Domyślnie jest to \code{png}.}
 
@@ -23,14 +26,16 @@ diagnostyka_wielomianow(model, zmWielomian, zmGrupujace = NULL,
 
 \item{przew_nparPar}{lista z parametrami funkcji \code{\link{przew_npar}}.}
 
-\item{smooothScatterPar}{lista z parametrami funkcji \code{\link[graphics]{smoothScatter}}.}
+\item{smooothScatterPar}{lista z parametrami funkcji
+\code{\link[graphics]{smoothScatter}}.}
 }
 \value{
 funkcja zwraca listę z obliczeniami dla modelu.
 }
 \description{
-Funkcja oblicza link test, BIC oraz współczynnik R2 (w przypadku modeli 'lm') lub dekompozycje wariancji (dla modeli 'lmerMod'),
-sprawdza czy składowa wielomianowa modelu jest rosnąca oraz rysuje wykresy reszt modelu z wykresem przewidywań wielomianem
-i regesją nieparametryczną.
+Funkcja oblicza link test, BIC oraz współczynnik R2 (w przypadku modeli 'lm')
+lub dekompozycje wariancji (dla modeli 'lmerMod'), sprawdza czy składowa
+wielomianowa modelu jest rosnąca oraz rysuje wykresy reszt modelu z wykresem
+przewidywań wielomianem i regesją nieparametryczną.
 }
 

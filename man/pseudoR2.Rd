@@ -13,6 +13,7 @@ pseudoR2(model)
 Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model.
 }
 \description{
-Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod' zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
+Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'
+zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
 }
 

@@ -1,4 +1,35 @@
 --------------------
+Zmiany w EWDwskazniki 0.5 (2015-08-13)
+
+- Nowe funkcje:
+  - tabelki_dane_do_modeli_ewd(): funkcja pozwala łatwo przygotować cały pakiet
+    zestawień liczby zdających i parametrów rozkładu zmiennych używanych do
+    estymacji modeli EWD (wykorzystuje do tego wcześniej obecne w pakiecie
+    funcje tabelka_ld() i parametry_egz() );
+  - przygotuj_wsk_ewd(): automatyzuje cały proces wyliczania wartości wskaźników
+    EWD na podstawie wyestymowanych modeli;
+    - póki co pełny zakres działania został zapewniony jedynie dla wskaźników
+      jednorocznych;
+    - implementacja przypisywania kategorii i przesuwania średnich wartości
+      wskaźników dla wskaźników trzyletnich została odłożona na następną wersję;
+  - panorama_z_listy_wskaznikow(): rysuje "panoramy edukacji" (tj. wykresy
+    rozrzutu szkół śr. wyniki x EWD) na podstawie tego, co zwraca
+    przygotuj_wsk_ewd().
+
+- Nowe funkcjonalności:
+  - parametry_egz() akceptuje wiele zmiennych jako definiujących grupowanie
+    "bez łącznie" (tj. grBezLacznie może mieć wiele elementów);
+  - zmieniono sposób działania tabelka_ld() tak, że sama nie dokonuje grupowania
+    ze względu na lata (ale można łatwo uzyskać taki efekt odpalając ją
+    w ramach ddply(), czy czegoś podobnego);
+  - diagnostyka_wielomianow() stara się utworzyć katalog na wykresy, jeśli ten
+    nie istnieje;
+  - dane_do_kalkulatora() radzi sobie z modelami gimnazjalnymi (a przynajmniej
+    tymi z 2015 r.);
+  - ewd_es() otrzymało argument 'noweDane', który pozwala wyliczyć EWD na innych
+    danych niż te, które zostały wykorzystane przy estymacji modelu.
+
+--------------------
 Zmiany w EWDwskazniki 0.4.1 (2015-08-06)
 
 - Nowe funkcje:

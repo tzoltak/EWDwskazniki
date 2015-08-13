@@ -22,8 +22,8 @@ poszczególnych szkół}
 
 \item{lata}{ciąg znaków opisujący, jakich lat wskaźnik dotyczy}
 
-\item{zapiszPng}{ciąg znaków - ścieżka do katalogu, w którym mają być zapisane pliki
-PNG z wykresami lub NULL, jeśli wykresy mają nie być zapisywane}
+\item{zapiszPng}{ciąg znaków - ścieżka do katalogu, w którym mają być
+zapisane pliki PNG z wykresami lub NULL, jeśli wykresy mają nie być zapisywane}
 
 \item{xlab}{opcjonalnie ciąg znaków - podpis osi X, jeśli ma być inny niż
 \code{wskaznik}}
@@ -31,17 +31,21 @@ PNG z wykresami lub NULL, jeśli wykresy mają nie być zapisywane}
 \item{paleta}{funkcja definiująca paletę kolorów do wykorzystania przy rysowaniu
 wykresów, typowo wynik wywołania funkcji \code{\link[grDevices]{colorRampPalette}}}
 
-\item{prElips}{wektor liczb z przedziału (0;1), które oznaczają  odsetek szkół, które mają się znaleźć w elipsie.}
+\item{prElips}{wektor liczb z przedziału (0;1), które oznaczają  odsetek szkół,
+które mają się znaleźć w elipsie.}
 
-\item{lu}{wektor liczbowy zawierający liczbę uczniów w poszczególnych szkołach. Wymagany do wyznaczenia elips.}
+\item{lu}{wektor liczbowy zawierający liczbę uczniów w poszczególnych
+szkołach. Wymagany do wyznaczenia elips.}
 
-\item{kolory}{wektor zawierający informację o kolorach elips. Domyślnie elipsy są niebieskie.}
+\item{kolory}{wektor zawierający informację o kolorach elips. Domyślnie
+elipsy są niebieskie.}
 }
 \value{
 funkcja nic nie zwraca.
 }
 \description{
-Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze względu na
-wartości średnich wyników na wyjściu (oś X) i wartości wskaźników EWD (oś Y).
+Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze
+względu na wartości średnich wyników na wyjściu (oś X) i wartości wskaźników
+EWD (oś Y).
 }
 

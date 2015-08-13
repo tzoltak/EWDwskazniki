@@ -4,17 +4,18 @@
 \alias{tabelka_ld}
 \title{Liczba zdających egzaminy.}
 \usage{
-tabelka_ld(x, nazwyZmWynikiEgzWy, sufiksEgzWe, wydl = 1,
-  nazwaEgzWy = "egz. wy.", nazwaEgzWe = "egz. we.")
+tabelka_ld(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe, nazwaEgzWy = "egz. wy.",
+  nazwaEgzWe = "egz. we.")
 }
 \arguments{
 \item{x}{data frame z danymi potrzebnymi do przygotowania zestawienia}
 
-\item{nazwyZmWynikiEgzWy}{wektor tekstowy zawierający nazwy zmiennych z wynikami poszczególnych części egzaminu na wyjściu, dla których ma być przygotowane zestawienie}
+\item{nazwyZmWynikiEgzWy}{wektor ciągów znaków zawierający nazwy zmiennych
+z wynikami poszczególnych części egzaminu "na wyjściu", dla których ma być
+przygotowane zestawienie}
 
-\item{sufiksEgzWe}{ciąg znaków (zwykle pojedynczy znak) - sufiks związany z egzaminem na wejściu (zmienne opisujące bycie laureatem czy dyslektykiem dotyczącego tego egzaminu mają nazwy kończące się na '_sufiksEgzWe')}
-
-\item{wydl}{liczba całkowita - jakie maksymalne wydłużenie toku kształcenia [lat] uwzględnić w zestawieniu}
+\item{kodyCzesciEgzWe}{wektor ciągów znaków - kody części egzaminu
+"na wejściu" (np. "gm_m", "s")}
 
 \item{nazwaEgzWy}{ciąg znaków - nazwa egzaminu na wyjściu (do nagłówka tabeli)}
 
@@ -24,12 +25,7 @@ tabelka_ld(x, nazwyZmWynikiEgzWy, sufiksEgzWe, wydl = 1,
 data frame
 }
 \description{
-Funkcja zwraca tabelę z zestawieniem liczby podchodzących do dwóch egzaminów (na wejściu i na wyjściu), z wyszczególnieniem liczby laureatów i dyslektyków.
-}
-\details{
-W \code{x} muszą znajdować się zmienne wymienione w \code{nazwyZmWynikiEgzWy}.
-Nazwy wymienione w \code{nazwyZmWynikiEgzWy} muszą pasować do maski '^(sum|norm|irt|rsch)_sufiks$', gdzie 'sufiks' jest skrótem powiązanym z daną częścią egzaminu na wyjściu (w przyszłości zestaw prefiksów zostanie zapewne poszerzony).
-W \code{x} muszą się też znajdować zmienne o nazwach postaci 'laureat_sufiks' (dla każdego sufiksu jw.) oraz 'dysleksja_substr(sufiks, 1, 1)'.
-Odnośnie egzaminu na wejściu, w \code{x} muszą znajdować się zmienne o nazwach postaci: 'rok_\code{sufiksEgzWe}' oraz 'laureat_\code{sufiksEgzWe}', 'dysleksja_substr(\code{sufiksEgzWe}, 1, 1)'.
+Funkcja zwraca tabelę z zestawieniem liczby podchodzących do dwóch egzaminów
+(na wejściu i na wyjściu), z wyszczególnieniem liczby laureatów i dyslektyków.
 }
 

@@ -1,24 +1,25 @@
 #' @title Pobieranie nazw zmiennych z formul
 #' @description
-#' Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły. Jeżeli formuła jest obustronna to funkcja zwraca błąd.
+#' Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły.
+#' Jeżeli formuła jest obustronna to funkcja zwraca błąd.
 #' @param formula parametr klasy 'formula'.
 #' @param nazwa ciąg znaków wykorzystywany w komunikcie błedu.
-#' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to funkcja zwraca błąd dla formuł prawostronnych, które
+#' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to
+#' funkcja zwraca błąd dla formuł prawostronnych, które
 #' zawierają więcej niż jedną zmienną.
 #' @import formula.tools
 #' @return wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
 wyciagnij_nazwe_zmiennej <- function(formula,
                                      nazwa = as.character(substitute(formula)),
-                                     czyJednaZmienna = TRUE
-){
-  if(is.null(formula)){
+                                     czyJednaZmienna = TRUE){
+  if (is.null(formula)) {
     return(formula)
-  } else if( class(formula) == "formula" ){
-    if(!is.one.sided(formula)  ) {
+  } else if (class(formula) == "formula") {
+    if (!is.one.sided(formula)  ) {
       stop(paste0("Formuła ", nazwa, " nie jest prawostronna."))
     }
     zmienne = all.vars(formula)
-    if(czyJednaZmienna & length(zmienne) != 1){
+    if (czyJednaZmienna & length(zmienne) != 1) {
       stop(paste0("Niepoprawna liczba zmiennych w formule ", nazwa, "."))
     }
     return(zmienne)
@@ -31,7 +32,8 @@ wyciagnij_nazwe_zmiennej <- function(formula,
 
 #' @title Wyliczenia do wspołczynnika R-kwadrat.
 #' @description
-#' Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod' zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
+#' Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'
+#' zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
 #' @return Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model.
 pseudoR2 <- function(model){
@@ -47,11 +49,12 @@ pseudoR2.lmerMod <- function(model){
   efLos = ranef(model)
   ret = c(sapply(VarCorr(model), function(x) x[[1]]), attributes(VarCorr(model))$sc^2)
 
-  dt = data.frame(pred = predict(model, re.form = ~0), efekt =model.frame(model)[, names(efLos)])
+  dt = data.frame(pred = predict(model, re.form = ~0),
+                  efekt = model.frame(model)[, names(efLos)])
   pred = NULL # aby usunąć komunikat 'note' z check.
-  tab = ddply(dt, ~efekt, summarise, mean=mean(pred),
-              var=as.numeric(cov.wt(as.matrix(pred), method="ML")$cov),
-              n=length(pred))
+  tab = ddply(dt, ~efekt, summarise, mean = mean(pred),
+              var = as.numeric(cov.wt(as.matrix(pred), method = "ML")$cov),
+              n = length(pred))
   # tab = ddply(dt, ~efekt, summarise, mean=mean(pred), var=biasedVar(pred), n=length(pred))
 
   EEf = sum(tab$mean*tab$n)/sum(tab$n)
@@ -62,11 +65,11 @@ pseudoR2.lmerMod <- function(model){
   ret = cbind(ret, apply(ret, 1, sum))
   ret = rbind(ret, apply(ret, 2, sum))
   rownames(ret) <- c(names(efLos), "Resid.", "Suma")
-  colnames(ret)<- c("Ef. Los", "Ef. St.", "Suma")
+  colnames(ret) <- c("Ef. Los", "Ef. St.", "Suma")
   return(ret)
 }
 
-fixef.lm<-function(model){
+fixef.lm <- function(model){
   return(coefficients(model))
 }
 
@@ -76,21 +79,40 @@ ranef.lm <- function(model){
 
 #' @title Mapowanie zmiennych dla modelu z interakcjami
 #' @description
-#' Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki danych, na której był budowany model
-#' na nazwy współczynników modelu (i macierzy modelu).
+#' Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki
+#' danych, na której był budowany model na nazwy współczynników modelu
+#' (i macierzy modelu).
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
 #' @param zmiennaWielomianowa nazwa zmiennej, która jest parametrem wielomianu.
-#' @return funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne ramki danych, a nazwy kolumn to nazwy współczynników modelu.
+#' @return funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne
+#' ramki danych, a nazwy kolumn to nazwy współczynników modelu.
 model_map <- function(model, zmiennaWielomianowa){
-  mapowanie = attributes(attributes(model.frame(model))$terms)$factors # macierz zawierająca przypisanie zmiennych z formuły do efektów poszczególnych rzędów, ale jeszcze bez rozbicia factorów na dummiesy
-  mapowanie = mapowanie[!(rownames(mapowanie) %in% names(ranef(model))), ] # wykluczamy z niej zmienne definiujące efekty losowe - najpierw wiersze
-  mapowanie = mapowanie[, colSums(mapowanie) > 0] # a następnie kolumny, które były z nimi powiązane
-  maskaZmWielomian = grepl(paste0("^(|poly[(]|I[(])", zmiennaWielomianowa, "(|,.+[)]|[ ^][[:digit:]]+[)])$"), rownames(mapowanie)) # maska wskazująca na wiersze powiązane ze zmienną wprowadzaną wielomianem (gdy w formule jest poly(), wiersz jest tylko jeden, ale gdy wielomian był wprowadzany przez zm+I(zm^2)+..., to jest ich wiele)
-  mapowanie = rbind(mapowanie[!maskaZmWielomian, , drop=FALSE], zmWielomian=as.numeric(colSums(mapowanie[maskaZmWielomian, , drop=FALSE]) > 0)) # i te ew. wiele wierszy zamieniamy na jeden
+  # macierz zawierająca przypisanie zmiennych z formuły do efektów
+  # poszczególnych rzędów, ale jeszcze bez rozbicia factorów na dummiesy
+  mapowanie = attributes(attributes(model.frame(model))$terms)$factors
+  # wykluczamy z niej zmienne definiujące efekty losowe - najpierw wiersze
+  mapowanie = mapowanie[!(rownames(mapowanie) %in% names(ranef(model))), ]
+  # a następnie kolumny, które były z nimi powiązane
+  mapowanie = mapowanie[, colSums(mapowanie) > 0]
+  # maska wskazująca na wiersze powiązane ze zmienną wprowadzaną wielomianem
+  # (gdy w formule jest poly(), wiersz jest tylko jeden, ale gdy wielomian był
+  # wprowadzany przez zm+I(zm^2)+..., to jest ich wiele)
+  maskaZmWielomian = grepl(paste0("^(|poly[(]|I[(])", zmiennaWielomianowa,
+                                  "(|,.+[)]|[ ^][[:digit:]]+[)])$"),
+                           rownames(mapowanie))
+  # i te ew. wiele wierszy zamieniamy na jeden
+  mapowanie = rbind(mapowanie[!maskaZmWielomian, , drop = FALSE],
+                    zmWielomian = as.numeric(colSums(mapowanie[maskaZmWielomian, ,
+                                                               drop = FALSE]) > 0))
   rownames(mapowanie)[nrow(mapowanie)] = zmiennaWielomianowa
-  mapowanie = cbind(0, mapowanie) # dodajemy jeszcze kolumnę na stałą regresji
-  mapowanie = mapowanie[, 1 + attributes(model.matrix(model))$assign] # i korzystamy z faktu, że w pewnym tajemniczym miejscu zapisane jest mapowanie kolumn model.matrix na kolumny tak powstałej macierzy
-  colnames(mapowanie) = colnames(model.matrix(model)) # na koniec jeszcze przypisujemy nazwy kolumn z model.matrix
-  mapowanie = mapowanie == 1 # i żeby wygodniej było tego dalej używać, przerzucamy na macierz wartości logicznych
+  # dodajemy jeszcze kolumnę na stałą regresji
+  mapowanie = cbind(0, mapowanie)
+  # i korzystamy z faktu, że w pewnym tajemniczym miejscu zapisane jest
+  # mapowanie kolumn model.matrix na kolumny tak powstałej macierzy
+  mapowanie = mapowanie[, 1 + attributes(model.matrix(model))$assign]
+  # na koniec jeszcze przypisujemy nazwy kolumn z model.matrix
+  colnames(mapowanie) = colnames(model.matrix(model))
+  # i żeby wygodniej było tego dalej używać, przerzucamy na macierz wartości logicznych
+  mapowanie = mapowanie == 1
   return(mapowanie)
 }

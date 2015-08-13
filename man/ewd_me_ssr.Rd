@@ -9,10 +9,12 @@ ewd_me_ssr(x, noweDane = NULL)
 \arguments{
 \item{x}{model klasy \code{lmerMod}}
 
-\item{noweDane}{ramka danych z danymi uczniów dla szkół. Jeżeli NULL to funkcja liczy EWD na danych pobranych z modelu.}
+\item{noweDane}{ramka danych z danymi uczniów dla szkół. Jeżeli NULL to
+funkcja liczy EWD na danych pobranych z modelu.}
 }
 \value{
-data frame z potencjalnym atrybutem 'noweDane', który zawiera parametr noweDane.
+data frame z potencjalnym atrybutem 'noweDane', który zawiera
+parametr noweDane.
 }
 \description{
 Funkcja zwraca oszacowania EWD i ich "błędy standardowe" wykorzystując metodę
@@ -20,7 +22,7 @@ Funkcja zwraca oszacowania EWD i ich "błędy standardowe" wykorzystując metod�
 }
 \details{
 Funkcja powstała jako awaryjne rozwiązanie w sytuacji, gdy
-\code{ranef(., condVar=TRUE)} nie dawało dobrych oszacowań "błędów standardowych"
-ze względu na błąd autorów pakietu \code{lme4}.
+\code{ranef(., condVar=TRUE)} nie dawało dobrych oszacowań "błędów
+standardowych" ze względu na błąd autorów pakietu \code{lme4}.
 }
 

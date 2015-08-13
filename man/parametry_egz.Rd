@@ -7,22 +7,33 @@
 parametry_egz(x, grBezLacznie, grZLacznie, nazwaPierwKol = NA)
 }
 \arguments{
-\item{x}{data frame lub lista ze zmiennymi, dla których mają zostać wyliczone statystyki}
+\item{x}{data frame lub lista ze zmiennymi, dla których mają zostać wyliczone
+statystyki}
 
-\item{grBezLacznie}{ciąg znaków lub NULL, gdy nie dotyczy - nazwa zmiennej grupującej, dla której statystyki mają być zwrócone tylko w podziale na grupy, ale bez podawania statystyk dla całej zbiorowości}
+\item{grBezLacznie}{wektor ciągów znaków lub NULL, gdy nie dotyczy - nazwy
+zmiennych grupujących, dla których statystyki mają być zwrócone tylko
+w podziale na grupy, ale bez podawania statystyk dla całej zbiorowości}
 
-\item{grZLacznie}{ciąg znaków lub NULL, gdy nie dotyczy - nazwa zmiennej grupującej, dla której statystyki mają być zwrócone zarówno w podziale na grupy, jak i dla całej zbiorowości}
+\item{grZLacznie}{ciąg znaków lub NULL, gdy nie dotyczy - nazwa zmiennej
+grupującej (może być tylko jedna!), dla której statystyki mają być zwrócone
+zarówno w podziale na grupy, jak i dla całej zbiorowości}
 
-\item{nazwaPierwKol}{ciąg znaków - nazwa pierwszej kolumny zwracenego data frame'a, zawierającej nazwy zmiennych, dla których wyliczono statystyki}
+\item{nazwaPierwKol}{ciąg znaków - nazwa pierwszej kolumny zwracenego data
+frame'a, zawierającej nazwy zmiennych, dla których wyliczono statystyki}
 }
 \value{
 data frame
 }
 \description{
-Funkcja zwraca wartości zestawu statystyk opisowych: kwartyle, średnia, odch. stand. dla zestawu zmiennych, w podziale na grupy.
+Funkcja zwraca wartości zestawu statystyk opisowych: kwartyle, średnia, odch.
+stand. dla zestawu zmiennych, w podziale na grupy.
 }
 \details{
-W \code{x} muszą znajdować się zarówno zmienne, dla których wyliczona mają zostać statystyki, jak i zmienne grupujące, których nazwy podają parametry \code{grBezLacznie} i \code{grZLacznie}.
-Jeśli oba argumenty \code{grBezLacznie} i \code{grZLacznie} został podane, dzielenia na grupy ze względu na \code{grZLacznie} zostanie przeprowadzone w ramach grup wyróżnionych ze względu na \code{grBezLacznie}.
+W \code{x} muszą znajdować się zarówno zmienne, dla których wyliczona mają
+zostać statystyki, jak i zmienne grupujące, których nazwy podają parametry
+\code{grBezLacznie} i \code{grZLacznie}.
+Jeśli oba argumenty \code{grBezLacznie} i \code{grZLacznie} został podane,
+dzielenia na grupy ze względu na \code{grZLacznie} zostanie przeprowadzone
+w ramach grup wyróżnionych ze względu na \code{grBezLacznie}.
 }
 

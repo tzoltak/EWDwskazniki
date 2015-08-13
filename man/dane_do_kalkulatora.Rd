@@ -4,16 +4,16 @@
 \alias{dane_do_kalkulatora}
 \title{Kalkulator EWD}
 \usage{
-dane_do_kalkulatora(modele, mapowanieWe, mapowanieWy, dane)
+dane_do_kalkulatora(modele, normyWe, normyWy, dane)
 }
 \arguments{
 \item{modele}{lista modeli regresji MNK}
 
-\item{mapowanieWe}{lista zawierająca mapowania wyników surowych egzaminów na wejściu
-na skalę 100;15}
+\item{normyWe}{lista zawierająca mapowania wyników surowych egzaminów
+na wejściu na skalę 100;15}
 
-\item{mapowanieWy}{lista zawierająca mapowania wyników surowych egzaminów na wyjściu
-na skalę 100;15}
+\item{normyWy}{lista zawierająca mapowania wyników surowych egzaminów
+na wyjściu na skalę 100;15}
 
 \item{dane}{data frame z danymi używanymi do estymacji ww. modeli}
 }
@@ -21,13 +21,14 @@ na skalę 100;15}
 lista
 }
 \description{
-Funkcja zwraca listę zawierającą zestawienia, które trzeba wkleić do odpowiedniego
-arkusza kalkulacyjnego i przesłać do Blue Bricka, aby mogli zaimplementować modele
-w Kalkulatorze.
+Funkcja zwraca listę zawierającą zestawienia, które trzeba wkleić do
+odpowiedniego arkusza kalkulacyjnego i przesłać do Blue Bricka, aby mogli
+ zaimplementować modele w Kalkulatorze.
 }
 \details{
 Dane muszą być przekazane oddzielnym argumentem, aby uprościć sobie sprawę
-z wykrywaniem, jakie były najniższe wartości egzaminu na wejściu występujące w danych
-(jeśli w formule modelu użyto funkcji \code{poly()}, jest to niebanalne).
+z wykrywaniem, jakie były najniższe wartości egzaminu na wejściu występujące
+w danych (jeśli w formule modelu użyto funkcji \code{poly()}, jest to
+niebanalne).
 }
 

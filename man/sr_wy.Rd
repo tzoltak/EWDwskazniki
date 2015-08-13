@@ -9,14 +9,15 @@ sr_wy(model, ewd)
 \arguments{
 \item{model}{model klasy \code{lmerMod}}
 
-\item{ewd}{data frame będący wynikiem działania funkcji \code{\link{ewd_me}} lub \code{\link{ewd_me_ssr}}.
-Jeżeli ten parametr zawiera atrybut noweDane to funkcja wykonuje wyliczenia na tym atrybucie.}
+\item{ewd}{data frame będący wynikiem działania funkcji \code{\link{ewd_me}}
+lub \code{\link{ewd_me_ssr}}. Jeżeli ten parametr zawiera atrybut noweDane to
+ funkcja wykonuje wyliczenia na tym atrybucie.}
 }
 \value{
 data frame
 }
 \description{
-Funkcja zwraca oszacowania średnich wyników na wyjściu i ich "błędy standardowe"
-oraz korelacje z EWD wykorzystując metodę "z jednego modelu".
+Funkcja zwraca oszacowania średnich wyników na wyjściu i ich "błędy
+standardowe" oraz korelacje z EWD wykorzystując metodę "z jednego modelu".
 }
 
