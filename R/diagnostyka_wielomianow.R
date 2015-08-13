@@ -14,7 +14,8 @@
 #' @param wykresyFun funkcja rysująca wykresy. Domyślnie jest to \code{png}.
 #' @param wykresyParam lista parametrów funkcji rysującej wykresy.
 #' @param przew_nparPar lista z parametrami funkcji \code{\link{przew_npar}}.
-#' @param smooothScatterPar lista z parametrami funkcji \code{\link[graphics]{smoothScatter}}.
+#' @param smooothScatterPar lista z parametrami funkcji
+#' \code{\link[graphics]{smoothScatter}}.
 #' @return funkcja zwraca listę z obliczeniami dla modelu.
 #' @import EWDogolny
 #' @import lme4
@@ -185,11 +186,10 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
 
             if ( !is.null(folderWykresy) ) {
               folderDoPowrotu = getwd()
-              if (dir.exists(folderWykresy)) {
-                setwd(folderWykresy)
-              } else {
+              if (!dir.exists(folderWykresy)) {
                 dir.create(folderWykresy)
               }
+              setwd(folderWykresy)
               plik = paste0(zmZal, "_stopien", stopien, "_",
                             paste0(zmGrupujace, x[1, zmGrupujace],
                                    collapse = "_"), ".png")

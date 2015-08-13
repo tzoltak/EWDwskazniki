@@ -4,9 +4,10 @@
 \alias{diagnostyka_pelna}
 \title{Pełna diagnostyka wielomianow}
 \usage{
-diagnostyka_pelna(dane, stopnie, typModelu, efektLosowy, egzWej, egzWyj,
-  zmGrupujace, dysl_wej, dysl_wyj, katalogRysunki, porownanieModeliPlik,
-  tytulDiagnostyka, maska = NULL)
+diagnostyka_pelna(dane, stopnie, typModelu, zmEgzWej, zmEgzWyj,
+  zmGrupujace = NULL, efektLosowy = NULL, zmDyslWej = NULL,
+  zmDyslWyj = NULL, katalogRysunki = NULL, porownModeliPlik = NULL,
+  tytulDiagnostyka = "", maska = NULL)
 }
 \arguments{
 \item{dane}{ramka danych z wynikami egzaminu}
@@ -17,34 +18,34 @@ dla których należy zbudować modele.}
 \item{typModelu}{zmienna określająca, jaki model ma być użyty. Dopuszczalne
 wartości to "lm" oraz "lmer".}
 
-\item{efektLosowy}{nazwa kolumny ramki 'dane', która określa efekt losowy.
-Parametr ignorowany dla modelu 'lm'.}
-
-\item{egzWej}{nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
+\item{zmEgzWej}{nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
 egzaminu wejściowego.}
 
-\item{egzWyj}{nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
+\item{zmEgzWyj}{nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
 egzaminu wyjściowego.}
 
 \item{zmGrupujace}{wektor ciągów znakowych określających zmienne modelu, na
 podstawie których określone są grupy, w których wykonywane są obliczenia oraz
 dla których są sporządzane wykresy}
 
-\item{dysl_wej}{nazwa kolumny ramki 'dane', która zawiera informacje
+\item{efektLosowy}{nazwa kolumny ramki 'dane', która określa efekt losowy.
+Parametr ignorowany dla modelu 'lm'.}
+
+\item{zmDyslWej}{nazwa kolumny ramki 'dane', która zawiera informacje
 o dysleksji zgłoszonej dla egzaminu wejściowego.}
 
-\item{dysl_wyj}{nazwa kolumny ramki 'dane', która zawiera informacje
+\item{zmDyslWyj}{nazwa kolumny ramki 'dane', która zawiera informacje
 o dysleksji zgłoszonej dla egzaminu wyjściowego.}
 
 \item{katalogRysunki}{ścieżka do katalogu do zapisu wykresów diagnostycznych.}
 
-\item{porownanieModeliPlik}{ścieżka do pliku do zapisu porównania modeli.
+\item{porownModeliPlik}{ścieżka do pliku do zapisu porównania modeli.
 Parametr użyty tylko, gdy rozważamy wiele modeli.}
 
 \item{tytulDiagnostyka}{tytuł wykresu diagnostycznego rysowanego, gdy
 rozważany jest tylko jeden model.}
 
-\item{maska}{wektor boolowski określający, które obserwacje z ramki dane
+\item{maska}{wektor logiczny określający, które obserwacje z ramki dane
 powinny zostać użyte do wyestymowania modeli.}
 }
 \value{

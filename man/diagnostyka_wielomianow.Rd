@@ -26,7 +26,8 @@ Jeżeli jest równa NULL to wykresy nie są zapisywane.}
 
 \item{przew_nparPar}{lista z parametrami funkcji \code{\link{przew_npar}}.}
 
-\item{smooothScatterPar}{lista z parametrami funkcji \code{\link[graphics]{smoothScatter}}.}
+\item{smooothScatterPar}{lista z parametrami funkcji
+\code{\link[graphics]{smoothScatter}}.}
 }
 \value{
 funkcja zwraca listę z obliczeniami dla modelu.

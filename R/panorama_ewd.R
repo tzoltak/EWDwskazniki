@@ -1,6 +1,71 @@
 #' @title Diagnostyka wskaźników EWD
 #' @description
 #' Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze
+#' względu na wartości średnich wyników "na wejściu"/"na wyjściu" (oś X)
+#' i wartości wskaźników EWD (oś Y).
+#' @param x lista data frame'ów zwracana przez funkcję
+#' \code{\link{przygotuj_wsk_ewd}}
+#' @param lata ciąg znaków opisujący, jakich lat wskaźnik dotyczy
+#' @param katalogZapis opcjonalnie ciąg znaków podający nazwę katalogu, do
+#' którego mają zostać zapisane rysunki (jeśli nie zostanie podana, rysunki
+#' nie zostaną zapisane)
+#' @param wybierzSzkoly opcjonalnie wyrażenie (expression), które zostanie
+#' użyte do zawężenia grupy szkół, których wyniki będą prezentowane; np.
+#' \code{expression(lu_wszyscy >= 10)}
+#' @param typSzkol opcjonalnie ciąg znaków z nazwą typu szkół (potrzebny tylko
+#' w przypadku matury)
+#' @return funkcja nic nie zwraca.
+#' @export
+panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
+                                       wybierzSzkoly = NULL,
+                                       typSzkol = NULL) {
+ stopifnot(
+   "listaWskaznikowEWD" %in% class(x),
+   is.null(katalogZapis) | is.character(katalogZapis),
+   is.null(wybierzSzkoly) | is.expression(wybierzSzkoly),
+   is.null(typSzkol) | is.character(typSzkol))
+  if (!is.null(katalogZapis)) {
+    stopifnot(length(katalogZapis) == 1)
+  }
+  if (!is.null(typSzkol)) {
+    stopifnot(length(typSzkol) == 1)
+    stopifnot(typSzkol %in% c("SP", "gimn.", "LO", "T"))
+  }
+
+  skrotEgz = unique(substr(names(x), 1, 1))
+  dopelniaczEgz = list(
+    "s" = "sprawdzianu",
+    "g" = "egzaminu gimnazjalnego",
+    "m" = "matury"
+  )
+  dopelniaczEgzWy = dopelniaczEgz[[skrotEgz]]
+  dopelniaczEgzWe = dopelniaczEgz[[grep(skrotEgz, names(dopelniaczEgz)) - 1]]
+  if (is.null(typSzkol)) {
+    typSzkol = list(
+      "s" = "SP",
+      "g" = "gimn.",
+      "m" = "LO lub T"
+    )[[skrotEgz]]
+  }
+
+  for (i in 1:length(x)) {
+    temp = subset(x[[i]], eval(wybierzSzkoly, x[[i]]))
+    # na X egz. "wyjściu"
+    message(names(x)[i], " x ", paste0("ewd_", names(x)[i]))
+    panorama_ewd(temp[, names(x)[i]], temp[, paste0("ewd_", names(x)[i])],
+                 dopelniaczEgzWy, typSzkol, names(x)[i], lata, katalogZapis,
+                 prElips = c(0.5, 0.9), lu = temp$lu_wszyscy, kolory = rep(1, 2))
+    # na X egz. "wejściu"
+    message("sr_we x ", paste0("ewd_", names(x)[i]))
+    panorama_ewd(temp$sr_we, temp[, paste0("ewd_", names(x)[i])],
+                 dopelniaczEgzWe, typSzkol, names(x)[i], lata, katalogZapis,
+                 prElips = c(0.5, 0.9), lu = temp$lu_wszyscy, kolory = rep(1, 2))
+  }
+}
+
+#' @title Diagnostyka wskaźników EWD
+#' @description
+#' Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze
 #' względu na wartości średnich wyników na wyjściu (oś X) i wartości wskaźników
 #' EWD (oś Y).
 #' @param sr wektor liczbowy z wartościami średnich wyników egzaminu na wyjściu
@@ -56,7 +121,7 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
     }
     dataEllipse(sr, ewd, levels = pWarst, plot.points = FALSE, center.pch = NULL,
                 fill = TRUE, fill.alpha = 0.1, segments = 200,
-                col = kolory)
+                col = kolory, lwd = 1)
   } else if (!is.null(prElips) | !is.null(lu)) {
     message("Jeżeli potrzebujesz użyć elips to oba parametry: prElips i lu muszą być różne od NULL.")
   }
@@ -84,4 +149,28 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
     setwd(katalog)
   }
   invisible(NULL)
+}
+
+#' @title Wyliczanie EWD
+#' @description
+#' Funkcja zwraca "empiryczne prawdopodobieństwa" pozwalające tak dobrać
+#' wielkość wastwic, aby znajdował się w ich obrębie założony odsetek uczniów
+#' (choć z założenia, że rozkład wyników na wyjściu i EWD jest dwuwymiarowym
+#' rozkładem normalnym wynikałaby nieco inna wielkość elips).
+#' @param wyniki wektor z wartościami średnich wyników na wyjściu poszczególnych
+#' szkół
+#' @param ewd wektor z wartościami wskaźników EWD szkół
+#' @param liczbaUczniow wektor z liczbą uczniów z poszczególnych szkołach
+#' @param pr wektor prawdopodobieństw, dla których mają być wyznaczone
+#' odpowiadające im prawdopodobieństwa empiryczne
+#' @return wektor liczbowy
+#' @import EWDogolny
+#' @export
+wielkoscWarstwic = function(wyniki, ewd, liczbaUczniow, pr = c(0.5, 0.9)) {
+  kow = cov.wt(cbind(wyniki, ewd), liczbaUczniow, method = "ML")
+  odlMahSt = mahalanobis(cbind(wyniki, ewd), kow$center, kow$cov)
+  kwantyle = kwantyl_wazony(odlMahSt, liczbaUczniow, pr)
+  prEmp = round(pchisq(kwantyle, df = 2), 3)
+  print(matrix(prEmp, nrow = 1, dimnames = list("pr. emp.", pr)))
+  invisible(prEmp)
 }
