@@ -22,11 +22,11 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
   )
   stopifnot(all(nazwyZmWynikiEgzWy %in% names(x)),
             paste0("rok_", substr(kodyCzesciEgzWe, 1, 1)) %in% names(x),
-            all(grepl("^(sum|norm|irt|rsch)_|_(suma|norm)$", nazwyZmWynikiEgzWy))
+            all(grepl("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", nazwyZmWynikiEgzWy))
   )
 
   skrotEgzWe = unique(substr(kodyCzesciEgzWe, 1, 1))
-  skrotEgzWy = sub("^(sum|norm|irt|rsch)_|_(suma|norm)$", "", nazwyZmWynikiEgzWy)
+  skrotEgzWy = sub("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", "", nazwyZmWynikiEgzWy)
   skrotEgzWy = unique(substr(skrotEgzWy, 1, 1))
   lZmLaurWe = sum(grepl(paste0("^laureat_", skrotEgzWe), names(x)))
 
@@ -48,7 +48,7 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
       labels = c("nie", "tak"))
   })
   for (i in nazwyZmWynikiEgzWy) {
-    kodCzesci = sub("^(sum|norm|irt|rsch)_|_(suma|norm)$", "", i)
+    kodCzesci = sub("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", "", i)
     skrotEgzWy = substr(kodCzesci, 1, 1)
     maskaBD = !is.na(x[, i])
     zmDoZsumowania = c(
