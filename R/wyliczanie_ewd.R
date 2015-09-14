@@ -129,7 +129,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
         join(skale, data.frame(zmienna = maskaZm), type = "inner"))
       wskazniki_skalowania =
         rbind(wskazniki_skalowania,
-              data.frame(rodzaj_wsk = "ewd", wskaznik = temp$wskaznik,
+              data.frame(rodzaj_wsk = "ewd", wskaznik = names(modele)[i],
                          rok_do = rokDo, temp[, c("id_skali", "skalowanie")],
                          stringsAsFactors = FALSE))
       # wyliczanie liczby uczniów
@@ -183,7 +183,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
                 wielkoscWarstwic(get(zmWynik), get(zmEwd), lu_ewd))
       wskazniki = rbind(wskazniki,
                         data.frame(rodzaj_wsk = "ewd", wskaznik = names(ewd)[i],
-                                   rok_do = rokDo, gamma50 = pr[1], gamma90 = pr[2]))
+                                   rok_do = rokDo, gamma50 = pr[1], gamma90 = pr[2],
+                                   stringsAsFactors = FALSE))
       # przypisywanie kategorii
       ewd[[i]] = within(ewd[[i]], {kategoria = 0})
       ewd[[i]] = within(ewd[[i]], {
@@ -202,7 +203,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
                        rok_do = rokDo)
     }
     attributes(ewd)$wskazniki = wskazniki
-    attributes(ewd)$wskazniki_skalowania = unique(wskazniki_skalowania)
+    attributes(ewd)$wskazniki_skalowania = wskazniki_skalowania
     attributes(ewd)$wskazniki_parametry = wskazniki_parametry
     attributes(ewd)$liczba_zdajacych = liczba_zdajacych
   }
