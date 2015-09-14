@@ -12,14 +12,19 @@
 #' przekazany argumentem \code{dane}, zawierający dane szkół, które nie zostały
 #' wykorzystane na etapie estymacji modelu, ale chcemy teraz wyliczyć dla nich
 #' wartości wskaźników
+#' @param skale data frame zawierający informacje o skalowaniach (i skalach),
+#' z których pochodzą zmienne z oszacowaniami umiejętności, zawarte w danych;
+#' typowo atrybut \code{skale} obiektu klasy \code{daneWyskalowane}
+#' (zwracanego przez funkcję \code{\link[EWDdane]{przygotuj_dane_do_ewd}})
 #' @return lista data frame'ów
 #' @import EWDogolny
 #' @import plyr
 #' @export
-przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL) {
+przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
   stopifnot(is.list(modele), length(modele) > 0,
             is.data.frame(dane),
-            is.null(danePominiete) | is.data.frame(danePominiete))
+            is.null(danePominiete) | is.data.frame(danePominiete),
+            is.null(skale) | is.data.frame(skale))
   if (!is.null(danePominiete)) {
     stopifnot(all(names(dane) == names(danePominiete)))
   }
@@ -27,6 +32,13 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL) {
   czyLmer = all(unlist(lapply(modele, function(x) {return("lmerMod" %in% class(x))})))
   if (!(czyLm | czyLmer)) {
     stop("Wszystkie elementy listy 'modele' muszą być albo klasy 'lm' albo klasy 'lmerMod'.")
+  }
+  if (!is.null(skale)) {
+    maskaZm = c("id_skali", "opis_skali", "skalowanie", "zmienna")
+    stopifnot(all(maskaZm %in% names(skale)))
+    skale = skale[, maskaZm]
+    skale$opis_skali = sub("^[^;]+;([^;]+);.*$", "\\1", skale$opis_skali)
+    names(skale) = sub("^opis_skali", "wskaznik", names(skale))
   }
 
   zmIdSzk = names(dane)[grep("^id_szkoly_", names(dane))]
@@ -47,7 +59,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL) {
                           noweDane = danePominiete)
   } else {
     ewd = lapply(modele, ewd_me)
-    ewdPominiete = lapply(modele, ewd_me_ssr, dane = danePominiete)
+    ewdPominiete = lapply(modele, ewd_me_ssr, noweDane = danePominiete)
     ewd = mapply(sr_wy, modele, ewd, SIMPLIFY = FALSE)
     ewdPominiete = mapply(sr_wy, modele, ewdPominiete, SIMPLIFY = FALSE)
   }
@@ -55,8 +67,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL) {
   ewd = mapply(
     function(x, y) {
       x = rbind(
-        cbind(x, pomin = "false"),
-        cbind(y, pomin = "true" ))
+        cbind(x, pomin = FALSE),
+        cbind(y, pomin = TRUE))
       x = subset(x, !is.na(get("ewd")))
       return(x)
     },
@@ -91,12 +103,108 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL) {
       return(suppressMessages(join(y, x, type = "right")))
     }, y = oSzkole)
   } else {
+    rokDo = max(as.numeric(levels(dane[, zmRokEgzWy])))
+    # przygotowywanie obiektu z parametrami modelu
+    wskazniki_parametry = ldply(modele, function(x) {
+      parametry = summary(x)$coef
+      return(data.frame(parametr = rownames(parametry),
+                        wartosc = parametry[, 1], bs = parametry[, 2]))
+    }, .id = "wskaznik")
+    wskazniki_parametry = within(wskazniki_parametry, {
+      wskaznik = levels(wskaznik)[wskaznik]
+      parametr = levels(parametr)[parametr]
+      rodzaj_wsk = "ewd"
+      rok_do = rokDo
+    })
+
+    lUWszyscy = unique(dane[, c(zmIdSzkWy, "lu_wszyscy")])
+    liczba_zdajacych = data.frame()
+    wskazniki = data.frame()
+    wskazniki_skalowania = data.frame()
     for (i in 1:length(ewd)) {
       message("Wskaźnik ", names(ewd)[i])
+      maskaZm = intersect(names(dane), all.vars(formula(modele[[i]])))
+      # wypełnianie wskazniki_skalowania
+      temp = suppressMessages(
+        join(skale, data.frame(zmienna = maskaZm), type = "inner"))
+      wskazniki_skalowania =
+        rbind(wskazniki_skalowania,
+              data.frame(rodzaj_wsk = "ewd", wskaznik = temp$wskaznik,
+                         rok_do = rokDo, temp[, c("id_skali", "skalowanie")],
+                         stringsAsFactors = FALSE))
       # wyliczanie liczby uczniów
+      lUWsk = ddply(na.omit(dane[, maskaZm])[, c(zmIdSzkWy, zmRokEgzWy)],
+                    unname(zmIdSzkWy),
+                    function(x, zmRokEgzWy) {
+                      n = nrow(x)
+                      return(data.frame(
+                        lu = n, lu_ewd = n,
+                        roczn_nowy = max(unclass(x[, zmRokEgzWy])),
+                        roczn_liczba = length(unique(x[, zmRokEgzWy])),
+                        stringsAsFactors = FALSE))
+                    },
+                    zmRokEgzWy = zmRokEgzWy)
+      lUWsk = within(lUWsk, {
+        roczn_ostatni = as.numeric(levels(dane[, zmRokEgzWy]))[roczn_nowy]
+      })
+      lUWsk = within(lUWsk, {
+        roczn_nowy = factor(as.numeric(roczn_nowy == max(roczn_nowy)),
+                            levels = 0:1, labels = c("nie", "tak"))
+      })
+      lUWsk = suppressMessages(join(lUWsk, lUWszyscy))
+      liczba_zdajacych = rbind(liczba_zdajacych,
+                               cbind(id_ww = NA, rodzaj_wsk = "ewd",
+                                     wskaznik = names(modele)[i],
+                                     kategoria_lu = "ogółem",
+                                     lUWsk[, !grepl("^roczn_", names(lUWsk))],
+                                     stringsAsFactors = FALSE))
       # przesuwanie średniego wyniku na wyjściu i EWD do średniej ważonej liczbą uczniów w szkole odpowiednio 100 i 0
+      ewd[[i]] = suppressMessages(join(ewd[[i]], lUWsk))
+      zmEwd   = paste0("ewd_", names(ewd)[i])
+      zmWynik = names(ewd)[i]
+      przesEwd = with(subset(ewd[[i]], !get("pomin")),
+                      weighted.mean(get(zmEwd), lu_ewd))
+      przesWyn = with(subset(ewd[[i]], !get("pomin")),
+                      weighted.mean(get(zmWynik), lu_ewd))
+      ewd[[i]] = within(ewd[[i]], {
+        assign(zmEwd, get(zmEwd) - przesEwd)
+        assign(zmWynik, get(zmWynik) - przesWyn + 100)
+      })
+      wskazniki_parametry =
+        rbind(wskazniki_parametry,
+              data.frame(wskaznik = names(ewd)[i],
+                         parametr = c("przesEWD", "przesWynEgzWy"),
+                         wartosc = c(przesEwd, przesWyn),
+                         bs = NA,  rok_do = rokDo, rodzaj_wsk = "ewd"))
+      message("  Przesunięcie średnich wyników końcowych: ", format(przesWyn - 100, nsmall=2, digits=2))
+      message("  Przesunięcie EWD: ", format(przesEwd, nsmall=2, digits=2))
+      message("  Prawdopodobieństwa empiryczne dla warstwic: ")
+      pr = with(subset(ewd[[i]], !get("pomin")),
+                wielkoscWarstwic(get(zmWynik), get(zmEwd), lu_ewd))
+      wskazniki = rbind(wskazniki,
+                        data.frame(rodzaj_wsk = "ewd", wskaznik = names(ewd)[i],
+                                   rok_do = rokDo, gamma50 = pr[1], gamma90 = pr[2]))
       # przypisywanie kategorii
+      ewd[[i]] = within(ewd[[i]], {kategoria = 0})
+      ewd[[i]] = within(ewd[[i]], {
+        kategoria[get("roczn_liczba") == 2 & get("roczn_nowy") == "tak"] = 1  # wyniki tylko z dwóch roczników, ale są wyniki z najnowszego rocznika
+        kategoria[get("lu_ewd") / get("lu_wszyscy") < 0.9              ] = 2  # ponad 10% niepołączonych wyników
+        kategoria[get("lu_ewd") < 30                                   ] = 4  # mniej niż 30 połączonych wyników
+        kategoria[get("roczn_liczba") < 2                              ] = 5  # dane z tylko jednego rocznika
+        kategoria[get("roczn_nowy") == "nie"                           ] = 6  # brak danych z najnowszego rocznika
+      })
+      message("  Rozkład kategorii:")
+      print(with(ewd[[i]], ftable(get("pomin"), get("kategoria"))))
+      message("")
+      # kosmetyka
+      names(ewd[[i]]) = sub("^roczn_ostatni$", "rok", names(ewd[[i]]))
+      ewd[[i]] = cbind(ewd[[i]][, !grepl("^roczn_", names(ewd[[i]]))],
+                       rok_do = rokDo)
     }
+    attributes(ewd)$wskazniki = wskazniki
+    attributes(ewd)$wskazniki_skalowania = unique(wskazniki_skalowania)
+    attributes(ewd)$wskazniki_parametry = wskazniki_parametry
+    attributes(ewd)$liczba_zdajacych = liczba_zdajacych
   }
   class(ewd) = c(class(ewd), "listaWskaznikowEWD")
   return(ewd)

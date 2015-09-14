@@ -108,7 +108,8 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
 
   parametryGraficzne = par(no.readonly = TRUE)
   par(bg = "white")
-  smoothScatter(sr, ewd, nbin = 256, bandwidth = 0.2,
+  smoothScatter(sr, ewd, nbin = 256,
+                bandwidth = c(ifelse(mean(sr, na.rm = TRUE) > 50, 0.2, 0.02), 0.2),
                 main = paste0("Śr. wyniki ", egzamin, " a EWD ",
                               typ_szkoly, "\n",
                               wskaznik, " ", lata),

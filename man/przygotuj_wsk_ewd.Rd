@@ -4,7 +4,7 @@
 \alias{przygotuj_wsk_ewd}
 \title{Wyliczanie EWD}
 \usage{
-przygotuj_wsk_ewd(modele, dane, danePominiete = NULL)
+przygotuj_wsk_ewd(modele, dane, danePominiete = NULL, skale = NULL)
 }
 \arguments{
 \item{modele}{lista modeli klasy \code{lm} lub \code{lmerMod}}
@@ -17,6 +17,11 @@ których estymowane były modele podane parametrem \code{modele}}
 przekazany argumentem \code{dane}, zawierający dane szkół, które nie zostały
 wykorzystane na etapie estymacji modelu, ale chcemy teraz wyliczyć dla nich
 wartości wskaźników}
+
+\item{skale}{data frame zawierający informacje o skalowaniach (i skalach),
+z których pochodzą zmienne z oszacowaniami umiejętności, zawarte w danych;
+typowo atrybut \code{skale} obiektu klasy \code{daneWyskalowane}
+(zwracanego przez funkcję \code{\link[EWDdane]{przygotuj_dane_do_ewd}})}
 }
 \value{
 lista data frame'ów

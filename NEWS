@@ -1,4 +1,14 @@
 --------------------
+Zmiany w EWDwskazniki 0.6 (2015-09-14)
+
+- Nowe funkcjonalności:
+  - przygotuj_wsk_ewd() obsługuje trzyletnie modele gimnazjalne (rozpoznaje je
+    jako te wyestymowane lmer(), co oczywiście nie jest doskonałe, bo poki co
+    nie poradzi sobie z modelami z matury);
+  - panorama_ewd() bardzo grubo, ale zawsze dopasowuje bandwidth do skali tego,
+    co ma na osi poziomej;
+
+--------------------
 Zmiany w EWDwskazniki 0.5 (2015-08-13)
 
 - Nowe funkcje:
