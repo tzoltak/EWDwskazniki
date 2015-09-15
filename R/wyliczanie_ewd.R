@@ -208,6 +208,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
     attributes(ewd)$liczba_zdajacych = liczba_zdajacych
   }
   class(ewd) = c(class(ewd), "listaWskaznikowEWD")
+  attributes(ewd)$dataUtworzenia = Sys.time()
   return(ewd)
 }
 #' @title Wyliczanie EWD
