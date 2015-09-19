@@ -32,20 +32,21 @@ panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
     stopifnot(typSzkol %in% c("SP", "gimn.", "LO", "T"))
   }
 
-  skrotEgz = unique(substr(names(x), 1, 1))
+  skrotEgzWy = unique(substr(names(x), 1, 1))
   dopelniaczEgz = list(
     "s" = "sprawdzianu",
     "g" = "egzaminu gimnazjalnego",
     "m" = "matury"
   )
-  dopelniaczEgzWy = dopelniaczEgz[[skrotEgz]]
-  dopelniaczEgzWe = dopelniaczEgz[[grep(skrotEgz, names(dopelniaczEgz)) - 1]]
+  skrotEgzWe = names(dopelniaczEgz)[grep(skrotEgzWy, names(dopelniaczEgz)) - 1]
+  dopelniaczEgzWy = dopelniaczEgz[[skrotEgzWy]]
+  dopelniaczEgzWe = dopelniaczEgz[[grep(skrotEgzWy, names(dopelniaczEgz)) - 1]]
   if (is.null(typSzkol)) {
     typSzkol = list(
       "s" = "SP",
       "g" = "gimn.",
       "m" = "LO lub T"
-    )[[skrotEgz]]
+    )[[skrotEgzWy]]
   }
 
   for (i in 1:length(x)) {
@@ -59,7 +60,8 @@ panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
     message("sr_we x ", paste0("ewd_", names(x)[i]))
     panorama_ewd(temp$sr_we, temp[, paste0("ewd_", names(x)[i])],
                  dopelniaczEgzWe, typSzkol, names(x)[i], lata, katalogZapis,
-                 prElips = c(0.5, 0.9), lu = temp$lu_wszyscy, kolory = rep(1, 2))
+                 skrotEgzWe, prElips = c(0.5, 0.9),
+                 lu = temp$lu_wszyscy, kolory = rep(1, 2))
   }
 }
 
@@ -107,6 +109,7 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
             )
 
   parametryGraficzne = par(no.readonly = TRUE)
+  on.exit(par(parametryGraficzne))
   par(bg = "white")
   smoothScatter(sr, ewd, nbin = 256,
                 bandwidth = c(ifelse(mean(sr, na.rm = TRUE) > 50, 0.2, 0.02), 0.2),
