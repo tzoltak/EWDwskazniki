@@ -39,6 +39,6 @@ Tu w przyszłości uzupełnić. Trzeba dodać do funkcji jakąś weryfikację
 poprawności argumentów.
 }
 \seealso{
-\code{\link[ZPD]{normalizuj_ekwikwantylowo}}
+\code{\link[ZPD]{normalizuj}}
 }
 

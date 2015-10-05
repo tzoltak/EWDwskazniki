@@ -18,7 +18,7 @@
 #' Tu w przyszłości uzupełnić. Trzeba dodać do funkcji jakąś weryfikację
 #' poprawności argumentów.
 #' @return Wektor liczbowy z przeliczonymi wartościami argumentu \code{wynikiZnorm}.
-#' @seealso \code{\link[ZPD]{normalizuj_ekwikwantylowo}}
+#' @seealso \code{\link[ZPD]{normalizuj}}
 #' @export
 sklej_normy = function(wynikiZnorm, wynikiSurowe, do, grupy=NULL, sr=100, os=15, ile=do) {
   if (is.null(grupy)) grupy = rep(1, length(wynikiZnorm))
