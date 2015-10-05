@@ -25,20 +25,34 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
             all(grepl("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", nazwyZmWynikiEgzWy))
   )
 
+  kodyCzesciEgzWe = sub("R$", "", kodyCzesciEgzWe)
   skrotEgzWe = unique(substr(kodyCzesciEgzWe, 1, 1))
   skrotEgzWy = sub("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", "", nazwyZmWynikiEgzWy)
   skrotEgzWy = unique(substr(skrotEgzWy, 1, 1))
-  lZmLaurWe = sum(grepl(paste0("^laureat_", skrotEgzWe), names(x)))
+  lZmLaurWe = sum(grepl(paste0("^laureat_",
+                               sub("R$", "", kodyCzesciEgzWe), "$"), names(x)))
+  czesciLaurWy = gsub("^(sum|norm|irt|rsch)_|(|R)_(suma|norm|irt)$", "",
+                      nazwyZmWynikiEgzWy)
+  if (all(paste0("laureat_", czesciLaurWy) %in% names(x))) {
+    kodyCzesciEgzWy = nazwaEgzWy
+    lZmLaurWy = 1
+  } else {
+    zmLaurEgzWy = names(x)[grep(paste0("^laureat_", skrotEgzWy, "_"),
+                                    names(x))]
+    kodyCzesciEgzWy = sub("^laureat_", "", zmLaurEgzWy)
+    lZmLaurWy = length(kodyCzesciEgzWy)
+  }
 
   # przygotowujemy macierz z nazwami wierszy i kolumn
   tabelkaLD =
-    matrix(NA, nrow = 5 + lZmLaurWe, ncol = length(nazwyZmWynikiEgzWy),
+    matrix(NA, nrow = 4 + lZmLaurWy + lZmLaurWe,
+           ncol = length(nazwyZmWynikiEgzWy),
            dimnames = list(
              c("ogółem",
                paste0("dysleksja ", nazwaEgzWy),
                paste0("dysleksja ", nazwaEgzWe),
                paste0("dysleksja ", nazwaEgzWe, " i ", nazwaEgzWy),
-               paste0("laureaci ", nazwaEgzWy),
+               paste0("laureaci ", kodyCzesciEgzWy),
                paste0("laureaci ", kodyCzesciEgzWe)),
              nazwyZmWynikiEgzWy))
   # żeby ją wypełnić
@@ -48,14 +62,17 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
       labels = c("nie", "tak"))
   })
   for (i in nazwyZmWynikiEgzWy) {
-    kodCzesci = sub("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", "", i)
-    skrotEgzWy = substr(kodCzesci, 1, 1)
+    if (lZmLaurWy == 1) {
+      kodyCzesci = sub("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", "", i)
+    } else {
+      kodyCzesci = kodyCzesciEgzWy
+    }
     maskaBD = !is.na(x[, i])
     zmDoZsumowania = c(
       paste0("dysleksja_", skrotEgzWy),
       paste0("dysleksja_", skrotEgzWe),
       "dysleksja_temp",
-      paste0("laureat_", kodCzesci),
+      paste0("laureat_", kodyCzesci),
       paste0("laureat_", kodyCzesciEgzWe)
     )
     temp = lapply(x[, zmDoZsumowania], function(x, maska) {
