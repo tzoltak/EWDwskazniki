@@ -1,4 +1,12 @@
 --------------------
+Zmiany w EWDwskazniki 0.7 (2015-10-06)
+
+- Nowe funkcje:
+  - parametry_rozkladu_rasch(), przeksztalc_skale_norm(),
+    przeksztalc_dane_normami() pozwalają poradzić sobie z przygotowywaniem
+    danych do wyliczania jednorocznych wskaźników maturalnych;
+
+--------------------
 Zmiany w EWDwskazniki 0.6 (2015-09-14)
 
 - Nowe funkcjonalności:

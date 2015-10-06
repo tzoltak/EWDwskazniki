@@ -55,7 +55,7 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
                x = cbind(x, temp)
                x$wydl = factor(x$wydl, levels = levels(model.frame(model)$wydl))
                wydl = x$wydl[1]
-               names(x) = sub("^gm_r$", "gm", names(x))
+               names(x) = sub("^gm(R_ir|_r)$", "gm", names(x))
                skrotEgzWe = all.vars(formula(model))[-1]
                skrotEgzWe = setNames(skrotEgzWe, skrotEgzWe)
                skrotEgzWe = skrotEgzWe[!grepl("^(plec|wydl)$|^dysl(|eksja)_", skrotEgzWe)]

@@ -1,6 +1,6 @@
 Encoding: UTF-8
 Package: EWDwskazniki
-Version: 0.6
+Version: 0.7
 Title: Functions for estimation of Educational Value-Added indicators of Polish
     schools
 Authors@R: c(

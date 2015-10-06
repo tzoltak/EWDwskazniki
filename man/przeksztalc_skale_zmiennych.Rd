@@ -20,9 +20,8 @@ wyniki będą używane do wyliczania wskaźników i mają zostać przekształcon
 data frame
 }
 \description{
-Funkcja na podstawie listy modeli, data frame'a z danymi, na podstawie
-których zostały one wyliczone oraz ew. data frame'a o takiej samej
-strukturze zawierającego dane nie użyte wcześniej do estymacji modeli,
-przygotowuje zestawienia z wartościami wskaźników EWD.
+Funkcja przekształca skale zmiennych z surowymi lub wyskalowanymi wynikami
+egzaminów ze 100;15 na 0;1, lub odwrotnie, adkewatnie do tego, jak typowo
+są one wykorzystywane w modelach EWD.
 }
 
