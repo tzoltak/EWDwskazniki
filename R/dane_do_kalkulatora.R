@@ -22,20 +22,34 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
   normyWe = lapply(normyWe, function(x) {
     if (all(c("wartosc", "wartosc_zr", "konstrukt") %in% names(x))) {
       konstrukt = x$konstrukt[1]
-      x = x[, c("wartosc", "wartosc_zr")]
-      names(x) = c("suma", konstrukt)
+      if ("grupa" %in% names(x)) {
+        maskaZmienne = c("grupa", "wartosc", "wartosc_zr")
+        nazwyZmiennych = c("grupa", "suma", konstrukt)
+      } else {
+        maskaZmienne = c("wartosc", "wartosc_zr")
+        nazwyZmiennych = c("suma", konstrukt)
+      }
+      x = x[, maskaZmienne]
+      names(x) = nazwyZmiennych
     }
     return(x)
   })
   normyWy = lapply(normyWy, function(x) {
     if (all(c("wartosc", "wartosc_zr", "konstrukt") %in% names(x))) {
       konstrukt = x$konstrukt[1]
-      x = x[, c("wartosc", "wartosc_zr")]
-      names(x) = c("suma", konstrukt)
+      if ("grupa" %in% names(x)) {
+        maskaZmienne = c("grupa", "wartosc", "wartosc_zr")
+        nazwyZmiennych = c("grupa", "suma", konstrukt)
+      } else {
+        maskaZmienne = c("wartosc", "wartosc_zr")
+        nazwyZmiennych = c("suma", konstrukt)
+      }
+      x = x[, maskaZmienne]
+      names(x) = nazwyZmiennych
     }
     return(x)
   })
-  # przeliczenie egz. na wejściu na 100;15
+  # wyliczanie przewidywań
   przew = setNames(vector(mode = "list", length = length(modele)), names(modele))
   for (i in 1:length(modele)) {
     lata = as.numeric(gsub("[^[:digit:]]", "", names(normyWe)))
@@ -47,7 +61,8 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
     temp =
       lapply(temp,
              function(x, dane, model) {
-               maskaPoprawki = grep("^plec$|^dysl(|eksja)_", names(model.frame(model)))
+               maskaPoprawki = grep("^plec$|^dysl(|eksja)_",
+                                    names(model.frame(model)))
                temp = model.frame(model)[1:nrow(x), maskaPoprawki]
                for (i in 1:ncol(temp)) {
                  temp[, i] = levels(temp[, i])[1]
@@ -55,11 +70,13 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
                x = cbind(x, temp)
                x$wydl = factor(x$wydl, levels = levels(model.frame(model)$wydl))
                wydl = x$wydl[1]
-               names(x) = sub("^gm(R_ir|_r)$", "gm", names(x))
                skrotEgzWe = all.vars(formula(model))[-1]
                skrotEgzWe = setNames(skrotEgzWe, skrotEgzWe)
                skrotEgzWe = skrotEgzWe[!grepl("^(plec|wydl)$|^dysl(|eksja)_", skrotEgzWe)]
-               skrotEgzWe = sub("^(sum|norm)_|_(norm|suma)$", "", skrotEgzWe)
+               skrotEgzWe = sub("^(sum|norm|irt)_|_(norm|suma|irt)$", "", skrotEgzWe)
+               if (!any(skrotEgzWe %in% names(x))) {
+                 return(NULL)
+               }
                names(x) = sub(paste0("^", skrotEgzWe, "$"), names(skrotEgzWe), names(x))
                x = cbind(x[, names(x) %in% c("suma", names(skrotEgzWe))],
                          przew = predict(model, x))
@@ -76,6 +93,7 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
                return(x)
              },
              dane = dane, model = modele[[i]])
+    temp = temp[!unlist(lapply(temp, is.null))]
     temp = suppressMessages(join_all(temp, type = "full"))
     przew[[i]] = temp
   }
@@ -92,22 +110,6 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
   przew = przew[, c("suma",
                     names(przew)[!grepl("^suma$|^przew_", names(przew))],
                     names(przew)[ grepl("^przew_", names(przew))])]
-  # przeliczenie egz. na wyjściu na 100;15
-  normyWy =
-    lapply(normyWy,
-           function(x) {
-             x = dlply(x, names(x)[grep("^suma_", names(x))],
-                       function(x) {
-                         maska = grepl("^suma_", names(x))
-                         sufiks = paste0(as.numeric(x[1, maska]), collapse = "")
-                         x = x[, !maska]
-                         names(x)[names(x) != "suma"] =
-                           paste0(names(x)[names(x) != "suma"], "_", sufiks)
-                         return(x)
-                       })
-             x = suppressMessages(join_all(x, type = "full"))
-           })
-  # łączenie wyników z różnych modeli
   normyWy = suppressMessages(join_all(normyWy, type = "full"))
   # poprawki na płeć i dysleksję
   poprawki = mapply(
