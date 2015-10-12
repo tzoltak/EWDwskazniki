@@ -9,6 +9,10 @@ Zmiany w EWDwskazniki 0.7 (2015-10-06)
 - Nowe funkcjonalności:
   - dane_do_kalkulatora() obsługuje modele maturalne.
 
+- Poprawione błędy:
+  - porownaj_wielomiany() zapisuje nazwy statystyk dopasowania modeli, a nie
+    tylko ich wartości.
+
 --------------------
 Zmiany w EWDwskazniki 0.6 (2015-09-14)
 

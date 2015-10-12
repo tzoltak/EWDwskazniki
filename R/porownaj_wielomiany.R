@@ -37,7 +37,7 @@ porownaj_wielomiany = function(x, zapis = NULL, cyfryLinkTest = 5, cyfryR2 = 4) 
   message("Monotoniczność")
   print(czyRosnaca, row.names = FALSE)
 
-  parametry = lapply(x, function(x) {
+  statystyki = lapply(x, function(x) {
     if (is.matrix(x$R2)) {
       return(data.frame(bic = round(x$bic, cyfryR2),
                         "R2 ind." = round(x$R2[2, 2] / x$R2[2, 3], cyfryR2),
@@ -46,12 +46,15 @@ porownaj_wielomiany = function(x, zapis = NULL, cyfryLinkTest = 5, cyfryR2 = 4) 
       return(data.frame(bic = round(x$bic, cyfryR2), "R2" = round(x$R2, cyfryR2)))
     }
   })
-  parametry = t(rbind.fill(parametry))
-  colnames(parametry) = names(x)
-  message("Parametry")
-  print(parametry)
+  statystyki = t(rbind.fill(statystyki))
+  colnames(statystyki) = names(x)
+  message("Statystyki")
+  print(statystyki)
+  statystyki = data.frame(statystyka = rownames(statystyki), statystyki,
+                          stringsAsFactors = FALSE,check.names = FALSE)
 
-  wynik = list(linkTest = linkTest, czyRosnaca = czyRosnaca, parametry = parametry)
+  wynik = list(linkTest = linkTest, czyRosnaca = czyRosnaca,
+               statystyki = statystyki)
   if (!is.null(zapis)) {
     tryCatch({do_schowka(wynik, plik = zapis)}, error = stop)
   }
