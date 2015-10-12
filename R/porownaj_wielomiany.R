@@ -39,11 +39,11 @@ porownaj_wielomiany = function(x, zapis = NULL, cyfryLinkTest = 5, cyfryR2 = 4) 
 
   statystyki = lapply(x, function(x) {
     if (is.matrix(x$R2)) {
-      return(data.frame(bic = round(x$bic, cyfryR2),
+      return(data.frame(BIC = round(x$bic, cyfryR2),
                         "R2 ind." = round(x$R2[2, 2] / x$R2[2, 3], cyfryR2),
                         "R2 szk." = round(x$R2[1, 2] / x$R2[1, 3], cyfryR2)))
     } else {
-      return(data.frame(bic = round(x$bic, cyfryR2), "R2" = round(x$R2, cyfryR2)))
+      return(data.frame(BIC = round(x$bic, cyfryR2), "R2" = round(x$R2, cyfryR2)))
     }
   })
   statystyki = t(rbind.fill(statystyki))
