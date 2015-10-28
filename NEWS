@@ -1,4 +1,11 @@
 --------------------
+Zmiany w EWDwskazniki 0.7.1 (2015-10-28)
+
+- Poprawione błędy:
+  - przygotuj_wsk_ewd() radzi sobie w sytuacji, gdy argument 'danePominiete' nie
+    został podany (jest NULLem).
+
+--------------------
 Zmiany w EWDwskazniki 0.7 (2015-10-06)
 
 - Nowe funkcje:

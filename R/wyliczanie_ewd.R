@@ -54,25 +54,39 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
   message("Wyliczanie wartości EWD i średnich wyników 'na wyjściu'.")
   if (czyLm) {
     ewd = lapply(modele, ewd_es, idSzkoly = dane[, zmIdSzkWy, drop = FALSE])
-    ewdPominiete = lapply(modele, ewd_es,
-                          idSzkoly = danePominiete[, zmIdSzkWy, drop = FALSE],
-                          noweDane = danePominiete)
+    if (!is.null(danePominiete)) {
+      ewdPominiete = lapply(modele, ewd_es,
+                            idSzkoly = danePominiete[, zmIdSzkWy, drop = FALSE],
+                            noweDane = danePominiete)
+    }
   } else {
     ewd = lapply(modele, ewd_me)
-    ewdPominiete = lapply(modele, ewd_me_ssr, noweDane = danePominiete)
     ewd = mapply(sr_wy, modele, ewd, SIMPLIFY = FALSE)
-    ewdPominiete = mapply(sr_wy, modele, ewdPominiete, SIMPLIFY = FALSE)
+    if (!is.null(danePominiete)) {
+      ewdPominiete = lapply(modele, ewd_me_ssr, noweDane = danePominiete)
+      ewdPominiete = mapply(sr_wy, modele, ewdPominiete, SIMPLIFY = FALSE)
+    }
   }
   # łączenie wskaźników z danych "normalnych" i "pominiętych"
-  ewd = mapply(
-    function(x, y) {
-      x = rbind(
-        cbind(x, pomin = FALSE),
-        cbind(y, pomin = TRUE))
-      x = subset(x, !is.na(get("ewd")))
-      return(x)
-    },
-    ewd, ewdPominiete, SIMPLIFY = FALSE)
+  if (!is.null(danePominiete)) {
+    ewd = mapply(
+      function(x, y) {
+        x = rbind(
+          cbind(x, pomin = FALSE),
+          cbind(y, pomin = TRUE))
+        x = subset(x, !is.na(get("ewd")))
+        return(x)
+      },
+      ewd, ewdPominiete, SIMPLIFY = FALSE)
+  } else {
+    ewd = lapply(ewd,
+      function(x) {
+        x = cbind(x, pomin = FALSE)
+        x = subset(x, !is.na(get("ewd")))
+        return(x)
+      }
+    )
+  }
   # wyliczanie srednich wynikow "na wejsciu"
   message("Wyliczanie średnich wyników 'na wejściu'.")
   dane = rbind(dane, danePominiete)
