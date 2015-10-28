@@ -3,9 +3,11 @@ Zmiany w EWDwskazniki 0.7.1 (2015-10-28)
 
 - Poprawione błędy:
   - przygotuj_wsk_ewd() radzi sobie w sytuacji, gdy argument 'danePominiete' nie
-    został podany (jest NULLem).
+    został podany (jest NULLem);
   - panorama_ewd() radzi sobie w sytuacji, gdy argument wybierzSzkoly nie został
-    podany (jest NULLem).
+    podany (jest NULLem);
+  - tabelka_ld() radzi sobie w sytuacji, gdy argument 'kodyCzesciEgzWe' ma
+    więcej niż jeden element.
 
 --------------------
 Zmiany w EWDwskazniki 0.7 (2015-10-06)
@@ -117,4 +119,3 @@ Zmiany w EWDwskazniki 0.2 (2014-10-13)
 
 --------------------
 Publikacja EWDwskazniki 0.1 (2014-08-09)
-
