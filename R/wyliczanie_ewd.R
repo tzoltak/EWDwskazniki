@@ -426,8 +426,9 @@ sr_we = function(zmEgzWe, dane) {
             is.data.frame(dane))
   stopifnot(zmEgzWe %in% names(dane))
   zmIdSzk = c("s", "g", "m")
+  skrotEgzWe = substr(sub("^(norm|sum)_","", zmEgzWe), 1, 1)
   zmIdSzk = paste0("id_szkoly_",
-                   zmIdSzk[grep(substr(zmEgzWe, 1, 1), zmIdSzk) + 1])
+                   zmIdSzk[grep(substr(skrotEgzWe, 1, 1), zmIdSzk) + 1])
   stopifnot(zmIdSzk %in% names(dane))
 
   return(ddply(dane, zmIdSzk, function(x, y) {

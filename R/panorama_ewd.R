@@ -50,7 +50,11 @@ panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
   }
 
   for (i in 1:length(x)) {
-    temp = subset(x[[i]], eval(wybierzSzkoly, x[[i]]))
+    if (!is.null(wybierzSzkoly)) {
+      temp = subset(x[[i]], eval(wybierzSzkoly, x[[i]]))
+    } else {
+      temp = x[[i]]
+    }
     # na X egz. "wyjściu"
     message(names(x)[i], " x ", paste0("ewd_", names(x)[i]))
     panorama_ewd(temp[, names(x)[i]], temp[, paste0("ewd_", names(x)[i])],
