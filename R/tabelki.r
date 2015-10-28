@@ -29,8 +29,9 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
   skrotEgzWe = unique(substr(kodyCzesciEgzWe, 1, 1))
   skrotEgzWy = sub("^(sum|norm|irt|rsch)_|_(suma|norm|irt)$", "", nazwyZmWynikiEgzWy)
   skrotEgzWy = unique(substr(skrotEgzWy, 1, 1))
-  lZmLaurWe = sum(grepl(paste0("^laureat_",
-                               sub("R$", "", kodyCzesciEgzWe), "$"), names(x)))
+  lZmLaurWe = sum(grepl(paste0("^laureat_(",
+                               paste0(sub("R$", "", kodyCzesciEgzWe), collapse = "|"),
+                               ")$"), names(x)))
   czesciLaurWy = gsub("^(sum|norm|irt|rsch)_|(|R)_(suma|norm|irt)$", "",
                       nazwyZmWynikiEgzWy)
   if (all(paste0("laureat_", czesciLaurWy) %in% names(x))) {
