@@ -2,10 +2,13 @@
 Zmiany w EWDwskazniki 0.7.1 (2015-10-28)
 
 - Poprawione błędy:
-  - przygotuj_wsk_ewd() radzi sobie w sytuacji, gdy argument 'danePominiete' nie
-    został podany (jest NULLem);
+  - ewd_me_ssr() radzi sobie z występowaniem braków danych w argumencie
+    'noweDane';
   - panorama_ewd() radzi sobie w sytuacji, gdy argument wybierzSzkoly nie został
     podany (jest NULLem);
+  - przygotuj_wsk_ewd() radzi sobie w sytuacji, gdy argument 'danePominiete' nie
+    został podany (jest NULLem); a także w sytuacji, gdy nie został podany
+    argument 'skale' (jest NULLem);
   - tabelka_ld() radzi sobie w sytuacji, gdy argument 'kodyCzesciEgzWe' ma
     więcej niż jeden element.
 
