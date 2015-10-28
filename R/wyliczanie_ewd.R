@@ -139,13 +139,15 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
       message("Wskaźnik ", names(ewd)[i])
       maskaZm = intersect(names(dane), all.vars(formula(modele[[i]])))
       # wypełnianie wskazniki_skalowania
-      temp = suppressMessages(
-        join(skale, data.frame(zmienna = maskaZm), type = "inner"))
-      wskazniki_skalowania =
-        rbind(wskazniki_skalowania,
-              data.frame(rodzaj_wsk = "ewd", wskaznik = names(modele)[i],
-                         rok_do = rokDo, temp[, c("id_skali", "skalowanie")],
-                         stringsAsFactors = FALSE))
+      if (!is.null(skale)) {
+        temp = suppressMessages(
+          join(skale, data.frame(zmienna = maskaZm), type = "inner"))
+        wskazniki_skalowania =
+          rbind(wskazniki_skalowania,
+                data.frame(rodzaj_wsk = "ewd", wskaznik = names(modele)[i],
+                           rok_do = rokDo, temp[, c("id_skali", "skalowanie")],
+                           stringsAsFactors = FALSE))
+      }
       # wyliczanie liczby uczniów
       lUWsk = ddply(na.omit(dane[, maskaZm])[, c(zmIdSzkWy, zmRokEgzWy)],
                     unname(zmIdSzkWy),
@@ -274,6 +276,7 @@ ewd_me_ssr = function(x, noweDane = NULL) {
     resztySt = model.frame(x)[, 1] - predict(x, re.form = ~0)
     grupa = model.frame(x)[, names(VarCorr(x))[1]]
   } else {
+    noweDane = na.omit(noweDane[, names(noweDane) %in% all.vars(formula(x))])
     if (class(x) == "lmerMod") {
       resztySt = noweDane[, names(attributes(x)$frame)[1]] -
         predict(x, newdata = noweDane, re.form = ~0)
@@ -281,10 +284,7 @@ ewd_me_ssr = function(x, noweDane = NULL) {
       resztySt = noweDane[, as.character(x$formula[[2]])] -
         predict(x, newdata = noweDane, zLosowymi = FALSE)
     }
-    maska = !is.na(resztySt)
-    noweDane = noweDane[maska, names(noweDane) %in% all.vars(formula(x))]
     grupa = noweDane[, names(VarCorr(x))[1]]
-    resztySt = resztySt[maska]
   }
 
   sigma2E = sigma(x)^2
