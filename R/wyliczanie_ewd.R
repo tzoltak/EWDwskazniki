@@ -42,9 +42,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
     skale$opis_skali = sub("^[^;]+;([^;]+);.*$", "\\1", skale$opis_skali)
     names(skale) = sub("^opis_skali", "wskaznik", names(skale))
   }
-  if (!is.null(powiazaniaPrzedmiotow)) {
-    stopifnot(all(names(modele) %in% names(powiazaniaPrzedmiotow)))
-  } else {
+  if (is.null(powiazaniaPrzedmiotow)) {
     powiazaniaPrzedmiotow = list(
       mlp = "pol",
       mlm = "mat",
@@ -68,6 +66,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
     "wos" = "WOS",
     "ang" = "j. angielski"
   )
+  stopifnot(all(names(modele) %in% names(powiazaniaPrzedmiotow)))
   stopifnot(all(unlist(powiazaniaPrzedmiotow) %in% names(nazwyPrzedmiotow)))
 
   zmIdSzk = names(dane)[grep("^id_szkoly_", names(dane))]
