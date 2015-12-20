@@ -20,11 +20,13 @@
 #' @import EWDogolny
 #' @import plyr
 #' @export
-przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
+przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
+                             powiazaniaPrzedmiotow = NULL) {
   stopifnot(is.list(modele), length(modele) > 0,
             is.data.frame(dane),
             is.null(danePominiete) | is.data.frame(danePominiete),
-            is.null(skale) | is.data.frame(skale))
+            is.null(skale) | is.data.frame(skale),
+            is.null(powiazaniaPrzedmiotow) | is.list(powiazaniaPrzedmiotow))
   if (!is.null(danePominiete)) {
     stopifnot(all(names(dane) == names(danePominiete)))
   }
@@ -40,6 +42,33 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
     skale$opis_skali = sub("^[^;]+;([^;]+);.*$", "\\1", skale$opis_skali)
     names(skale) = sub("^opis_skali", "wskaznik", names(skale))
   }
+  if (!is.null(powiazaniaPrzedmiotow)) {
+    stopifnot(all(names(modele) %in% names(powiazaniaPrzedmiotow)))
+  } else {
+    powiazaniaPrzedmiotow = list(
+      mlp = "pol",
+      mlm = "mat",
+      mlh = c("pol", "his", "wos"),
+      mlmp = c("mat", "bio", "che", "fiz", "geo", "inf"),
+      mtp = "pol",
+      mtm = "mat",
+      mth = c("pol", "his", "wos"),
+      mtmp = c("mat", "bio", "che", "fiz", "geo", "inf")
+    )
+  }
+  nazwyPrzedmiotow = list(
+    "bio" = "biologia",
+    "che" = "chemia",
+    "fiz" = "fizyka",
+    "geo" = "geografia",
+    "his" = "historia",
+    "inf" = "informatyka",
+    "pol" = "j. polski",
+    "mat" = "matematyka",
+    "wos" = "WOS",
+    "ang" = "j. angielski"
+  )
+  stopifnot(all(unlist(powiazaniaPrzedmiotow) %in% names(nazwyPrzedmiotow)))
 
   zmIdSzk = names(dane)[grep("^id_szkoly_", names(dane))]
   if (length(zmIdSzk) < 1) {
@@ -168,12 +197,62 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
                             levels = 0:1, labels = c("nie", "tak"))
       })
       lUWsk = suppressMessages(join(lUWsk, lUWszyscy))
-      liczba_zdajacych = rbind(liczba_zdajacych,
-                               cbind(id_ww = NA, rodzaj_wsk = "ewd",
-                                     wskaznik = names(modele)[i],
-                                     kategoria_lu = "ogółem",
-                                     lUWsk[, !grepl("^roczn_", names(lUWsk))],
-                                     stringsAsFactors = FALSE))
+      maskaPrzyst = grepl("^zdawal_", names(dane))
+      if (sum(maskaPrzyst) > 0) {  # matura
+        przedmioty = unique(gsub("^zdawal_m_|_[pr]$", "",
+                                 names(dane)[maskaPrzyst]))
+        przedmioty = intersect(przedmioty,
+                               unlist(powiazaniaPrzedmiotow[[names(ewd)[i]]]))
+        lUPrzedm =
+          subset(dane[, names(dane) == zmIdSzkWy | maskaPrzyst],
+               rownames(dane) %in% rownames(model.frame(modele[[i]])))
+        lUPrzedm = lUPrzedm[, grepl(paste0("_", przedmioty, "_", collapse = "|"),
+                                   names(lUPrzedm)) | names(lUPrzedm) == zmIdSzkWy]
+        lUPrzedm = ddply(lUPrzedm, unname(zmIdSzkWy), function(x) {
+          return(as.data.frame(lapply(x[, !grepl("^id_szkoly", names(x))], sum)))
+        })
+        # zmiany nazw
+        lUPrzedm = reshape2::melt(lUPrzedm, id.vars = zmIdSzkWy)
+        lUPrzedm$variable = sub("^zdawal_(m_|)", "", lUPrzedm$variable)
+        lUPrzedm$variable = sub("_r$", " rozszerzona", lUPrzedm$variable)
+        lUPrzedm$variable = sub("_p$", " łącznie", lUPrzedm$variable)
+        for (j in przedmioty) {
+          lUPrzedm$variable = sub(paste0("^", j, " "),
+                                  paste0(nazwyPrzedmiotow[[j]], " "),
+                                  lUPrzedm$variable)
+        }
+        # sumowanie PP i PR do "łącznie"
+        lUPrzedmRozsz = subset(lUPrzedm, grepl(" rozszerzona$", get("variable")))
+        lUPrzedmRozsz = subset(lUPrzedmRozsz, !grepl(" (polski|matematyka) ",
+                                                     get("variable")))
+        lUPrzedmRozsz$variable = sub(" rozszerzona$", " łącznie",
+                                     lUPrzedmRozsz$variable)
+        names(lUPrzedmRozsz) = sub("value", "valueR", names(lUPrzedmRozsz))
+        lUPrzedm = suppressMessages(join(lUPrzedm, lUPrzedmRozsz))
+        rm(lUPrzedmRozsz)
+        lUPrzedm$valueR[is.na(lUPrzedm$valueR)] = 0
+        lUPrzedm$value = lUPrzedm$value + lUPrzedm$valueR
+        lUPrzedm = within(lUPrzedm, {
+          lu_wszyscy = NA
+          lu_ewd = value
+          lu = value
+        })
+        # dopisanie
+        liczba_zdajacych = rbind(liczba_zdajacych,
+                                 data.frame(id_ww = NA, rodzaj_wsk = "ewd",
+                                            wskaznik = names(modele)[i],
+                                            kategoria_lu = lUPrzedm$variable,
+                                            lUPrzedm[, grep("^id_szkoly|^lu",
+                                                            names(lUPrzedm))],
+                                            stringsAsFactors = FALSE))
+      } else { # egzaminy nie będące maturą
+        liczba_zdajacych = rbind(liczba_zdajacych,
+                                 cbind(id_ww = NA, rodzaj_wsk = "ewd",
+                                       wskaznik = names(modele)[i],
+                                       kategoria_lu = "ogółem",
+                                       lUWsk[, !grepl("^roczn_", names(lUWsk))],
+                                       stringsAsFactors = FALSE))
+      }
       # przesuwanie średniego wyniku na wyjściu i EWD do średniej ważonej liczbą uczniów w szkole odpowiednio 100 i 0
       ewd[[i]] = suppressMessages(join(ewd[[i]], lUWsk))
       zmEwd   = paste0("ewd_", names(ewd)[i])
