@@ -249,14 +249,13 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
                                             lUPrzedm[, grep("^id_szkoly|^lu",
                                                             names(lUPrzedm))],
                                             stringsAsFactors = FALSE))
-      } else { # egzaminy nie będące maturą
-        liczba_zdajacych = rbind(liczba_zdajacych,
-                                 cbind(id_ww = NA, rodzaj_wsk = "ewd",
-                                       wskaznik = names(modele)[i],
-                                       kategoria_lu = "ogółem",
-                                       lUWsk[, !grepl("^roczn_", names(lUWsk))],
-                                       stringsAsFactors = FALSE))
       }
+      liczba_zdajacych = rbind(liczba_zdajacych,
+                               cbind(id_ww = NA, rodzaj_wsk = "ewd",
+                                     wskaznik = names(modele)[i],
+                                     kategoria_lu = "ogółem",
+                                     lUWsk[, !grepl("^roczn_", names(lUWsk))],
+                                     stringsAsFactors = FALSE))
       # przesuwanie średniego wyniku na wyjściu i EWD do średniej ważonej liczbą uczniów w szkole odpowiednio 100 i 0
       ewd[[i]] = suppressMessages(join(ewd[[i]], lUWsk))
       zmEwd   = paste0("ewd_", names(ewd)[i])
