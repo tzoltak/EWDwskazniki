@@ -20,11 +20,13 @@
 #' @import EWDogolny
 #' @import plyr
 #' @export
-przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
+przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
+                             powiazaniaPrzedmiotow = NULL) {
   stopifnot(is.list(modele), length(modele) > 0,
             is.data.frame(dane),
             is.null(danePominiete) | is.data.frame(danePominiete),
-            is.null(skale) | is.data.frame(skale))
+            is.null(skale) | is.data.frame(skale),
+            is.null(powiazaniaPrzedmiotow) | is.list(powiazaniaPrzedmiotow))
   if (!is.null(danePominiete)) {
     stopifnot(all(names(dane) == names(danePominiete)))
   }
@@ -40,6 +42,32 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
     skale$opis_skali = sub("^[^;]+;([^;]+);.*$", "\\1", skale$opis_skali)
     names(skale) = sub("^opis_skali", "wskaznik", names(skale))
   }
+  if (is.null(powiazaniaPrzedmiotow)) {
+    powiazaniaPrzedmiotow = list(
+      mlp = "pol",
+      mlm = "mat",
+      mlh = c("pol", "his", "wos"),
+      mlmp = c("mat", "bio", "che", "fiz", "geo", "inf"),
+      mtp = "pol",
+      mtm = "mat",
+      mth = c("pol", "his", "wos"),
+      mtmp = c("mat", "bio", "che", "fiz", "geo", "inf")
+    )
+  }
+  nazwyPrzedmiotow = list(
+    "bio" = "biologia",
+    "che" = "chemia",
+    "fiz" = "fizyka",
+    "geo" = "geografia",
+    "his" = "historia",
+    "inf" = "informatyka",
+    "pol" = "j. polski",
+    "mat" = "matematyka",
+    "wos" = "WOS",
+    "ang" = "j. angielski"
+  )
+  stopifnot(all(names(modele) %in% names(powiazaniaPrzedmiotow)))
+  stopifnot(all(unlist(powiazaniaPrzedmiotow) %in% names(nazwyPrzedmiotow)))
 
   zmIdSzk = names(dane)[grep("^id_szkoly_", names(dane))]
   if (length(zmIdSzk) < 1) {
@@ -80,16 +108,21 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
       ewd, ewdPominiete, SIMPLIFY = FALSE)
   } else {
     ewd = lapply(ewd,
-      function(x) {
-        x = cbind(x, pomin = FALSE)
-        x = subset(x, !is.na(get("ewd")))
-        return(x)
-      }
+                 function(x) {
+                   x = cbind(x, pomin = FALSE)
+                   x = subset(x, !is.na(get("ewd")))
+                   return(x)
+                 }
     )
   }
   # wyliczanie srednich wynikow "na wejsciu"
   message("Wyliczanie średnich wyników 'na wejściu'.")
   dane = rbind(dane, danePominiete)
+  if ("matura_miedzynarodowa" %in% names(dane)) {
+    ib = ddply(dane[, c(zmIdSzkWy, "matura_miedzynarodowa")], unname(zmIdSzkWy),
+               function(x) {return(data.frame(matura_miedzynarodowa =
+                                                any(x$matura_miedzynarodowa)))})
+  }
   rm(danePominiete)
   zmEgzWe = lapply(modele, zgadnij_zm_egz_we)
   sr_we = lapply(zmEgzWe, sr_we, dane = dane)
@@ -168,6 +201,55 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
                             levels = 0:1, labels = c("nie", "tak"))
       })
       lUWsk = suppressMessages(join(lUWsk, lUWszyscy))
+      maskaPrzyst = grepl("^zdawal_", names(dane))
+      if (sum(maskaPrzyst) > 0) {  # matura
+        przedmioty = unique(gsub("^zdawal_m_|_[pr]$", "",
+                                 names(dane)[maskaPrzyst]))
+        przedmioty = intersect(przedmioty,
+                               unlist(powiazaniaPrzedmiotow[[names(ewd)[i]]]))
+        lUPrzedm =
+          subset(dane[, names(dane) == zmIdSzkWy | maskaPrzyst],
+                 rownames(dane) %in% rownames(model.frame(modele[[i]])))
+        lUPrzedm = lUPrzedm[, grepl(paste0("_", przedmioty, "_", collapse = "|"),
+                                    names(lUPrzedm)) | names(lUPrzedm) == zmIdSzkWy]
+        lUPrzedm = ddply(lUPrzedm, unname(zmIdSzkWy), function(x) {
+          return(as.data.frame(lapply(x[, !grepl("^id_szkoly", names(x))], sum)))
+        })
+        # zmiany nazw
+        lUPrzedm = reshape2::melt(lUPrzedm, id.vars = zmIdSzkWy)
+        lUPrzedm$variable = sub("^zdawal_(m_|)", "", lUPrzedm$variable)
+        lUPrzedm$variable = sub("_r$", " rozszerzona", lUPrzedm$variable)
+        lUPrzedm$variable = sub("_p$", " łącznie", lUPrzedm$variable)
+        for (j in przedmioty) {
+          lUPrzedm$variable = sub(paste0("^", j, " "),
+                                  paste0(nazwyPrzedmiotow[[j]], " "),
+                                  lUPrzedm$variable)
+        }
+        # sumowanie PP i PR do "łącznie"
+        lUPrzedmRozsz = subset(lUPrzedm, grepl(" rozszerzona$", get("variable")))
+        lUPrzedmRozsz = subset(lUPrzedmRozsz, !grepl(" (polski|matematyka) ",
+                                                     get("variable")))
+        lUPrzedmRozsz$variable = sub(" rozszerzona$", " łącznie",
+                                     lUPrzedmRozsz$variable)
+        names(lUPrzedmRozsz) = sub("value", "valueR", names(lUPrzedmRozsz))
+        lUPrzedm = suppressMessages(join(lUPrzedm, lUPrzedmRozsz))
+        rm(lUPrzedmRozsz)
+        lUPrzedm$valueR[is.na(lUPrzedm$valueR)] = 0
+        lUPrzedm$value = lUPrzedm$value + lUPrzedm$valueR
+        lUPrzedm = within(lUPrzedm, {
+          lu_wszyscy = NA
+          lu_ewd = value
+          lu = value
+        })
+        # dopisanie
+        liczba_zdajacych = rbind(liczba_zdajacych,
+                                 data.frame(id_ww = NA, rodzaj_wsk = "ewd",
+                                            wskaznik = names(modele)[i],
+                                            kategoria_lu = lUPrzedm$variable,
+                                            lUPrzedm[, grep("^id_szkoly|^lu",
+                                                            names(lUPrzedm))],
+                                            stringsAsFactors = FALSE))
+      }
       liczba_zdajacych = rbind(liczba_zdajacych,
                                cbind(id_ww = NA, rodzaj_wsk = "ewd",
                                      wskaznik = names(modele)[i],
@@ -192,7 +274,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
                          parametr = c("przesEWD", "przesWynEgzWy"),
                          wartosc = c(przesEwd, przesWyn),
                          bs = NA,  rok_do = rokDo, rodzaj_wsk = "ewd"))
-      message("  Przesunięcie średnich wyników końcowych: ", format(przesWyn - 100, nsmall=2, digits=2))
+      message("  Przesunięcie średnich wyników końcowych: ",
+              format(przesWyn - 100, nsmall=2, digits=2))
       message("  Przesunięcie EWD: ", format(przesEwd, nsmall=2, digits=2))
       message("  Prawdopodobieństwa empiryczne dla warstwic: ")
       pr = with(subset(ewd[[i]], !get("pomin")),
@@ -203,13 +286,26 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL) {
                                    stringsAsFactors = FALSE))
       # przypisywanie kategorii
       ewd[[i]] = within(ewd[[i]], {kategoria = 0})
-      ewd[[i]] = within(ewd[[i]], {
-        kategoria[get("roczn_liczba") == 2 & get("roczn_nowy") == "tak"] = 1  # wyniki tylko z dwóch roczników, ale są wyniki z najnowszego rocznika
-        kategoria[get("lu_ewd") / get("lu_wszyscy") < 0.9              ] = 2  # ponad 10% niepołączonych wyników
-        kategoria[get("lu_ewd") < 30                                   ] = 4  # mniej niż 30 połączonych wyników
-        kategoria[get("roczn_liczba") < 2                              ] = 5  # dane z tylko jednego rocznika
-        kategoria[get("roczn_nowy") == "nie"                           ] = 6  # brak danych z najnowszego rocznika
-      })
+      if (zmRokEgzWy == "rok_m") {
+        ewd[[i]] = suppressMessages(join(ewd[[i]], ib))
+        ewd[[i]] = within(ewd[[i]], {
+          kategoria[get("roczn_liczba") == 2 & get("roczn_nowy") == "tak" ] = 200  # wyniki tylko z dwóch roczników, ale są wyniki z najnowszego rocznika
+          kategoria[get("roczn_liczba") == 1 & get("roczn_nowy") == "tak" ] = 201  # wyniki tylko z jednego rocznika, ale są wyniki z najnowszego rocznika
+          kategoria[get("lu_ewd") / get("lu_wszyscy") < 0.9               ] = 202  # ponad 10% niepołączonych wyników
+          kategoria[get("matura_miedzynarodowa") == 1                     ] = 203  # w szkole jest zdawana matura międzynarodowa
+          kategoria[get("lu_ewd") < 30                                    ] = 204  # mniej niż 30 połączonych wyników
+          kategoria[get("lu_ewd") < 30 & get("matura_miedzynarodowa") == 1] = 205  # mniej niż 30 połączonych wyników
+          kategoria[get("roczn_nowy") == "nie"                            ] = 206  # brak danych z najnowszego rocznika
+        })
+      } else {
+        ewd[[i]] = within(ewd[[i]], {
+          kategoria[get("roczn_liczba") == 2 & get("roczn_nowy") == "tak"] = 1  # wyniki tylko z dwóch roczników, ale są wyniki z najnowszego rocznika
+          kategoria[get("lu_ewd") / get("lu_wszyscy") < 0.9              ] = 2  # ponad 10% niepołączonych wyników
+          kategoria[get("lu_ewd") < 30                                   ] = 4  # mniej niż 30 połączonych wyników
+          kategoria[get("roczn_liczba") < 2                              ] = 5  # dane z tylko jednego rocznika
+          kategoria[get("roczn_nowy") == "nie"                           ] = 6  # brak danych z najnowszego rocznika
+        })
+      }
       message("  Rozkład kategorii:")
       print(with(ewd[[i]], ftable(get("pomin"), get("kategoria"))))
       message("")

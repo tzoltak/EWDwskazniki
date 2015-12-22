@@ -1,4 +1,12 @@
 --------------------
+Zmiany w EWDwskazniki 0.8 (2015-12-22)
+
+- Nowe funkcjonalności:
+  - przygotuj_wsk_ewd() radzi sobie z przygotowywaniem zestawienia liczby
+    zdających przystepujących do poszczególnych części egzaminu również dla
+    matury.
+
+--------------------
 Zmiany w EWDwskazniki 0.7.1 (2015-10-28)
 
 - Poprawione błędy:
