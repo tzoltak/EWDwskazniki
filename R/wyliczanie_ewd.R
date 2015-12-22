@@ -227,7 +227,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
         }
         # sumowanie PP i PR do "łącznie"
         lUPrzedmRozsz = subset(lUPrzedm, grepl(" rozszerzona$", get("variable")))
-        lUPrzedmRozsz = subset(lUPrzedmRozsz, !grepl(" (polski|matematyka) ",
+        lUPrzedmRozsz = subset(lUPrzedmRozsz, !grepl("(polski|matematyka) ",
                                                      get("variable")))
         lUPrzedmRozsz$variable = sub(" rozszerzona$", " łącznie",
                                      lUPrzedmRozsz$variable)
