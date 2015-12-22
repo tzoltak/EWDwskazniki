@@ -20,6 +20,15 @@ przeksztalc_skale_zmiennych = function(dane, czesciEgzWy, sufiksWyniki) {
   if (sufiksWyniki == "irt") {
     # jeśli operujemy na wynikach wyskalowanych IRT, to zm. zależne trzeba przerzucić na 100;15
     for (i in intersect(names(dane), paste0(czesciEgzWy, "_irt"))) {
+# brut-hack na problem z nietrzymaniem skali przez zapisane w bazie oszacowania umiejętności z matury
+#       for (j in unique(dane$rok_m)) {
+#         maskaRok = dane$rok_m == j
+#         maska = maskaRok & !dane$pomin_szkole
+#         sr = mean(dane[maska, i], na.rm = TRUE)
+#         os = sd(dane[maska, i], na.rm = TRUE)
+#         dane[maskaRok, i] = (dane[maskaRok, i] - sr) / os
+#         dane[maskaRok, i] = 100 + 15 * dane[maskaRok, i]
+#       }
       dane[, i] = 100 + 15 * dane[, i]
     }
   } else if (sufiksWyniki == "norm") {
