@@ -146,6 +146,7 @@ przeksztalc_skale_norm = function(normy, parametry, na10015 = TRUE) {
 #' @param czesciEgzWy wektor ciągów znaków, pozwala podać, zmienne związane
 #' z jakimi konstruktami mają zostać pominięte
 #' @return data frame
+#' @importFrom stats sd
 #' @export
 parametry_rozkladu_rasch = function(dane, czesciEgzWy = "") {
   stopifnot(is.data.frame(dane),
@@ -154,7 +155,7 @@ parametry_rozkladu_rasch = function(dane, czesciEgzWy = "") {
 
   dane = subset(dane, !get("pomin_szkole") & get("wydl") == "0")
   maska = names(dane)[grep(paste0("R_irt$"), names(dane))]
-  maska = maska[!grepl(paste0("^(bs|",
+  maska = maska[!grepl(paste0("^(bs|grupa|",
                               paste0(czesciEgzWy, collapse = "|"),
                               ")_"), maska)]
   skrotEgz = unique(substr(maska, 1, 1))

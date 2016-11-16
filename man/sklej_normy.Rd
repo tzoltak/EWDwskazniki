@@ -28,7 +28,8 @@ których oddzielnie ma być przeprowadzone łączenie}
 wykonane}
 }
 \value{
-Wektor liczbowy z przeliczonymi wartościami argumentu \code{wynikiZnorm}.
+Wektor liczbowy z przeliczonymi wartościami argumentu
+\code{wynikiZnorm}
 }
 \description{
 Funkcja służy do sklejania ze sobą najniższych wartości skali znormalizowanej

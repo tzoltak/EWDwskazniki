@@ -10,7 +10,7 @@ pseudoR2(model)
 \item{model}{parametr klasy 'lmerMod' lub 'lm'.}
 }
 \value{
-Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model.
+Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model
 }
 \description{
 Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'

@@ -11,26 +11,28 @@ diagnostyka_wielomianow(model, zmWielomian, zmGrupujace = NULL,
 \arguments{
 \item{model}{obiekt klasy 'lm' lub 'lmerMod'}
 
-\item{zmWielomian}{ciąg znaków określający zmienną wielomianu}
+\item{zmWielomian}{ciąg znaków lub formuła określający zmienną wielomianu}
 
-\item{zmGrupujace}{wektor ciągów znakowych określających zmienne modelu, na
-podstawie których określone są grupy, w których wykonywane są obliczenia oraz
-dla których są sporządzane wykresy}
+\item{zmGrupujace}{opcjonalnie wektor ciągów znaków lub formuła określających
+zmienne modelu, na podstawie których określone są grupy, w których wykonywane
+są obliczenia oraz dla których są sporządzane wykresy}
 
-\item{folderWykresy}{ścieżka do folderu, gdzie powinny być zapisane wykresy.
-Jeżeli jest równa NULL to wykresy nie są zapisywane.}
+\item{folderWykresy}{opcjonalnie ścieżka do folderu, gdzie powinny być
+zapisane wykresy; jeżeli jest równa NULL to wykresy nie są zapisywane}
 
-\item{wykresyFun}{funkcja rysująca wykresy. Domyślnie jest to \code{png}.}
+\item{wykresyFun}{opcjonalnie  funkcja rysująca wykresy; domyślnie jest to
+\code{\link[grDevices]{png}}.}
 
-\item{wykresyParam}{lista parametrów funkcji rysującej wykresy.}
+\item{wykresyParam}{opcjonalnie lista parametrów funkcji rysującej wykresy}
 
-\item{przew_nparPar}{lista z parametrami funkcji \code{\link{przew_npar}}.}
+\item{przew_nparPar}{opcjonalnie lista z parametrami funkcji
+\code{\link{przew_npar}}.}
 
-\item{smooothScatterPar}{lista z parametrami funkcji
+\item{smooothScatterPar}{opcjonalnie lista z parametrami funkcji
 \code{\link[graphics]{smoothScatter}}.}
 }
 \value{
-funkcja zwraca listę z obliczeniami dla modelu.
+funkcja zwraca listę z obliczeniami dla modelu
 }
 \description{
 Funkcja oblicza link test, BIC oraz współczynnik R2 (w przypadku modeli 'lm')

@@ -17,7 +17,8 @@ funkcja zwraca błąd dla formuł prawostronnych, które
 zawierają więcej niż jedną zmienną.}
 }
 \value{
-wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
+wektor ciągów znakowych, które są nazwami prawostronnych zmiennych
+formuły
 }
 \description{
 Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły.

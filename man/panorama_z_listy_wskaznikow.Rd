@@ -25,7 +25,7 @@ użyte do zawężenia grupy szkół, których wyniki będą prezentowane; np.
 w przypadku matury)}
 }
 \value{
-funkcja nic nie zwraca.
+funkcja nic nie zwraca
 }
 \description{
 Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze

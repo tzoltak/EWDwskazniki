@@ -18,11 +18,11 @@ dla których należy zbudować modele.}
 \item{typModelu}{zmienna określająca, jaki model ma być użyty. Dopuszczalne
 wartości to "lm" oraz "lmer".}
 
-\item{zmEgzWej}{nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
-egzaminu wejściowego.}
+\item{zmEgzWej}{nazwa kolumny ramki 'dane', która zawiera wyniki
+(oszacowania umiejętności) egzaminu wejściowego.}
 
-\item{zmEgzWyj}{nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
-egzaminu wyjściowego.}
+\item{zmEgzWyj}{nazwa kolumny ramki 'dane', która zawiera wyniki
+(oszacowania umiejętności) egzaminu wyjściowego.}
 
 \item{zmGrupujace}{wektor ciągów znakowych określających zmienne modelu, na
 podstawie których określone są grupy, w których wykonywane są obliczenia oraz
@@ -50,7 +50,7 @@ powinny zostać użyte do wyestymowania modeli.}
 }
 \value{
 funkcja zwraca listę modeli lub model (w przypadku podania parametru
-'stopnie' o długości 1).
+'stopnie' o długości 1)
 }
 \description{
 Funkcja wykonuje pełną diagnostykę modeli EWD.

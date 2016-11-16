@@ -7,10 +7,10 @@
 #' wartości to "lm" oraz "lmer".
 #' @param efektLosowy nazwa kolumny ramki 'dane', która określa efekt losowy.
 #' Parametr ignorowany dla modelu 'lm'.
-#' @param zmEgzWej nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
-#' egzaminu wejściowego.
-#' @param zmEgzWyj nazwa kolumny ramki 'dane', która zawiera wyniki(umiejętności)
-#' egzaminu wyjściowego.
+#' @param zmEgzWej nazwa kolumny ramki 'dane', która zawiera wyniki
+#' (oszacowania umiejętności) egzaminu wejściowego.
+#' @param zmEgzWyj nazwa kolumny ramki 'dane', która zawiera wyniki
+#' (oszacowania umiejętności) egzaminu wyjściowego.
 #' @param zmGrupujace wektor ciągów znakowych określających zmienne modelu, na
 #' podstawie których określone są grupy, w których wykonywane są obliczenia oraz
 #' dla których są sporządzane wykresy
@@ -26,7 +26,8 @@
 #' @param maska wektor logiczny określający, które obserwacje z ramki dane
 #' powinny zostać użyte do wyestymowania modeli.
 #' @return funkcja zwraca listę modeli lub model (w przypadku podania parametru
-#' 'stopnie' o długości 1).
+#' 'stopnie' o długości 1)
+#' @importFrom stats as.formula lm na.omit
 #' @import lme4
 #' @export
 diagnostyka_pelna <- function(dane, stopnie, typModelu, zmEgzWej, zmEgzWyj,

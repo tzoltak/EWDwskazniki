@@ -7,15 +7,16 @@
 #' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to
 #' funkcja zwraca błąd dla formuł prawostronnych, które
 #' zawierają więcej niż jedną zmienną.
-#' @import formula.tools
-#' @return wektor ciągów znakowych, które są nazwami prawostronnych zmiennych formuły.
+#' @return wektor ciągów znakowych, które są nazwami prawostronnych zmiennych
+#' formuły
+#' @importFrom stats terms
 wyciagnij_nazwe_zmiennej <- function(formula,
                                      nazwa = as.character(substitute(formula)),
                                      czyJednaZmienna = TRUE){
   if (is.null(formula)) {
     return(formula)
   } else if (class(formula) == "formula") {
-    if (!is.one.sided(formula)  ) {
+    if (attributes(terms(formula) )$response != 0) {
       stop(paste0("Formuła ", nazwa, " nie jest prawostronna."))
     }
     zmienne = all.vars(formula)
@@ -35,7 +36,7 @@ wyciagnij_nazwe_zmiennej <- function(formula,
 #' Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'
 #' zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
-#' @return Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model.
+#' @return Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model
 pseudoR2 <- function(model){
   return(UseMethod("pseudoR2"))
 }
@@ -44,10 +45,12 @@ pseudoR2.lm <- function(model){
   return(summary(model)$r.squared)
 }
 
+#' @importFrom stats cov.wt model.frame predict
 #' @import plyr
 pseudoR2.lmerMod <- function(model){
   efLos = ranef(model)
-  ret = c(sapply(VarCorr(model), function(x) x[[1]]), attributes(VarCorr(model))$sc^2)
+  ret = c(sapply(VarCorr(model), function(x) x[[1]]),
+          attributes(VarCorr(model))$sc^2)
 
   dt = data.frame(pred = predict(model, re.form = ~0),
                   efekt = model.frame(model)[, names(efLos)])
@@ -70,7 +73,7 @@ pseudoR2.lmerMod <- function(model){
 }
 
 fixef.lm <- function(model){
-  return(coefficients(model))
+  return(coef(model))
 }
 
 ranef.lm <- function(model){
@@ -85,8 +88,9 @@ ranef.lm <- function(model){
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
 #' @param zmiennaWielomianowa nazwa zmiennej, która jest parametrem wielomianu.
 #' @return funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne
-#' ramki danych, a nazwy kolumn to nazwy współczynników modelu.
-model_map <- function(model, zmiennaWielomianowa){
+#' ramki danych, a nazwy kolumn to nazwy współczynników modelu
+#' @importFrom stats model.frame model.matrix
+model_map = function(model, zmiennaWielomianowa){
   # macierz zawierająca przypisanie zmiennych z formuły do efektów
   # poszczególnych rzędów, ale jeszcze bez rozbicia factorów na dummiesy
   mapowanie = attributes(attributes(model.frame(model))$terms)$factors
@@ -96,7 +100,7 @@ model_map <- function(model, zmiennaWielomianowa){
   mapowanie = mapowanie[, colSums(mapowanie) > 0]
   # maska wskazująca na wiersze powiązane ze zmienną wprowadzaną wielomianem
   # (gdy w formule jest poly(), wiersz jest tylko jeden, ale gdy wielomian był
-  # wprowadzany przez zm+I(zm^2)+..., to jest ich wiele)
+  # wprowadzany przez zm + I(zm^2) + ..., to jest ich wiele)
   maskaZmWielomian = grepl(paste0("^(|poly[(]|I[(])", zmiennaWielomianowa,
                                   "(|,.+[)]|[ ^][[:digit:]]+[)])$"),
                            rownames(mapowanie))

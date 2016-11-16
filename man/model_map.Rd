@@ -13,7 +13,7 @@ model_map(model, zmiennaWielomianowa)
 }
 \value{
 funkcja zwraca macierz logiczną, której nazwy wierszy to zmienne
-ramki danych, a nazwy kolumn to nazwy współczynników modelu.
+ramki danych, a nazwy kolumn to nazwy współczynników modelu
 }
 \description{
 Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki

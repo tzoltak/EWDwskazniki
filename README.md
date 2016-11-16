@@ -25,5 +25,16 @@ devtools::install_github('tzoltak/EWDwskazniki')
    * W konsoli wywołać:
 ```r
 git clone https://github.com/tzoltak/EWDwskazniki.git
-R CMD INSTALL ZPD
+R CMD INSTALL EWDwskazniki
 ```
+
+## Cytowanie
+
+Jeśli korzystasz z danych udostępnianych przez pakiet ZPD, jako źródło danych zacytuj proszę:
+
+Żółtak T. (2015).*Statystyczne modelowanie wskaźnikow Edukacyjnej Wartości Dodanej. Podsumowanie polskich doświadczeń 2005-2015*. Warszawa: Instytut Badań Edukacyjnych.
+
+## Sponsorzy
+
+Pakiet został opracowany w ramach projektu systemowego *Rozwój metody edukacyjnej wartości dodanej na potrzeby wzmocnienia ewaluacyjnej funkcji egzaminów zewnętrznych* (UDA-POKL.03.02.00-00-001/13-00) współfinansowanego przez Unię Europejską ze środków Europejskiego Funduszu społecznego, realizowanych przez Instytut Badań Edukacyjnych.
+![KL+IBE+EFS](inst/logo-IBE-EWD.png)

@@ -9,11 +9,12 @@
 \arguments{
 \item{object}{model klasy \code{lmeEWD}}
 
-\item{...}{parametry: 'newdata' - ramka danych, dla których należy wyliczyć przewidywania oraz
-'zLosowymi' -  wartość boolowska określająca, czy uwzględniać w przewidywaniach efekt losowy.}
+\item{...}{parametry: \code{newdata} - ramka danych, dla których należy
+obliczyć przewidywania oraz \code{zLosowymi} -  wartość logiczna określająca,
+czy uwzględniać w przewidywaniach efekt losowy}
 }
 \value{
-wektor liczb.
+wektor liczb
 }
 \description{
 Funkcja tworzy obiekt klasy 'lmeEWD' na podstawie obiektu 'lmerMod'.

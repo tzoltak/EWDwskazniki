@@ -41,7 +41,7 @@ szkołach. Wymagany do wyznaczenia elips.}
 elipsy są niebieskie.}
 }
 \value{
-funkcja nic nie zwraca.
+funkcja nic nie zwraca
 }
 \description{
 Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze

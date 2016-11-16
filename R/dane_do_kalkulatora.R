@@ -12,9 +12,10 @@
 #' @details
 #' Dane muszą być przekazane oddzielnym argumentem, aby uprościć sobie sprawę
 #' z wykrywaniem, jakie były najniższe wartości egzaminu na wejściu występujące
-#' w danych (jeśli w formule modelu użyto funkcji \code{poly()}, jest to
+#' w danych (jeśli w formule modelu użyto funkcji \code{poly}, jest to
 #' niebanalne).
 #' @return lista
+#' @importFrom stats coef density formula model.frame predict resid setNames
 #' @export
 dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
   stopifnot(is.list(modele), is.list(normyWe), is.list(normyWy))

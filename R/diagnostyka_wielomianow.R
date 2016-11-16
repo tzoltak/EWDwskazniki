@@ -5,58 +5,86 @@
 #' wielomianowa modelu jest rosnąca oraz rysuje wykresy reszt modelu z wykresem
 #' przewidywań wielomianem i regesją nieparametryczną.
 #' @param model obiekt klasy 'lm' lub 'lmerMod'
-#' @param zmWielomian ciąg znaków określający zmienną wielomianu
-#' @param zmGrupujace wektor ciągów znakowych określających zmienne modelu, na
-#' podstawie których określone są grupy, w których wykonywane są obliczenia oraz
-#' dla których są sporządzane wykresy
-#' @param folderWykresy ścieżka do folderu, gdzie powinny być zapisane wykresy.
-#' Jeżeli jest równa NULL to wykresy nie są zapisywane.
-#' @param wykresyFun funkcja rysująca wykresy. Domyślnie jest to \code{png}.
-#' @param wykresyParam lista parametrów funkcji rysującej wykresy.
-#' @param przew_nparPar lista z parametrami funkcji \code{\link{przew_npar}}.
-#' @param smooothScatterPar lista z parametrami funkcji
+#' @param zmWielomian ciąg znaków lub formuła określający zmienną wielomianu
+#' @param zmGrupujace opcjonalnie wektor ciągów znaków lub formuła określających
+#' zmienne modelu, na podstawie których określone są grupy, w których wykonywane
+#' są obliczenia oraz dla których są sporządzane wykresy
+#' @param folderWykresy opcjonalnie ścieżka do folderu, gdzie powinny być
+#' zapisane wykresy; jeżeli jest równa NULL to wykresy nie są zapisywane
+#' @param wykresyFun opcjonalnie  funkcja rysująca wykresy; domyślnie jest to
+#' \code{\link[grDevices]{png}}.
+#' @param wykresyParam opcjonalnie lista parametrów funkcji rysującej wykresy
+#' @param przew_nparPar opcjonalnie lista z parametrami funkcji
+#' \code{\link{przew_npar}}.
+#' @param smooothScatterPar opcjonalnie lista z parametrami funkcji
 #' \code{\link[graphics]{smoothScatter}}.
-#' @return funkcja zwraca listę z obliczeniami dla modelu.
+#' @return funkcja zwraca listę z obliczeniami dla modelu
+#' @importFrom stats AIC coef lm model.frame model.matrix
+#' @importFrom graphics grid lines smoothScatter
+#' @importFrom grDevices blues9 colorRampPalette dev.print grey png
 #' @import EWDogolny
 #' @import lme4
 #' @import plyr
 #' @export
-diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
-                                   folderWykresy = NULL, wykresyFun = png, wykresyParam = NULL,
-                                   przew_nparPar = NULL, smooothScatterPar = NULL){
+diagnostyka_wielomianow = function(model, zmWielomian, zmGrupujace = NULL,
+                                   folderWykresy = NULL, wykresyFun = png,
+                                   wykresyParam = NULL, przew_nparPar = NULL,
+                                   smooothScatterPar = NULL){
   zmWielomian = wyciagnij_nazwe_zmiennej(zmWielomian)
   zmGrupujace = wyciagnij_nazwe_zmiennej(zmGrupujace, czyJednaZmienna = FALSE)
-  # trzeba tu dopisać jakieś sprawdzanie warunków, czy zmWielomian i zmGrupujace są w modelu (czy tam w danych)
+  stopifnot("lm" %in% class(model) | "lmerMod" %in% class(model),
+            is.character(zmWielomian), is.function(wykresyFun),
+            is.null(zmGrupujace) | is.character(zmGrupujace),
+            is.null(folderWykresy) | is.character(folderWykresy),
+            is.null(wykresyParam) | is.list(wykresyParam),
+            is.null(przew_nparPar) | is.list(przew_nparPar),
+            is.null(smooothScatterPar) | is.list(smooothScatterPar))
+  stopifnot(zmWielomian %in% all.vars(formula(model)),
+            all(zmGrupujace %in% all.vars(formula(model))))
+  if (!is.null(folderWykresy)) {
+    stopifnot(dir.exists(folderWykresy))
+  }
 
-  zmWielomianMacierz = colnames(model.matrix(model))[ grepl(paste0("^", zmWielomian, "$|^poly[(]", zmWielomian,", [[:digit:]]+(|, raw = TRUE)[)][1]{0,1}$") , colnames(model.matrix(model)))]
+  zmWielomianMacierz = colnames(model.matrix(model))
+  zmWielomianMacierz =
+    zmWielomianMacierz[grepl(paste0("^", zmWielomian, "$|^poly[(]",
+                                    zmWielomian,
+                                    ", [[:digit:]]+(|, raw = TRUE)[)][1]{0,1}$"),
+                             colnames(model.matrix(model)))]
 
   mapowanie = model_map(model, zmWielomian)
   # Teraz wykorzystując mapowanie możemy przygotować maski:
   maskaWielomian = mapowanie[rownames(mapowanie) == zmWielomian, ]
-  maskaGrupowanie = apply( mapowanie[ rownames(mapowanie) %in% zmGrupujace , , drop = FALSE], 2, any) &
+  maskaGrupowanie =
+    apply(mapowanie[rownames(mapowanie) %in% zmGrupujace, , drop = FALSE], 2, any) &
     apply(!mapowanie[!(rownames(mapowanie) %in% zmGrupujace), , drop = FALSE], 2, all)
   maskaGrupowanie = c(TRUE, maskaGrupowanie[-1])  # i jeszcze stała
   maskaPozostale = !maskaWielomian & !maskaGrupowanie
 
-  maskaTylkoWielomian = mapowanie[rownames(mapowanie) == zmWielomian, ] &
-    apply( !mapowanie[ !rownames(mapowanie) %in% zmWielomian , , drop = FALSE], 2, all)
+  maskaTylkoWielomian =
+    mapowanie[rownames(mapowanie) == zmWielomian, ] &
+    apply(!mapowanie[ !rownames(mapowanie) %in% zmWielomian, , drop = FALSE], 2, all)
   stopien = sum(maskaTylkoWielomian)
 
   if (class(model) == "lm") {
     modelMatrix = t(model.matrix(model)) * coef(model)
-    # nie transponuję z powrotem po mnożeniu, więc poniżej są colSums, a nie rowSums
-    # a mapowania są po wierszach
+    # nie transponuję z powrotem po mnożeniu, więc poniżej są colSums,
+    # a nie rowSums, a mapowania są po wierszach
     przewWielomian = colSums(modelMatrix[maskaWielomian | maskaGrupowanie, ])
     resztyCzesciowe = model.frame(model)[, 1] - colSums(modelMatrix[maskaPozostale, ])
     rm(modelMatrix)
   } else if (class(model) == "lmerMod") {
     # W wersji dla lmer() jest bardziej skomplikowanie, ale za to za jednym
-    # zamachem uwzględnimy sobie efekty losowe, w tym ew. efekty losowe dla nachyleń(!),
-    # których w naszych modelach co prawda póki co nie ma, ale w ogólności mogłyby być.
-    # Przewidywanie z wielomianu idzie po prostu z efektów stałych, bez wielkiego cudowania:
-    przewWielomian = colSums(t(model.matrix(model)[, maskaWielomian | maskaGrupowanie]) *
-                               fixef(model)[maskaWielomian | maskaGrupowanie])
-    # nie transponuję z powrotem po mnożeniu, więc poniżej są colSums, a nie rowSums
+    # zamachem uwzględnimy sobie efekty losowe, w tym ew. efekty losowe dla
+    # nachyleń(!), których w naszych modelach co prawda póki co nie ma, ale
+    # w ogólności mogłyby być.
+    # Przewidywanie z wielomianu idzie po prostu z efektów stałych, bez
+    # wielkiego cudowania:
+    przewWielomian =
+      colSums(t(model.matrix(model)[, maskaWielomian | maskaGrupowanie]) *
+                fixef(model)[maskaWielomian | maskaGrupowanie])
+    # nie transponuję z powrotem po mnożeniu, więc poniżej są colSums,
+    # a nie rowSums
     # Z resztami częściowymi sprawa jest troszkę bardziej złożona, bo one muszą
     # przechwycić efekty stałe i losowe pozostałych zmiennych, ale też efekty
     # losowe wielomianu (i grupowania):
@@ -67,7 +95,7 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
                      dimnames = dimnames(model.matrix(model)))
     efSt = coef(model) # to jest lista data.frame'ów!
     # elementy listy są związane z pogupowaniem (dla odmiany tym związanym
-    # z efektem losowym), i każdy z nich jest data.framem opisującym wartości
+    # z efektem losowym), i każdy z nich jest data framem opisującym wartości
     # parametrów w ramach każdej grupy danego pogrupowania (tj. efekt stały plus
     # ew. przewidywanie realizacji efektu losowego w ramach danej grupy)
     for (i in 1:length(efSt)) {
@@ -86,7 +114,7 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
       efSt[[i]] = cbind(rownames(efSt[[i]]), efSt[[i]], stringsAsFactors = FALSE)
       colnames(efSt[[i]])[1] = names(efSt)[i]
       # zawikłane: chcemy wydobyć z model.frame wartości zmiennej grupującej,
-      # skonwertować je na tekst (co by było kompatybilnie z tym, co wyciągnęliśmy
+      # skonwertować je na tekst (co by były kompatybilnie z tym, co wyciągnęliśmy
       # przed chwilą z rownames() - to przecież też tekst), ale żeby na końcu
       # cały czas mieć data.frame'a z zachowaną nazwą (jedynej) kolumny
       temp = as.data.frame(lapply(model.frame(model)[, names(efSt)[i], drop = FALSE],
@@ -97,7 +125,8 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
       efStObs = efStObs + efSt[[i]][, -1] # dodajemy
     }
     # tu mnożenie przez macierz o takim samym wymiarze, więc bez transpozycji
-    resztyCzesciowe = model.frame(model)[, 1] - (rowSums(model.matrix(model) * efStObs) )
+    resztyCzesciowe =
+      model.frame(model)[, 1] - (rowSums(model.matrix(model) * efStObs) )
     rm(efSt) # to może być duże, niech nie zajmuje miejsca niepotrzebnie
   }
 
@@ -126,7 +155,7 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
   # smoothscatter
   xlimSmooth = range(danePoobliczane$zmWielomianowa, na.rm = TRUE)
   ylimSmooth = range(danePoobliczane$resztyCzesciowe, na.rm = TRUE)
-  smooothScatterParDomyslne = list (
+  smooothScatterParDomyslne = list(
     nbin = 256,
     colramp = colorRampPalette(c("white", blues9)),
     bandwidth = with(danePoobliczane, c((max(zmWielomianowa ) - min(zmWielomianowa )) / 256,
@@ -145,23 +174,26 @@ diagnostyka_wielomianow <- function(model, zmWielomian, zmGrupujace = NULL,
   wyniki =
     ddply(danePoobliczane, zmGrupujace,
           function(x, zmGrupujace, zmZal, stopien, wykresyParam, smooothScatterPar) {
-            wielomianXY = unique(data.frame(x = x$zmWielomianowa, y = x$przewWielomian ))
+            wielomianXY = unique(data.frame(x = x$zmWielomianowa, y = x$przewWielomian))
             wielomianXY = wielomianXY[order(wielomianXY$x), ]
 
             if (length(unique(x$resztyCzesciowe)) > 100) {
-              przewNPar = przew_npar_rpr("resztyCzesciowe", "zmWielomianowa", dane = x, przew_nparPar)
+              przewNPar = przew_npar_rpr("resztyCzesciowe", "zmWielomianowa",
+                                         dane = x, przew_nparPar)
             } else {
-              przewNPar = regr_pierw_rodz("resztyCzesciowe", "zmWielomianowa", dane = x)
+              przewNPar = regr_pierw_rodz("resztyCzesciowe", "zmWielomianowa",
+                                          dane = x)
             }
 
-            smooothScatterPar$main = paste(paste0("wielomian ", stopien, ". stopnia"),
-                                           "\n",
-                                           paste0(paste(zmGrupujace,
-                                                        apply(x[1, zmGrupujace, drop = FALSE],
-                                                              2, as.character),
-                                                        sep = ": "),
-                                                  collapse = ", "))
-            smooothScatterPar$x = data.frame(x = x$zmWielomianowa , y = x$resztyCzesciowe)
+            smooothScatterPar$main =
+              paste(paste0("wielomian ", stopien, ". stopnia"), "\n",
+                    paste0(paste(zmGrupujace,
+                                 apply(x[1, zmGrupujace, drop = FALSE],
+                                       2, as.character),
+                                 sep = ": "),
+                           collapse = ", "))
+            smooothScatterPar$x =
+              data.frame(x = x$zmWielomianowa, y = x$resztyCzesciowe)
             do.call(smoothScatter, smooothScatterPar)
             grid(col = grey(0.5))
             lines(przewNPar, col = 1, lwd = 2, lty = 2)

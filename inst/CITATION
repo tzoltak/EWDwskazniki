@@ -1,0 +1,11 @@
+bibentry(
+  bibtype = "Book",
+  title = "Statystyczne modelowanie wskaźników Edukacyjnej Wartości Dodanej. Podsumowanie polskich doświadczeń 2005-2015.",
+  author = as.person("Tomasz Żółtak [aut]"),
+  year = "2015",
+  publisher = "Instytut Badań Edukacyjnych",
+  address = "Warszawa",
+  isbn = "978-8365115-57-7",
+  url = "http://statwww.epfl.ch/davison/BMA/",
+  textVersion = "Zoltak T. (2015). Statystyczne modelowanie wskaznikow Edukacyjnej Wartosci Dodanej. Podsumowanie polskich doswiadczen 2005-2015. Warszawa: Instytut Badan Edukacyjnych."
+)

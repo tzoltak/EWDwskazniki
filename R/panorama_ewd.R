@@ -14,7 +14,10 @@
 #' \code{expression(lu_wszyscy >= 10)}
 #' @param typSzkol opcjonalnie ciąg znaków z nazwą typu szkół (potrzebny tylko
 #' w przypadku matury)
-#' @return funkcja nic nie zwraca.
+#' @return funkcja nic nie zwraca
+#' @importFrom stats formula lm
+#' @importFrom graphics abline grid legend lines par smoothScatter
+#' @importFrom grDevices blues9 colorRampPalette dev.print grey png
 #' @export
 panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
                                        wybierzSzkoly = NULL,
@@ -93,7 +96,7 @@ panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
 #' szkołach. Wymagany do wyznaczenia elips.
 #' @param kolory wektor zawierający informację o kolorach elips. Domyślnie
 #' elipsy są niebieskie.
-#' @return funkcja nic nie zwraca.
+#' @return funkcja nic nie zwraca
 #' @import car
 #' @export
 panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
@@ -172,6 +175,7 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
 #' @param pr wektor prawdopodobieństw, dla których mają być wyznaczone
 #' odpowiadające im prawdopodobieństwa empiryczne
 #' @return wektor liczbowy
+#' @importFrom stats cov.wt mahalanobis pchisq
 #' @import EWDogolny
 #' @export
 wielkoscWarstwic = function(wyniki, ewd, liczbaUczniow, pr = c(0.5, 0.9)) {
