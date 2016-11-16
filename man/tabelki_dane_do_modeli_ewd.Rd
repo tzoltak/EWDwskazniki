@@ -22,7 +22,4 @@ lista data frame'ów
 Funkcja przygotowuje zestaw tabelek z zestawieniem liczby podchodzących do
 egzaminów i statystykami opisowymi wyników.
 }
-\details{
-.
-}
 

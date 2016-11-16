@@ -163,11 +163,15 @@ parametry_egz = function(x, grBezLacznie, grZLacznie, nazwaPierwKol = NA) {
 }
 #' @title Parametry rozkładów zmiennych.
 #' @description
-#' Funkcja zwraca wartości zestawu statystyk opisowych: kwartyle, średnia, odch. stand.
+#' Funkcja zwraca wartości zestawu statystyk opisowych: kwartyle, średnia,
+#' odch. stand.
 #' @param x wektor liczbowy
-#' @param na.rm wartość logiczna - przekazywana do funkcji wyliczających statystyki
-#' @param digits liczba całkowita - do ilu miejsc po przecinku zaokrąglać zwracane wyniki
+#' @param na.rm wartość logiczna - przekazywana do funkcji obliczających
+#' statystyki
+#' @param digits liczba całkowita - do ilu miejsc po przecinku zaokrąglać
+#' zwracane wyniki
 #' @return wektor liczb
+#' @importFrom stats median quantile sd
 moje_parametry = function(x, na.rm = TRUE, digits = 2) {
   stopifnot(is.numeric(x), is.logical(na.rm), is.numeric(digits),
             length(na.rm) == 1, length(digits) == 1)

@@ -1,15 +1,17 @@
 #' @title Diagnostyka wielomianow
 #' @description
-#' Funkcja przygotowuje zestawienie porównujące modele z wielomianami różnych stopni.
+#' Funkcja przygotowuje zestawienie porównujące modele z wielomianami różnych
+#' stopni.
 #' @param x lista obiektów zwracanych przez funkcję
 #' \code{\link{diagnostyka_wielomianow}}
-#' @param zapis opcjonalnie nazwa pliku, do którego ma zostać zapisane zestawienie
+#' @param zapis opcjonalnie nazwa pliku, do którego ma zostać zapisane
+#' zestawienie
 #' @param cyfryLinkTest liczba cyfr po przecinku, do której zostaną zaokrąglone
 #' istotności "linktestu"
 #' @param cyfryR2 liczba cyfr po przecinku, do której zostaną zaokrąglone
 #' wartości R2 (i BIC)
 #' @return Funkcja zwraca listę z zestawieniami: 1) wyników "linktestu",
-#' 2) sprawdzenia monotoniczności, 3) parametrami BIC i R2 modeli.
+#' 2) sprawdzenia monotoniczności, 3) parametrami BIC i R2 modeli
 #' @import plyr
 #' @import EWDogolny
 #' @export

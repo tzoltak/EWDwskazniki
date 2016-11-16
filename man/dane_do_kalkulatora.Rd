@@ -28,7 +28,7 @@ odpowiedniego arkusza kalkulacyjnego i przesłać do Blue Bricka, aby mogli
 \details{
 Dane muszą być przekazane oddzielnym argumentem, aby uprościć sobie sprawę
 z wykrywaniem, jakie były najniższe wartości egzaminu na wejściu występujące
-w danych (jeśli w formule modelu użyto funkcji \code{poly()}, jest to
+w danych (jeśli w formule modelu użyto funkcji \code{poly}, jest to
 niebanalne).
 }
 

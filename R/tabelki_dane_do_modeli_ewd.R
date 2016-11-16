@@ -7,9 +7,8 @@
 #' (np. "gh_h")
 #' @param czesciEgzWe - wektor ciągów znaków - kody części egzaminu "wejściu"
 #' (np. "s")
-#' @details
-#' .
 #' @return lista data frame'ów
+#' @importFrom stats na.omit
 #' @export
 tabelki_dane_do_modeli_ewd = function(x, czesciEgzWy, czesciEgzWe) {
   stopifnot(is.data.frame(x),
@@ -21,12 +20,14 @@ tabelki_dane_do_modeli_ewd = function(x, czesciEgzWy, czesciEgzWe) {
 
   nazwyZmSumy = names(x)[grep("^sum_|_suma$", names(x))]
   nazwyZmNorm = names(x)[grep("^(norm|irt)_|_(norm|irt)$", names(x))]
-  nazwySumyEgzWy = nazwyZmSumy[sub("^sum_|_suma$", "", nazwyZmSumy) %in% czesciEgzWy]
-  nazwyNormEgzWy = nazwyZmNorm[sub("^(norm|irt)_|_(norm|irt)$", "",
-                                   nazwyZmNorm) %in% czesciEgzWy]
-  nazwySumyEgzWe = nazwyZmSumy[sub("^sum_|_suma$", "", nazwyZmSumy) %in% czesciEgzWe]
-  nazwyNormEgzWe = nazwyZmNorm[sub("^(norm|irt)_|_(norm|irt)$", "",
-                                   nazwyZmNorm) %in% czesciEgzWe]
+  nazwySumyEgzWy =
+    nazwyZmSumy[sub("^sum_|_suma$", "", nazwyZmSumy) %in% czesciEgzWy]
+  nazwyNormEgzWy =
+    nazwyZmNorm[sub("^(norm|irt)_|_(norm|irt)$", "", nazwyZmNorm) %in% czesciEgzWy]
+  nazwySumyEgzWe =
+    nazwyZmSumy[sub("^sum_|_suma$", "", nazwyZmSumy) %in% czesciEgzWe]
+  nazwyNormEgzWe =
+    nazwyZmNorm[sub("^(norm|irt)_|_(norm|irt)$", "", nazwyZmNorm) %in% czesciEgzWe]
   if (length(nazwySumyEgzWy) > 0) {
     nazwyDoLZWy = nazwySumyEgzWy
   } else {
@@ -41,7 +42,6 @@ tabelki_dane_do_modeli_ewd = function(x, czesciEgzWy, czesciEgzWe) {
   zmRokWy = paste0("rok_", skrotEgzWy)
   zmRokWe = paste0("rok_", skrotEgzWe)
   lataWy = length(unique(na.omit(x[, zmRokWy])))
-  lataWe = length(unique(na.omit(x[, zmRokWe])))
   if (lataWy > 1) {
     grBezLacznie1 = zmRokWy
     grBezLacznie2 = c(grBezLacznie1, zmRokWe)

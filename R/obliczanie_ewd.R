@@ -1,7 +1,7 @@
-#' @title Wyliczanie EWD
+#' @title Obliczanie EWD
 #' @description
 #' Funkcja na podstawie listy modeli, data frame'a z danymi, na podstawie
-#' których zostały one wyliczone oraz ew. data frame'a o takiej samej
+#' których zostały one obliczone oraz ew. data frame'a o takiej samej
 #' strukturze zawierającego dane nie użyte wcześniej do estymacji modeli,
 #' przygotowuje zestawienia z wartościami wskaźników EWD.
 #' @param modele lista modeli klasy \code{lm} lub \code{lmerMod}
@@ -10,13 +10,21 @@
 #' których estymowane były modele podane parametrem \code{modele}
 #' @param danePominiete opcjonalnie data frame o takiej samej strukturze, jak
 #' przekazany argumentem \code{dane}, zawierający dane szkół, które nie zostały
-#' wykorzystane na etapie estymacji modelu, ale chcemy teraz wyliczyć dla nich
+#' wykorzystane na etapie estymacji modelu, ale chcemy teraz obliczyć dla nich
 #' wartości wskaźników
 #' @param skale data frame zawierający informacje o skalowaniach (i skalach),
 #' z których pochodzą zmienne z oszacowaniami umiejętności, zawarte w danych;
 #' typowo atrybut \code{skale} obiektu klasy \code{daneWyskalowane}
 #' (zwracanego przez funkcję \code{\link[EWDdane]{przygotuj_dane_do_ewd}})
+#' @param powiazaniaPrzedmiotow opcjonalnie lista, której elementy są wektorami
+#' tekstowymi zawierającymi sufiksy nazw przedmiotów, a nazwy tych elementów
+#' odopwiadają sufiksom modeli przekazanych argumentem \code{modele}; pozwala
+#' określić, jakie informacje o liczbie ucznióW powinny zostać zapisane
+#' w zwracanych wynikach; jeśli nie zostanie podany, funkcja spróbuje użyć
+#' domyślnego mapowania, zapisanego w jej kodzie;
 #' @return lista data frame'ów
+#' @importFrom stats formula model.frame na.omit
+#' @importFrom reshape2 melt
 #' @import EWDogolny
 #' @import plyr
 #' @export
@@ -44,6 +52,12 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
   }
   if (is.null(powiazaniaPrzedmiotow)) {
     powiazaniaPrzedmiotow = list(
+      gh = "ndt.",
+      gh_h = "ndt.",
+      gh_p = "ndt.",
+      gm = "ndt.",
+      gm_m = "ndt.",
+      gm_p = "ndt.",
       mlp = "pol",
       mlm = "mat",
       mlh = c("pol", "his", "wos"),
@@ -51,10 +65,12 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
       mtp = "pol",
       mtm = "mat",
       mth = c("pol", "his", "wos"),
-      mtmp = c("mat", "bio", "che", "fiz", "geo", "inf")
+      mtmp = c("mat", "bio", "che", "fiz", "geo", "inf"),
+      m_mR = "mat"
     )
   }
   nazwyPrzedmiotow = list(
+    "ndt." = "nie dotyczy",
     "bio" = "biologia",
     "che" = "chemia",
     "fiz" = "fizyka",
@@ -78,8 +94,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
   zmIdSzkWy = zmIdSzk[length(zmIdSzk)]
   zmRokEgzWy = paste0("rok_", names(zmIdSzkWy))
 
-  # wyliczanie EWD i średnich wyników (i ew. korelacji)
-  message("Wyliczanie wartości EWD i średnich wyników 'na wyjściu'.")
+  # obliczanie EWD i średnich wyników (i ew. korelacji)
+  message("Obliczanie wartości EWD i średnich wyników 'na wyjściu'.")
   if (czyLm) {
     ewd = lapply(modele, ewd_es, idSzkoly = dane[, zmIdSzkWy, drop = FALSE])
     if (!is.null(danePominiete)) {
@@ -115,8 +131,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
                  }
     )
   }
-  # wyliczanie srednich wynikow "na wejsciu"
-  message("Wyliczanie średnich wyników 'na wejściu'.")
+  # obliczanie srednich wynikow "na wejsciu"
+  message("Obliczanie średnich wyników 'na wejściu'.")
   dane = rbind(dane, danePominiete)
   if ("matura_miedzynarodowa" %in% names(dane)) {
     ib = ddply(dane[, c(zmIdSzkWy, "matura_miedzynarodowa")], unname(zmIdSzkWy),
@@ -181,7 +197,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
                            rok_do = rokDo, temp[, c("id_skali", "skalowanie")],
                            stringsAsFactors = FALSE))
       }
-      # wyliczanie liczby uczniów
+      # obliczanie liczby uczniów
       lUWsk = ddply(na.omit(dane[, maskaZm])[, c(zmIdSzkWy, zmRokEgzWy)],
                     unname(zmIdSzkWy),
                     function(x, zmRokEgzWy) {
@@ -216,7 +232,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
           return(as.data.frame(lapply(x[, !grepl("^id_szkoly", names(x))], sum)))
         })
         # zmiany nazw
-        lUPrzedm = reshape2::melt(lUPrzedm, id.vars = zmIdSzkWy)
+        lUPrzedm = melt(lUPrzedm, id.vars = zmIdSzkWy)
         lUPrzedm$variable = sub("^zdawal_(m_|)", "", lUPrzedm$variable)
         lUPrzedm$variable = sub("_r$", " rozszerzona", lUPrzedm$variable)
         lUPrzedm$variable = sub("_p$", " łącznie", lUPrzedm$variable)
@@ -238,8 +254,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
         lUPrzedm$value = lUPrzedm$value + lUPrzedm$valueR
         lUPrzedm = within(lUPrzedm, {
           lu_wszyscy = NA
-          lu_ewd = value
-          lu = value
+          lu_ewd = get("value")
+          lu = get("value")
         })
         # dopisanie
         liczba_zdajacych = rbind(liczba_zdajacych,
@@ -256,7 +272,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
                                      kategoria_lu = "ogółem",
                                      lUWsk[, !grepl("^roczn_", names(lUWsk))],
                                      stringsAsFactors = FALSE))
-      # przesuwanie średniego wyniku na wyjściu i EWD do średniej ważonej liczbą uczniów w szkole odpowiednio 100 i 0
+      # przesuwanie średniego wyniku na wyjściu i EWD do średniej
+      #   ważonej liczbą uczniów w szkole odpowiednio 100 i 0
       ewd[[i]] = suppressMessages(join(ewd[[i]], lUWsk))
       zmEwd   = paste0("ewd_", names(ewd)[i])
       zmWynik = names(ewd)[i]
@@ -275,8 +292,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
                          wartosc = c(przesEwd, przesWyn),
                          bs = NA,  rok_do = rokDo, rodzaj_wsk = "ewd"))
       message("  Przesunięcie średnich wyników końcowych: ",
-              format(przesWyn - 100, nsmall=2, digits=2))
-      message("  Przesunięcie EWD: ", format(przesEwd, nsmall=2, digits=2))
+              format(przesWyn - 100, nsmall = 2, digits = 2))
+      message("  Przesunięcie EWD: ", format(przesEwd, nsmall = 2, digits = 2))
       message("  Prawdopodobieństwa empiryczne dla warstwic: ")
       pr = with(subset(ewd[[i]], !get("pomin")),
                 wielkoscWarstwic(get(zmWynik), get(zmEwd), lu_ewd))
@@ -323,10 +340,10 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
   attributes(ewd)$dataUtworzenia = Sys.time()
   return(ewd)
 }
-#' @title Wyliczanie EWD
+#' @title Obliczanie EWD
 #' @description
-#' Funkcja zwraca oszacowania EWD i ich "błędy standardowe" wykorzystując funkcję
-#' \code{\link[EWDogolny]{ranef_ddf}}.
+#' Funkcja zwraca oszacowania EWD i ich "błędy standardowe" wykorzystując
+#' funkcję \code{\link[EWDogolny]{ranef_ddf}}.
 #' @param x model klasy \code{lmerMod}
 #' @return data frame
 #' @import EWDogolny
@@ -346,7 +363,7 @@ ewd_me = function(x) {
   class(temp) = c(class(temp), "wskaznikiEwd")
   return(temp)
 }
-#' @title Wyliczanie EWD
+#' @title Obliczanie EWD
 #' @description
 #' Funkcja zwraca oszacowania EWD i ich "błędy standardowe" wykorzystując metodę
 #' "ściągniętych średnich reszt".
@@ -357,8 +374,9 @@ ewd_me = function(x) {
 #' @param x model klasy \code{lmerMod}
 #' @param noweDane ramka danych z danymi uczniów dla szkół. Jeżeli NULL to
 #' funkcja liczy EWD na danych pobranych z modelu.
-#' @return data frame z potencjalnym atrybutem 'noweDane', który zawiera
-#' parametr noweDane.
+#' @return data frame z potencjalnym atrybutem \code{noweDane}, który zawiera
+#' parametr \code{noweDane}
+#' @importFrom stats formula model.frame na.omit predict sigma
 #' @import plyr
 #' @export
 ewd_me_ssr = function(x, noweDane = NULL) {
@@ -386,7 +404,8 @@ ewd_me_ssr = function(x, noweDane = NULL) {
   sigma2E = sigma(x)^2
   sigma2U = as.numeric(VarCorr(x)[[1]])
   # średnie reszt ściągnięte o czynnik: 1/(1+sigma2E/sigma2U/n)
-  # warunkowe odchylenia standardowe to pierwiastek z: wariancja błędów indywidualnych ściągnięta o czynnik j.w., podzielona przez n
+  # warunkowe odchylenia standardowe to pierwiastek z:
+  #   wariancja błędów indywidualnych ściągnięta o czynnik j.w., podzielona przez n
   # po kilku przekształceniach: post_sd=1/( n/sigma2E + 1/sigma2U)
   temp = ddply(data.frame(resztySt, grupa, sigma2E, sigma2U), ~grupa, summarise,
                ewd = mean(resztySt) / (1 + sigma2E[1] / sigma2U[1] / length(resztySt)),
@@ -397,15 +416,16 @@ ewd_me_ssr = function(x, noweDane = NULL) {
 
   return(temp)
 }
-#' @title Wyliczanie EWD
+#' @title Obliczanie EWD
 #' @description
 #' Funkcja zwraca oszacowania średnich wyników na wyjściu i ich "błędy
 #' standardowe" oraz korelacje z EWD wykorzystując metodę "z jednego modelu".
 #' @param model model klasy \code{lmerMod}
 #' @param ewd data frame będący wynikiem działania funkcji \code{\link{ewd_me}}
 #' lub \code{\link{ewd_me_ssr}}. Jeżeli ten parametr zawiera atrybut noweDane to
-#'  funkcja wykonuje wyliczenia na tym atrybucie.
+#'  funkcja wykonuje obliczenia na tym atrybucie.
 #' @return data frame
+#' @importFrom stats fitted model.frame predict sd
 #' @import plyr
 #' @export
 sr_wy = function(model, ewd) {
@@ -444,11 +464,11 @@ sr_wy = function(model, ewd) {
   class(ewd) = unique(c(class(ewd), "wskaznikiEwd"))
   return(ewd)
 }
-#' @title Wyliczanie EWD (Kalkulator)
+#' @title Obliczanie EWD (Kalkulator)
 #' @description
-#' Funkcja zwraca oszacowania EWD i ich błędy standardowe wyliczane jako średnia
+#' Funkcja zwraca oszacowania EWD i ich błędy standardowe obliczane jako średnia
 #' z reszt regresji MNK oraz średnie wyniki egzaminu na wyjściu i ich błędy
-#' standardowe wyliczane jako błąd standardowy średniej z prostej próby losowej.
+#' standardowe obliczane jako błąd standardowy średniej z prostej próby losowej.
 #' @details
 #' Ponieważ obiekt z modelem regresji MNK nie zawiera informacji o przysziale
 #' uczniów do szkół, musi ona zostać podana oddzielnym parametrem
@@ -460,9 +480,10 @@ sr_wy = function(model, ewd) {
 #' @param idSzkoly data frame zawierający kolumnę z identyfikatorami szkół
 #' @param noweDane opcjonalnie data frame zawierający nowe dane (tj. nie te,
 #' na podstawie których został wystymowany model), dla których mają zostać
-#' wyliczone przewidywania, reszty i w efekcie wartości wskaźników
-#' @return data frame zawierający oszacowania dla poszczególnych szkół: EWD, błędu
-#' standardowego EWD, średniego wyniku końcowegoi jego błędu standardowego
+#' obliczone przewidywania, reszty i w efekcie wartości wskaźników
+#' @return data frame zawierający oszacowania dla poszczególnych szkół: EWD,
+#' błędu standardowego EWD, średniego wyniku końcowego i jego błędu standardowego
+#' @importFrom stats formula model.frame predict sd
 #' @import plyr
 #' @export
 ewd_es = function(model, idSzkoly, noweDane = NULL) {
@@ -502,7 +523,7 @@ ewd_es = function(model, idSzkoly, noweDane = NULL) {
   class(temp) = c(class(temp), "wskaznikiEwd")
   return(temp)
 }
-#' @title Wyliczanie EWD
+#' @title Obliczanie EWD
 #' @description
 #' Funkcja na podstawie modelu stara się zgadnąć nazwę zmiennej opisującej
 #' wyniki egzaminu "na wejściu".
@@ -516,6 +537,7 @@ ewd_es = function(model, idSzkoly, noweDane = NULL) {
 #' @param dane data frame zawierający dane (w szczególności zmieną z id szkoły i
 #' zmienną z wynikami egzaminu "na wejściu")
 #' @return ciąg znaków (nazwa zmiennej)
+#' @importFrom stats sd
 #' @import plyr
 sr_we = function(zmEgzWe, dane) {
   stopifnot(is.character(zmEgzWe), length(zmEgzWe) == 1,
@@ -534,7 +556,7 @@ sr_we = function(zmEgzWe, dane) {
     ))
   }, y = zmEgzWe))
 }
-#' @title Wyliczanie EWD
+#' @title Obliczanie EWD
 #' @description
 #' Funkcja na podstawie modelu stara się zgadnąć nazwę zmiennej opisującej
 #' wyniki egzaminu "na wejściu".
@@ -546,6 +568,7 @@ sr_we = function(zmEgzWe, dane) {
 #' najczęściej występuje w nazwach kolumn model.matrix.
 #' @param model model regresji, typowo klasy \code{lm} lu \code{lmer}
 #' @return ciąg znaków (nazwa zmiennej)
+#' @importFrom stats formula model.matrix
 zgadnij_zm_egz_we = function(model) {
   zmienne = all.vars(formula(model))[-1]
   zmienne = zmienne[!grepl("^plec$|^wydl|^dysl(eksja)_|^rok_|^laur(|eat)_", zmienne)]

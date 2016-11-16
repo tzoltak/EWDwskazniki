@@ -17,19 +17,23 @@
 #' @details
 #' Tu w przyszłości uzupełnić. Trzeba dodać do funkcji jakąś weryfikację
 #' poprawności argumentów.
-#' @return Wektor liczbowy z przeliczonymi wartościami argumentu \code{wynikiZnorm}.
+#' @return Wektor liczbowy z przeliczonymi wartościami argumentu
+#' \code{wynikiZnorm}
 #' @seealso \code{\link[ZPD]{normalizuj}}
+#' @importFrom stats pnorm qnorm
 #' @export
-sklej_normy = function(wynikiZnorm, wynikiSurowe, do, grupy=NULL, sr=100, os=15, ile=do) {
+sklej_normy = function(wynikiZnorm, wynikiSurowe, do, grupy = NULL, sr = 100,
+                       os = 15, ile = do) {
   if (is.null(grupy)) grupy = rep(1, length(wynikiZnorm))
   grupy = as.character(grupy)
 
   normyMin = by(wynikiZnorm, grupy, function(x) {return(sort(unique(x))[1:2])} )
-  normyMinNowe = lapply(normyMin,
-                        function(x, popr) {
-                          return(qnorm(pnorm(x[2], sr, os) - pnorm(x[1], sr, os), sr, os))
-                        }
-  )
+  normyMinNowe =
+    lapply(normyMin,
+           function(x, popr) {
+             return(qnorm(pnorm(x[2], sr, os) - pnorm(x[1], sr, os), sr, os))
+           }
+    )
   for (i in 1:length(normyMin)) {
     if (wynikiSurowe[grupy == names(normyMin)[i] &
                      wynikiZnorm == normyMin[[i]][2] &

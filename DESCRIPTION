@@ -1,20 +1,21 @@
 Encoding: UTF-8
 Package: EWDwskazniki
-Version: 0.8
+Version: 0.9
 Title: Functions for estimation of Educational Value-Added indicators of Polish
-    schools
+  schools
 Authors@R: c(
   person("Tomasz", "Zoltak", , "tomek@zozlak.org", role = c("aut", "cre")),
   person("Grzegorz", "Golonka", , "ggolonka@o2.pl", role = c("aut")))
 Description: Functions for estimation of Educational Value-Added indicators of
-    Polish schools.
+  Polish schools.
 Depends:
-    EWDogolny,
-    plyr,
-    formula.tools,
-    lme4,
-    car,
-    R (>= 2.15.0)
+  R (>= 3.0.0),
+  EWDogolny (>= 0.2.1),
+  plyr,
+  lme4,
+  car
+Imports:
+  reshape2
 License: MIT + file LICENSE
 Language: pl
 NeedsCompilation: no

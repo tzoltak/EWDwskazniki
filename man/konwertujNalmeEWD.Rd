@@ -10,9 +10,9 @@ konwertujNalmeEWD(objectLME4)
 \item{objectLME4}{model klasy \code{lmerMod}}
 }
 \value{
-obiekt klasy 'lmeEWD'.
+obiekt klasy \code{lmeEWD}
 }
 \description{
-Funkcja tworzy obiekt klasy 'lmeEWD' na podstawie obiektu 'lmerMod'.
+Funkcja tworzy obiekt klasy \code{lmeEWD} na podstawie obiektu \code{lmerMod}.
 }
 
