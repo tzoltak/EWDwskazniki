@@ -50,7 +50,7 @@ dane_do_kalkulatora = function(modele, normyWe, normyWy, dane) {
     }
     return(x)
   })
-  # wyliczanie przewidywań
+  # obliczanie przewidywań
   przew = setNames(vector(mode = "list", length = length(modele)), names(modele))
   for (i in 1:length(modele)) {
     lata = as.numeric(gsub("[^[:digit:]]", "", names(normyWe)))

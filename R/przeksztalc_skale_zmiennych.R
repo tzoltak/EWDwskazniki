@@ -8,7 +8,7 @@
 #' @param czesciEgzWy wektor ciągów znaków - kody konstruktów, które będą
 #' w modelach EWD zmiennymi zależnymi
 #' @param sufiksWyniki ciąg znaków: "irt", "norm" lub "suma"; określa, które
-#' wyniki będą używane do wyliczania wskaźników i mają zostać przekształcone
+#' wyniki będą używane do obliczania wskaźników i mają zostać przekształcone
 #' @return data frame
 #' @export
 przeksztalc_skale_zmiennych = function(dane, czesciEgzWy, sufiksWyniki) {
@@ -133,7 +133,7 @@ przeksztalc_skale_norm = function(normy, parametry, na10015 = TRUE) {
 }
 #' @title Wyliczanie EWD
 #' @description
-#' Funkcja wylicza średnie i odchylenia standardowe zmiennych z wynikami
+#' Funkcja oblicza średnie i odchylenia standardowe zmiennych z wynikami
 #' egzaminóW wyskalowanymi modelami rascha. Typowo na potrzeby jednorocznych
 #' modeli maturalnych, gdzie zachodzi ten problem, że wyniki egzaminu
 #' gimnazjalnego nie są wystandaryzowane względem poszczególnych typów szkół

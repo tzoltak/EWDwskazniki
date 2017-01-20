@@ -37,6 +37,11 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
             is.null(powiazaniaPrzedmiotow) | is.list(powiazaniaPrzedmiotow))
   if (!is.null(danePominiete)) {
     stopifnot(all(names(dane) == names(danePominiete)))
+    for (i in grep("^rok_", names(danePominiete))) {
+      if (!is.factor(danePominiete[[i]])) {
+        danePominiete[[i]] = factor(danePominiete[[i]])
+      }
+    }
   }
   czyLm = all(unlist(lapply(modele, function(x) {return("lm" %in% class(x))})))
   czyLmer = all(unlist(lapply(modele, function(x) {return("lmerMod" %in% class(x))})))
@@ -223,9 +228,10 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
                                  names(dane)[maskaPrzyst]))
         przedmioty = intersect(przedmioty,
                                unlist(powiazaniaPrzedmiotow[[names(ewd)[i]]]))
+        maskaZm = all.vars(formula(modele[[i]]))
         lUPrzedm =
           subset(dane[, names(dane) == zmIdSzkWy | maskaPrzyst],
-                 rownames(dane) %in% rownames(model.frame(modele[[i]])))
+                 apply(!is.na(dane[, maskaZm, drop = FALSE]), 1, all))
         lUPrzedm = lUPrzedm[, grepl(paste0("_", przedmioty, "_", collapse = "|"),
                                     names(lUPrzedm)) | names(lUPrzedm) == zmIdSzkWy]
         lUPrzedm = ddply(lUPrzedm, unname(zmIdSzkWy), function(x) {

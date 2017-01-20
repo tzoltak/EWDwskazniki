@@ -14,7 +14,7 @@ funkcji \code{\link[EWDdane]{przygotuj_dane_do_ewd}}}
 w modelach EWD zmiennymi zależnymi}
 
 \item{sufiksWyniki}{ciąg znaków: "irt", "norm" lub "suma"; określa, które
-wyniki będą używane do wyliczania wskaźników i mają zostać przekształcone}
+wyniki będą używane do obliczania wskaźników i mają zostać przekształcone}
 }
 \value{
 data frame

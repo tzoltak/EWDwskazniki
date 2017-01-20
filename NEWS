@@ -1,4 +1,20 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.1 (19.01.2017)
+
+- Nowe funkcje:
+  - koryguj_wskazniki_ewd() - funkcja umożliwia przeliczenie/obliczenie
+    wskaźników EWD tylko dla wybranych szkół.
+
+- Nowe funkcjonalności:
+  - przygotuj_wsk_ewd() nie wymaga, aby zmienne "rok_*" w ramce danych podawanej
+    argumentem "koryguj_wsk_ewd" były czynnikami - jeśli nie są, sama je
+    skonwertuje.
+
+- Poprawione błędy:
+  - przygotuj_wsk_ewd() zwraca liczbę uczniów zdających poszczególne przedmioty
+    również dla tych szkół, które zostały przekazane argumentem "danePominiete";
+
+--------------------
 Zmiany w EWDwskazniki 0.9.0 (16.11.2016)
 
 - Poprawione błędy:
@@ -37,7 +53,7 @@ Zmiany w EWDwskazniki 0.7 (06.10.2015)
 - Nowe funkcje:
   - parametry_rozkladu_rasch(), przeksztalc_skale_norm(),
     przeksztalc_dane_normami() pozwalają poradzić sobie z przygotowywaniem
-    danych do wyliczania jednorocznych wskaźników maturalnych.
+    danych do obliczania jednorocznych wskaźników maturalnych.
 
 - Nowe funkcjonalności:
   - dane_do_kalkulatora() obsługuje modele maturalne.
@@ -64,7 +80,7 @@ Zmiany w EWDwskazniki 0.5 (13.08.2015)
     zestawień liczby zdających i parametrów rozkładu zmiennych używanych do
     estymacji modeli EWD (wykorzystuje do tego wcześniej obecne w pakiecie
     funcje tabelka_ld() i parametry_egz() );
-  - przygotuj_wsk_ewd(): automatyzuje cały proces wyliczania wartości wskaźników
+  - przygotuj_wsk_ewd(): automatyzuje cały proces obliczania wartości wskaźników
     EWD na podstawie wyestymowanych modeli;
     - póki co pełny zakres działania został zapewniony jedynie dla wskaźników
       jednorocznych;
@@ -84,7 +100,7 @@ Zmiany w EWDwskazniki 0.5 (13.08.2015)
     nie istnieje;
   - dane_do_kalkulatora() radzi sobie z modelami gimnazjalnymi (a przynajmniej
     tymi z 2015 r.);
-  - ewd_es() otrzymało argument 'noweDane', który pozwala wyliczyć EWD na innych
+  - ewd_es() otrzymało argument 'noweDane', który pozwala obliczyć EWD na innych
     danych niż te, które zostały wykorzystane przy estymacji modelu.
 
 --------------------
@@ -92,7 +108,7 @@ Zmiany w EWDwskazniki 0.4.1 (06.08.2015)
 
 - Nowe funkcje:
   - sklej_normy(): funkcja przeniesiona z pakietu EWDdane, wykorzystywana przy
-    wyliczaniu modeli do Kalkulatora, aby usunąć problem jednostek odstających
+    obliczaniu modeli do Kalkulatora, aby usunąć problem jednostek odstających
     o okołozerowych wynikach sprawdzianu;
 
 --------------------
@@ -102,40 +118,44 @@ ZMiana licencji na MIT.
 - Nowe funkcje:
   - diagnostyka_pelna(): funkcja zamykająca w sobie procedurę analizy związaną
     z wyborem stopnia wielomianu;
-  - panorama_elips(): funkcja rysująca "panoramę edkacji", tj. wykres rozrzutu szkół
-    w przestrzeni wyznaczonej przez wartości wskaźników EWD i śrenie wyniki na wyjściu;
+  - panorama_elips(): funkcja rysująca "panoramę edkacji", tj. wykres rozrzutu4
+    szkół w przestrzeni wyznaczonej przez wartości wskaźników EWD i śrenie
+    wyniki na wyjściu;
 
 - Nowe funckjonalności:
-  - ewd_me_ssr(): funkcja otrzymała nowy agrument 'noweDane', który pozwala wyliczyć
-    wskaźniki na podstawie modelu na innych danych (ale o tej samej strukturze co
-    zbiór wykorzystany do estymacji modelu);
-  - sr_wy(): dostosowanie do nowej struktury obiektów zwracanych przez ewd_me_ssr();
+  - ewd_me_ssr(): funkcja otrzymała nowy agrument 'noweDane', który pozwala
+    obliczyć wskaźniki na podstawie modelu na innych danych (ale o tej samej
+    strukturze co zbiór wykorzystany do estymacji modelu);
+  - sr_wy(): dostosowanie do nowej struktury obiektów zwracanych przez
+    ewd_me_ssr();
 
 --------------------
 Zmiany w EWDwskazniki 0.3 (15.11.2014)
 
 - Nowe funkcje:
-  - ewd_es(): funkcja służąca do wyliczania wskaźników EWD na podstawie modeli efektów
-    stałych (do Kalkulatora);
-  - dane_do_kalkulatora(): funkcja przygotowuje zestawienia danych potrzebnych do
-    zaimplemetnowania modeli EWD w Kalkulatorze (do wklejenia do arkusza kalkulacyjnego
-    przesyłanego potem Blue Brickowi);
-  - panorama_ewd(): funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu
-    szkół ze względu na wartości średnich wyników na wyjściu (oś X) i wartości wskaźników
-    EWD (oś Y).
+  - ewd_es(): funkcja służąca do obliczania wskaźników EWD na podstawie modeli
+    efektów stałych (do Kalkulatora);
+  - dane_do_kalkulatora(): funkcja przygotowuje zestawienia danych potrzebnych
+    do zaimplemetnowania modeli EWD w Kalkulatorze (do wklejenia do arkusza
+    kalkulacyjnego przesyłanego potem Blue Brickowi);
+  - panorama_ewd(): funkcja rysuje "panoramę polskiej edukacji", czyli wykres
+    rozrzutu szkół ze względu na wartości średnich wyników na wyjściu (oś X)
+    i wartości wskaźników EWD (oś Y).
 
 - Nowe funkcjonalności:
-  - tabelka_ld(): kod funkcji został trochę uelastyczniony, żeby móc obsługiwać również
-    dane maturalne.
+  - tabelka_ld(): kod funkcji został trochę uelastyczniony, żeby móc obsługiwać
+    również dane maturalne.
+
 --------------------
 Zmiany w EWDwskazniki 0.2 (13.10.2014)
 
 - Nowe funkcje:
-  - diagnostykaWielomianow(), porownaj_wielomiany(): funkcje pozwalają na kompleksową
-    diagnostykę zależności nieliniowych;
-  - ewd_me(), ewd_me_ssr(), sr_wy(): funkcje służące do wyliczania wskaźników EWD na
-    podstawie modeli mieszanych efektów;
-  - wielkoscwarstwic(): wyznaczanie wielkości warstwic (w trzyletnich wskaźnikach EWD);
+  - diagnostykaWielomianow(), porownaj_wielomiany(): funkcje pozwalają na
+    kompleksową diagnostykę zależności nieliniowych;
+  - ewd_me(), ewd_me_ssr(), sr_wy(): funkcje służące do obliczania wskaźników
+    EWD na podstawie modeli mieszanych efektów;
+  - wielkoscwarstwic(): wyznaczanie wielkości warstwic (w trzyletnich
+    wskaźnikach EWD);
   - tabelka_ld(), parametryEgz(): funkcje przygotowujące rozkłady i zestawienia
     parametrów rozkładów.
 
