@@ -89,7 +89,7 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
 #' @description
 #' Funkcja zwraca wartości zestawu statystyk opisowych: kwartyle, średnia, odch.
 #' stand. dla zestawu zmiennych, w podziale na grupy.
-#' @param x data frame lub lista ze zmiennymi, dla których mają zostać wyliczone
+#' @param x data frame lub lista ze zmiennymi, dla których mają zostać obliczone
 #' statystyki
 #' @param grBezLacznie wektor ciągów znaków lub NULL, gdy nie dotyczy - nazwy
 #' zmiennych grupujących, dla których statystyki mają być zwrócone tylko
@@ -98,10 +98,10 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
 #' grupującej (może być tylko jedna!), dla której statystyki mają być zwrócone
 #' zarówno w podziale na grupy, jak i dla całej zbiorowości
 #' @param nazwaPierwKol ciąg znaków - nazwa pierwszej kolumny zwracenego data
-#' frame'a, zawierającej nazwy zmiennych, dla których wyliczono statystyki
+#' frame'a, zawierającej nazwy zmiennych, dla których obliczono statystyki
 #' @details
-#' W \code{x} muszą znajdować się zarówno zmienne, dla których wyliczona mają
-#' zostać statystyki, jak i zmienne grupujące, których nazwy podają parametry
+#' W \code{x} muszą znajdować się zarówno zmienne, dla których mają zostać
+#' obliczone statystyki, jak i zmienne grupujące, których nazwy podają parametry
 #' \code{grBezLacznie} i \code{grZLacznie}.
 #' Jeśli oba argumenty \code{grBezLacznie} i \code{grZLacznie} został podane,
 #' dzielenia na grupy ze względu na \code{grZLacznie} zostanie przeprowadzone

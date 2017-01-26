@@ -1,6 +1,6 @@
 # EWDwskazniki
 
-Pakiet zawierający zestaw funkcji służących do wyliczania wskaźników EWD.
+Pakiet zawierający zestaw funkcji służących do obliczania wskaźników EWD.
 
 ## Instalacja / aktualizacja
 

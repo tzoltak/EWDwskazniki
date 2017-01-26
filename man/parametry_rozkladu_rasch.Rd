@@ -17,7 +17,7 @@ z jakimi konstruktami mają zostać pominięte}
 data frame
 }
 \description{
-Funkcja wylicza średnie i odchylenia standardowe zmiennych z wynikami
+Funkcja oblicza średnie i odchylenia standardowe zmiennych z wynikami
 egzaminóW wyskalowanymi modelami rascha. Typowo na potrzeby jednorocznych
 modeli maturalnych, gdzie zachodzi ten problem, że wyniki egzaminu
 gimnazjalnego nie są wystandaryzowane względem poszczególnych typów szkół
