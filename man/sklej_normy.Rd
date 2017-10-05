@@ -42,4 +42,3 @@ poprawności argumentów.
 \seealso{
 \code{\link[ZPD]{normalizuj}}
 }
-

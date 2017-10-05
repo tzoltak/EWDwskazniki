@@ -19,4 +19,3 @@ wektor liczb
 \description{
 Funkcja tworzy obiekt klasy 'lmeEWD' na podstawie obiektu 'lmerMod'.
 }
-

@@ -36,4 +36,3 @@ Jeśli oba argumenty \code{grBezLacznie} i \code{grZLacznie} został podane,
 dzielenia na grupy ze względu na \code{grZLacznie} zostanie przeprowadzone
 w ramach grup wyróżnionych ze względu na \code{grBezLacznie}.
 }
-

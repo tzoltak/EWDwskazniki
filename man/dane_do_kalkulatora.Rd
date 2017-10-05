@@ -31,4 +31,3 @@ z wykrywaniem, jakie były najniższe wartości egzaminu na wejściu występują
 w danych (jeśli w formule modelu użyto funkcji \code{poly}, jest to
 niebanalne).
 }
-

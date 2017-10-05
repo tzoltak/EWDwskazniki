@@ -24,4 +24,3 @@ Funkcja przekształca skale zmiennych z surowymi lub wyskalowanymi wynikami
 egzaminów ze 100;15 na 0;1, lub odwrotnie, adkewatnie do tego, jak typowo
 są one wykorzystywane w modelach EWD.
 }
-

@@ -29,4 +29,3 @@ potrzeby jednorocznych modeli maturalnych, gdzie zachodzi ten problem, że
 wyniki egzaminu gimnazjalnego nie są wystandaryzowane względem poszczególnych
 typów szkół ponadgimnazjalnych.
 }
-

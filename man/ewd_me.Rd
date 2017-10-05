@@ -16,4 +16,3 @@ data frame
 Funkcja zwraca oszacowania EWD i ich "błędy standardowe" wykorzystując
 funkcję \code{\link[EWDogolny]{ranef_ddf}}.
 }
-

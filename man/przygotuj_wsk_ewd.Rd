@@ -40,4 +40,3 @@ których zostały one obliczone oraz ew. data frame'a o takiej samej
 strukturze zawierającego dane nie użyte wcześniej do estymacji modeli,
 przygotowuje zestawienia z wartościami wskaźników EWD.
 }
-

@@ -16,4 +16,3 @@ Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model
 Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'
 zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
 }
-

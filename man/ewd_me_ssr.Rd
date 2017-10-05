@@ -25,4 +25,3 @@ Funkcja powstała jako awaryjne rozwiązanie w sytuacji, gdy
 \code{ranef(., condVar=TRUE)} nie dawało dobrych oszacowań "błędów
 standardowych" ze względu na błąd autorów pakietu \code{lme4}.
 }
-

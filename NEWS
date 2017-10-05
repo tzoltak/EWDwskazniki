@@ -1,4 +1,17 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.2 (05.10.2017)
+
+- Nowe funkcjonalności:
+  - przeksztalc_dane_normami() potrafi współpracować ze zbiorami, w których
+    brak jest zmiennych opisujących grupę podczas skalowania (jeśli w normach
+    występuje tylko jedna grupa opisana jako "").
+
+- Poprawione błędy:
+  - przeksztalc_dane_normami() tworzy nazwę kolumny opisującej grupowanie (przed
+    dokonaniem łączenia) w sposób uwzględniający fakt, że grupowanie to cecha
+    skali, a nie po prostu egzaminu.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.1 (19.01.2017)
 
 - Nowe funkcje:
@@ -12,7 +25,7 @@ Zmiany w EWDwskazniki 0.9.1 (19.01.2017)
 
 - Poprawione błędy:
   - przygotuj_wsk_ewd() zwraca liczbę uczniów zdających poszczególne przedmioty
-    również dla tych szkół, które zostały przekazane argumentem "danePominiete";
+    również dla tych szkół, które zostały przekazane argumentem "danePominiete".
 
 --------------------
 Zmiany w EWDwskazniki 0.9.0 (16.11.2016)

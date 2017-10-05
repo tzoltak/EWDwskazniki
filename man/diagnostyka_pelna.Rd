@@ -55,4 +55,3 @@ funkcja zwraca listę modeli lub model (w przypadku podania parametru
 \description{
 Funkcja wykonuje pełną diagnostykę modeli EWD.
 }
-

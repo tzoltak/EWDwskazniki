@@ -30,4 +30,3 @@ konstruktu estymowanego w ramach skali - modelem raschowym). Jeśli w danych
 znajdują się już zmienne opisujące wyniki wyskalowane (o nazwach postaci
 \code{konstrukt_irt}), zostaną one zastąpione.
 }
-

@@ -26,4 +26,3 @@ wielkość wastwic, aby znajdował się w ich obrębie założony odsetek uczni�
 (choć z założenia, że rozkład wyników na wyjściu i EWD jest dwuwymiarowym
 rozkładem normalnym wynikałaby nieco inna wielkość elips).
 }
-
