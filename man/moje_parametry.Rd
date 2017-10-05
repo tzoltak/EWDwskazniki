@@ -22,4 +22,3 @@ wektor liczb
 Funkcja zwraca wartości zestawu statystyk opisowych: kwartyle, średnia,
 odch. stand.
 }
-

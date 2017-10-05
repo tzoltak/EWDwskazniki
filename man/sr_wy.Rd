@@ -20,4 +20,3 @@ data frame
 Funkcja zwraca oszacowania średnich wyników na wyjściu i ich "błędy
 standardowe" oraz korelacje z EWD wykorzystując metodę "z jednego modelu".
 }
-

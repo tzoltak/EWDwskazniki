@@ -82,8 +82,12 @@ przeksztalc_dane_normami = function(dane, normy) {
     stopifnot(skrotEgz %in% c("s", "g", "m"))
 
     normyTemp = normy[[i]][, c("grupa", "rok", "wartosc", "wartosc_zr")]
-    names(normyTemp) = c(paste0("grupa_", skrotEgz), paste0("rok_", skrotEgz),
+    names(normyTemp) = c(paste0("grupa_", konstrukt, "_irt"),
+                         paste0("rok_", skrotEgz),
                          paste0(konstrukt, "_suma"), paste0(konstrukt, "_irt"))
+    if (all(normyTemp[[grep("^grupa_", names(normyTemp))]] %in% "")) {
+      normyTemp = normyTemp[, -grep("^grupa_", names(normyTemp))]
+    }
     stopifnot(all(names(normyTemp) %in% names(dane)))
     dane = dane[, names(dane) != paste0(konstrukt, "_irt")]
     dane = suppressMessages(join(dane, normyTemp))

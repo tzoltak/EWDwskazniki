@@ -23,4 +23,3 @@ wszlekiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzamin
 czy długość toku kształcenia, 3) sposród pozostałych wybierz tą, która
 najczęściej występuje w nazwach kolumn model.matrix.
 }
-

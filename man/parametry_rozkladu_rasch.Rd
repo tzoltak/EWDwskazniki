@@ -26,4 +26,3 @@ ponadgimnazjalnych.
 Pod uwagę brani są przy tym jedynie uczniowie o standardowej długości toku
 kształcenia.
 }
-

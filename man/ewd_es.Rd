@@ -32,4 +32,3 @@ uczniów do szkół, musi ona zostać podana oddzielnym parametrem
 obiektu, z którego był estymowany model \code{x}. Łączenie jest
 przeprowadzane po nazwach wierszy (\code{model.frame(x)})' i (\code{id_szkoly}).
 }
-

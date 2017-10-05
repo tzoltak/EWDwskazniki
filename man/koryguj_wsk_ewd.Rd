@@ -32,4 +32,3 @@ dla których wartości wskaźników EWD mają zostać przeliczone, przygotowuje
 zestawienia z wartościami wskaźników EWD (używając jako konia roboczego
 \link{przygotuj_wsk_ewd}).
 }
-

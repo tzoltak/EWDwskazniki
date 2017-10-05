@@ -40,4 +40,3 @@ lub dekompozycje wariancji (dla modeli 'lmerMod'), sprawdza czy składowa
 wielomianowa modelu jest rosnąca oraz rysuje wykresy reszt modelu z wykresem
 przewidywań wielomianem i regesją nieparametryczną.
 }
-

@@ -27,4 +27,3 @@ Funkcja zwraca listę z zestawieniami: 1) wyników "linktestu",
 Funkcja przygotowuje zestawienie porównujące modele z wielomianami różnych
 stopni.
 }
-

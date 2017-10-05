@@ -20,4 +20,3 @@ Celem funkcji jest stworzenie tablicy, która zawiera mapowanie kolumn ramki
 danych, na której był budowany model na nazwy współczynników modelu
 (i macierzy modelu).
 }
-

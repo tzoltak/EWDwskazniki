@@ -32,4 +32,3 @@ Funkcja rysuje "panoramę polskiej edukacji", czyli wykres rozrzutu szkół ze
 względu na wartości średnich wyników "na wejściu"/"na wyjściu" (oś X)
 i wartości wskaźników EWD (oś Y).
 }
-

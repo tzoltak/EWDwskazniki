@@ -15,4 +15,3 @@ obiekt klasy \code{lmeEWD}
 \description{
 Funkcja tworzy obiekt klasy \code{lmeEWD} na podstawie obiektu \code{lmerMod}.
 }
-

@@ -24,4 +24,3 @@ formuły
 Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły.
 Jeżeli formuła jest obustronna to funkcja zwraca błąd.
 }
-

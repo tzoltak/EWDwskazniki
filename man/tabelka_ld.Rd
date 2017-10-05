@@ -28,4 +28,3 @@ data frame
 Funkcja zwraca tabelę z zestawieniem liczby podchodzących do dwóch egzaminów
 (na wejściu i na wyjściu), z wyszczególnieniem liczby laureatów i dyslektyków.
 }
-
