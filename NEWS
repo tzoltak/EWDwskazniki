@@ -1,4 +1,12 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.3 (17.11.2019)
+
+- Poprawione błędy:
+  - przygotuj_wsk_ewd() poprawnie oblicza łączne liczby uczniów zdających
+    poszczególne przedmioty maturalne również w sytuacji, gdy nie ma zdających
+    dany przedmiot nieobowiązkowy na poziomie podstawowym.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.2 (05.10.2017)
 
 - Nowe funkcjonalności:

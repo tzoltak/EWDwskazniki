@@ -237,6 +237,18 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
         lUPrzedm = ddply(lUPrzedm, unname(zmIdSzkWy), function(x) {
           return(as.data.frame(lapply(x[, !grepl("^id_szkoly", names(x))], sum)))
         })
+        # dodawanie kolumn dot. PP (które zostaną zamienione na "łącznie")
+        # dla nowszych edycji, kiedy brak przedmiotów nieobowiązkowych na PP
+        if (all(grepl("^zdawal_m_", grep("^zadawal_", names(lUPrzedm),
+                                         value = TRUE)))) {
+          brakujacePrzedmioty = apply(expand.grid("zdawal_m_", przedmioty,
+                                                  c("_p", "_r")),
+                                      1, paste0, collapse = "")
+          brakujacePrzedmioty = setdiff(brakujacePrzedmioty, names(lUPrzedm))
+          for (p in brakujacePrzedmioty) {
+            lUPrzedm[[p]] = 0
+          }
+        }
         # zmiany nazw
         lUPrzedm = melt(lUPrzedm, id.vars = zmIdSzkWy)
         lUPrzedm$variable = sub("^zdawal_(m_|)", "", lUPrzedm$variable)
@@ -256,6 +268,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
         names(lUPrzedmRozsz) = sub("value", "valueR", names(lUPrzedmRozsz))
         lUPrzedm = suppressMessages(join(lUPrzedm, lUPrzedmRozsz))
         rm(lUPrzedmRozsz)
+        lUPrzedm$value[is.na(lUPrzedm$value)] = 0
         lUPrzedm$valueR[is.na(lUPrzedm$valueR)] = 0
         lUPrzedm$value = lUPrzedm$value + lUPrzedm$valueR
         lUPrzedm = within(lUPrzedm, {

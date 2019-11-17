@@ -4,9 +4,10 @@
 \alias{panorama_ewd}
 \title{Diagnostyka wskaźników EWD}
 \usage{
-panorama_ewd(sr, ewd, egzamin, typ_szkoly, wskaznik, lata, zapiszPng = NULL,
-  xlab = wskaznik, paleta = colorRampPalette(c("white", blues9)),
-  prElips = NULL, lu = NULL, kolory = NULL)
+panorama_ewd(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
+  zapiszPng = NULL, xlab = wskaznik,
+  paleta = colorRampPalette(c("white", blues9)), prElips = NULL,
+  lu = NULL, kolory = NULL)
 }
 \arguments{
 \item{sr}{wektor liczbowy z wartościami średnich wyników egzaminu na wyjściu
