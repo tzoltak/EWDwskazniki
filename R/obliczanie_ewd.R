@@ -176,11 +176,10 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
     wskazniki_parametry = ldply(modele, function(x) {
       parametry = summary(x)$coef
       return(data.frame(parametr = rownames(parametry),
-                        wartosc = parametry[, 1], bs = parametry[, 2]))
+                        wartosc = parametry[, 1], bs = parametry[, 2],
+                        stringsAsFactors = FALSE))
     }, .id = "wskaznik")
     wskazniki_parametry = within(wskazniki_parametry, {
-      wskaznik = levels(wskaznik)[wskaznik]
-      parametr = levels(parametr)[parametr]
       rodzaj_wsk = "ewd"
       rok_do = rokDo
     })

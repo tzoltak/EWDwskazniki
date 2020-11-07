@@ -4,8 +4,13 @@
 \alias{przygotuj_wsk_ewd}
 \title{Obliczanie EWD}
 \usage{
-przygotuj_wsk_ewd(modele, dane, danePominiete = NULL, skale = NULL,
-  powiazaniaPrzedmiotow = NULL)
+przygotuj_wsk_ewd(
+  modele,
+  dane,
+  danePominiete = NULL,
+  skale = NULL,
+  powiazaniaPrzedmiotow = NULL
+)
 }
 \arguments{
 \item{modele}{lista modeli klasy \code{lm} lub \code{lmerMod}}

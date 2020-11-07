@@ -4,8 +4,15 @@
 \alias{sklej_normy}
 \title{Przeksztalcanie normalizacji ekwikwantylowej}
 \usage{
-sklej_normy(wynikiZnorm, wynikiSurowe, do, grupy = NULL, sr = 100,
-  os = 15, ile = do)
+sklej_normy(
+  wynikiZnorm,
+  wynikiSurowe,
+  do,
+  grupy = NULL,
+  sr = 100,
+  os = 15,
+  ile = do
+)
 }
 \arguments{
 \item{wynikiZnorm}{wektor wartości na skali znormalizowanej}

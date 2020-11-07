@@ -4,8 +4,13 @@
 \alias{koryguj_wsk_ewd}
 \title{Obliczanie EWD}
 \usage{
-koryguj_wsk_ewd(modele, dane, daneKorekty, skale = NULL,
-  powiazaniaPrzedmiotow = NULL)
+koryguj_wsk_ewd(
+  modele,
+  dane,
+  daneKorekty,
+  skale = NULL,
+  powiazaniaPrzedmiotow = NULL
+)
 }
 \arguments{
 \item{modele}{lista modeli klasy \code{lm} lub \code{lmerMod}}
