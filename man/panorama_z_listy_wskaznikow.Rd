@@ -4,8 +4,13 @@
 \alias{panorama_z_listy_wskaznikow}
 \title{Diagnostyka wskaźników EWD}
 \usage{
-panorama_z_listy_wskaznikow(x, lata, katalogZapis = NULL,
-  wybierzSzkoly = NULL, typSzkol = NULL)
+panorama_z_listy_wskaznikow(
+  x,
+  lata,
+  katalogZapis = NULL,
+  wybierzSzkoly = NULL,
+  typSzkol = NULL
+)
 }
 \arguments{
 \item{x}{lista data frame'ów zwracana przez funkcję

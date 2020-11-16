@@ -4,9 +4,16 @@
 \alias{diagnostyka_wielomianow}
 \title{Diagnostyka wielomianow}
 \usage{
-diagnostyka_wielomianow(model, zmWielomian, zmGrupujace = NULL,
-  folderWykresy = NULL, wykresyFun = png, wykresyParam = NULL,
-  przew_nparPar = NULL, smooothScatterPar = NULL)
+diagnostyka_wielomianow(
+  model,
+  zmWielomian,
+  zmGrupujace = NULL,
+  folderWykresy = NULL,
+  wykresyFun = png,
+  wykresyParam = NULL,
+  przew_nparPar = NULL,
+  smooothScatterPar = NULL
+)
 }
 \arguments{
 \item{model}{obiekt klasy 'lm' lub 'lmerMod'}

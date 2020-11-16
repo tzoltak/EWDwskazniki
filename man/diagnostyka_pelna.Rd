@@ -4,10 +4,21 @@
 \alias{diagnostyka_pelna}
 \title{Pełna diagnostyka wielomianow}
 \usage{
-diagnostyka_pelna(dane, stopnie, typModelu, zmEgzWej, zmEgzWyj,
-  zmGrupujace = NULL, efektLosowy = NULL, zmDyslWej = NULL,
-  zmDyslWyj = NULL, katalogRysunki = NULL, porownModeliPlik = NULL,
-  tytulDiagnostyka = "", maska = NULL)
+diagnostyka_pelna(
+  dane,
+  stopnie,
+  typModelu,
+  zmEgzWej,
+  zmEgzWyj,
+  zmGrupujace = NULL,
+  efektLosowy = NULL,
+  zmDyslWej = NULL,
+  zmDyslWyj = NULL,
+  katalogRysunki = NULL,
+  porownModeliPlik = NULL,
+  tytulDiagnostyka = "",
+  maska = NULL
+)
 }
 \arguments{
 \item{dane}{ramka danych z wynikami egzaminu}

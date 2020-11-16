@@ -1,4 +1,12 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.4 (17.11.2019)
+
+- Kompatybilność:
+  - przygotuj_wsk_ewd() - drobna zmiana kodu, poprawiająca błąd, który pojawił
+    się w związku ze zmianą zachowania funkcji data_frame(), która już nie
+    przekształca domyślnie zmiennych tekstowych na czynniki.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.3 (17.11.2019)
 
 - Poprawione błędy:

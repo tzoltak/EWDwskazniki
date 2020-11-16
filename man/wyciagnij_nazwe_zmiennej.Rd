@@ -4,8 +4,11 @@
 \alias{wyciagnij_nazwe_zmiennej}
 \title{Pobieranie nazw zmiennych z formul}
 \usage{
-wyciagnij_nazwe_zmiennej(formula,
-  nazwa = as.character(substitute(formula)), czyJednaZmienna = TRUE)
+wyciagnij_nazwe_zmiennej(
+  formula,
+  nazwa = as.character(substitute(formula)),
+  czyJednaZmienna = TRUE
+)
 }
 \arguments{
 \item{formula}{parametr klasy 'formula'.}

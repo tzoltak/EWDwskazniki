@@ -4,8 +4,13 @@
 \alias{tabelka_ld}
 \title{Liczba zdających egzaminy.}
 \usage{
-tabelka_ld(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
-  nazwaEgzWy = "egz. wy.", nazwaEgzWe = "egz. we.")
+tabelka_ld(
+  x,
+  nazwyZmWynikiEgzWy,
+  kodyCzesciEgzWe,
+  nazwaEgzWy = "egz. wy.",
+  nazwaEgzWe = "egz. we."
+)
 }
 \arguments{
 \item{x}{data frame z danymi potrzebnymi do przygotowania zestawienia}
