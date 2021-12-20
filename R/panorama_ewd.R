@@ -23,7 +23,7 @@ panorama_z_listy_wskaznikow = function(x, lata, katalogZapis = NULL,
                                        wybierzSzkoly = NULL,
                                        typSzkol = NULL) {
  stopifnot(
-   "listaWskaznikowEWD" %in% class(x),
+   inherits(x, "listaWskaznikowEWD"),
    is.null(katalogZapis) | is.character(katalogZapis),
    is.null(wybierzSzkoly) | is.expression(wybierzSzkoly),
    is.null(typSzkol) | is.character(typSzkol))

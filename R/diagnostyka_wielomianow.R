@@ -32,7 +32,7 @@ diagnostyka_wielomianow = function(model, zmWielomian, zmGrupujace = NULL,
                                    smooothScatterPar = NULL){
   zmWielomian = wyciagnij_nazwe_zmiennej(zmWielomian)
   zmGrupujace = wyciagnij_nazwe_zmiennej(zmGrupujace, czyJednaZmienna = FALSE)
-  stopifnot("lm" %in% class(model) | "lmerMod" %in% class(model),
+  stopifnot(inherits(model, "lm") | inherits(model, "lmerMod"),
             is.character(zmWielomian), is.function(wykresyFun),
             is.null(zmGrupujace) | is.character(zmGrupujace),
             is.null(folderWykresy) | is.character(folderWykresy),
@@ -66,14 +66,14 @@ diagnostyka_wielomianow = function(model, zmWielomian, zmGrupujace = NULL,
     apply(!mapowanie[ !rownames(mapowanie) %in% zmWielomian, , drop = FALSE], 2, all)
   stopien = sum(maskaTylkoWielomian)
 
-  if (class(model) == "lm") {
+  if (inherits(model, "lm")) {
     modelMatrix = t(model.matrix(model)) * coef(model)
     # nie transponuję z powrotem po mnożeniu, więc poniżej są colSums,
     # a nie rowSums, a mapowania są po wierszach
     przewWielomian = colSums(modelMatrix[maskaWielomian | maskaGrupowanie, ])
     resztyCzesciowe = model.frame(model)[, 1] - colSums(modelMatrix[maskaPozostale, ])
     rm(modelMatrix)
-  } else if (class(model) == "lmerMod") {
+  } else if (inherits(model, "lmerMod")) {
     # W wersji dla lmer() jest bardziej skomplikowanie, ale za to za jednym
     # zamachem uwzględnimy sobie efekty losowe, w tym ew. efekty losowe dla
     # nachyleń(!), których w naszych modelach co prawda póki co nie ma, ale

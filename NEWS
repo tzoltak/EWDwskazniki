@@ -1,4 +1,15 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.5 (20.12.2021)
+
+- Poprawione błędy:
+  - funkcje nadające klasy zwracanym obiektom robią to (w końcu!) w prawidłowy
+    sposób, tj. dopisując klasę specyficzną na początku (a nie na końcu)
+    atrybutu `class`.
+
+- Zmiany wewnętrzne:
+  - wszystkie sprawdzenia klas przepisano na wykorzystanie funkcji `inherits()`.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.4 (17.11.2019)
 
 - Kompatybilność:
