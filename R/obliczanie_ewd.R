@@ -43,8 +43,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
       }
     }
   }
-  czyLm = all(unlist(lapply(modele, function(x) {return("lm" %in% class(x))})))
-  czyLmer = all(unlist(lapply(modele, function(x) {return("lmerMod" %in% class(x))})))
+  czyLm = all(unlist(lapply(modele, function(x) {return(inherits(x, "lm"))})))
+  czyLmer = all(unlist(lapply(modele, function(x) {return(inherits(x, "lmerMod"))})))
   if (!(czyLm | czyLmer)) {
     stop("Wszystkie elementy listy 'modele' muszą być albo klasy 'lm' albo klasy 'lmerMod'.")
   }
@@ -354,7 +354,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
     attributes(ewd)$wskazniki_parametry = wskazniki_parametry
     attributes(ewd)$liczba_zdajacych = liczba_zdajacych
   }
-  class(ewd) = c(class(ewd), "listaWskaznikowEWD")
+  class(ewd) = c("listaWskaznikowEWD", class(ewd))
   attributes(ewd)$dataUtworzenia = Sys.time()
   return(ewd)
 }
@@ -367,7 +367,7 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
 #' @import EWDogolny
 #' @export
 ewd_me = function(x) {
-  if ("lmeEWD" %in% class(x)) {
+  if (inherits(x, "lmeEWD")) {
     stop("Użycie obiektu 'lmeEWD' tylko z funkcją ewd_me_ssr().")
   }
 
@@ -378,7 +378,7 @@ ewd_me = function(x) {
     all(names(temp)[2:3] == c("(Intercept)", "csd_(Intercept)"))
   )
   names(temp)[2:3] = c("ewd", "bs_ewd")
-  class(temp) = c(class(temp), "wskaznikiEwd")
+  class(temp) = c("wskaznikiEwd", class(temp))
   return(temp)
 }
 #' @title Obliczanie EWD
@@ -401,7 +401,7 @@ ewd_me_ssr = function(x, noweDane = NULL) {
   stopifnot(
     length(VarCorr(x)) == 1,
     all(grepl("^id_(szkoly|gimn|lo|t)", names(VarCorr(x)))),
-    class(x) %in% c("lmerMod", "lmeEWD")
+    inherits(x, "lmerMod") | inherits(x, "lmeEWD")
   )
 
   if (is.null(noweDane)) {
@@ -409,10 +409,10 @@ ewd_me_ssr = function(x, noweDane = NULL) {
     grupa = model.frame(x)[, names(VarCorr(x))[1]]
   } else {
     noweDane = na.omit(noweDane[, names(noweDane) %in% all.vars(formula(x))])
-    if (class(x) == "lmerMod") {
+    if (inherits(x, "lmerMod")) {
       resztySt = noweDane[, names(attributes(x)$frame)[1]] -
         predict(x, newdata = noweDane, re.form = ~0)
-    } else if (class(x) == "lmeEWD") {
+    } else if (inherits(x, "lmeEWD")) {
       resztySt = noweDane[, as.character(x$formula[[2]])] -
         predict(x, newdata = noweDane, zLosowymi = FALSE)
     }
@@ -430,7 +430,7 @@ ewd_me_ssr = function(x, noweDane = NULL) {
                bs_ewd = 1 / sqrt( length(resztySt) / sigma2E[1] + 1 / sigma2U[1] ))
   names(temp)[1] = names(VarCorr(x))[1]
   attributes(temp)$noweDane = noweDane
-  class(temp) = c(class(temp), "wskaznikiEwd")
+  class(temp) = c("wskaznikiEwd", class(temp))
 
   return(temp)
 }
@@ -460,9 +460,9 @@ sr_wy = function(model, ewd) {
     grupa = model.frame(model)[, names(ewd)[1]]
   } else {
     grupa = noweDane[, names(ewd)[1]]
-    if (class(model) == "lmerMod") {
+    if (inherits(model, "lmerMod")) {
       predSt = data.frame(grupa, pred = predict(model, newdata = noweDane, re.form = ~0))
-    } else if (class(model) == "lmeEWD") {
+    } else if (inherits(model, "lmeEWD")) {
       predSt = data.frame(grupa, pred = predict(model, newdata = noweDane,
                                                 zLosowymi = FALSE))
     }
@@ -479,7 +479,7 @@ sr_wy = function(model, ewd) {
   stopifnot(nrowPrzedPolaczeniemZeSr == nrow(ewd))
   ewd = within(ewd, {bs_sr = (get("bs_sr")^2 + get("bs_ewd")^2)^0.5 })
   ewd = within(ewd, {kor = get("bs_ewd") / bs_sr})
-  class(ewd) = unique(c(class(ewd), "wskaznikiEwd"))
+  class(ewd) = unique(c("wskaznikiEwd", class(ewd)))
   return(ewd)
 }
 #' @title Obliczanie EWD (Kalkulator)
@@ -506,7 +506,7 @@ sr_wy = function(model, ewd) {
 #' @export
 ewd_es = function(model, idSzkoly, noweDane = NULL) {
   stopifnot(
-    "lm" %in% class(model),
+    inherits(model, "lm"),
     is.data.frame(idSzkoly),
     any(grepl("^id_(szkoly|gimn|lo|t)", names(idSzkoly))),
     is.null(noweDane) | is.data.frame(noweDane)
@@ -538,7 +538,7 @@ ewd_es = function(model, idSzkoly, noweDane = NULL) {
                bs_ewd = sd(get("reszta")) / sqrt(length(get("reszta"))),
                sr = mean(get("wynik")),
                bs_sr = sd(get("wynik")) / sqrt(length(get("reszta"))))
-  class(temp) = c(class(temp), "wskaznikiEwd")
+  class(temp) = c("wskaznikiEwd", class(temp))
   return(temp)
 }
 #' @title Obliczanie EWD

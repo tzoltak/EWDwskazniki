@@ -6,7 +6,7 @@
 #' @importFrom stats as.formula formula getCall sigma
 #' @export
 konwertujNalmeEWD <- function(objectLME4){
-  stopifnot(  class(objectLME4) == "lmerMod")
+  stopifnot(inherits(objectLME4, "lmerMod"))
   ret = list()
   ret[["formula"]] = as.formula(formula(getCall(objectLME4)))
   ret[["sigma"]] = sigma(objectLME4)
