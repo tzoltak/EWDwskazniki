@@ -191,6 +191,8 @@ przygotuj_wsk_ewd = function(modele, dane, danePominiete = NULL, skale = NULL,
     for (i in 1:length(ewd)) {
       message("Wskaźnik ", names(ewd)[i])
       maskaZm = intersect(names(dane), all.vars(formula(modele[[i]])))
+      # aby działało również dla modeli jednorocznych
+      maskaZm = unique(c(maskaZm, zmRokEgzWy))
       # wypełnianie wskazniki_skalowania
       if (!is.null(skale)) {
         temp = suppressMessages(

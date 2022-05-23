@@ -1,4 +1,10 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.6 (23.05.2022)
+
+- Kompatybilność:
+  - przygotuj_wsk_ewd() radzi sobie również z modelami jednorocznymi.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.5 (20.12.2021)
 
 - Poprawione błędy:
