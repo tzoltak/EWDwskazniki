@@ -1,7 +1,7 @@
 #' @title Wyliczanie EWD
 #' @description
 #' Funkcja przekształca skale zmiennych z surowymi lub wyskalowanymi wynikami
-#' egzaminów ze 100;15 na 0;1, lub odwrotnie, adkewatnie do tego, jak typowo
+#' egzaminów ze 100;15 na 0;1, lub odwrotnie, adekwatnie do tego, jak typowo
 #' są one wykorzystywane w modelach EWD.
 #' @param dane data frame z danymi, typowo wczytany do R wynik działania
 #' funkcji \code{\link[EWDdane]{przygotuj_dane_do_ewd}}
@@ -54,7 +54,7 @@ przeksztalc_skale_zmiennych = function(dane, czesciEgzWy, sufiksWyniki) {
 #' W danych muszą znajdować się zmienne opisujące przydział obserwacji do grup
 #' (o nazwach postaci \code{grupa_s}, gdzie 's' to kod rodzaju egzaminu:
 #' 's' - sprawdzian, 'g' - egz. gimn., 'm' - matura) i surowe wyniki skal
-#' (o nazwach postaci \code{konstrukt_suma}, gdzie 'konstruktR' to nazwa
+#' (o nazwach postaci \code{konstrukt_suma}, gdzie 'konstrukt' to nazwa
 #' konstruktu estymowanego w ramach skali - modelem raschowym). Jeśli w danych
 #' znajdują się już zmienne opisujące wyniki wyskalowane (o nazwach postaci
 #' \code{konstrukt_irt}), zostaną one zastąpione.
@@ -138,7 +138,7 @@ przeksztalc_skale_norm = function(normy, parametry, na10015 = TRUE) {
 #' @title Wyliczanie EWD
 #' @description
 #' Funkcja oblicza średnie i odchylenia standardowe zmiennych z wynikami
-#' egzaminóW wyskalowanymi modelami rascha. Typowo na potrzeby jednorocznych
+#' egzaminów wyskalowanymi modelami Rascha. Typowo na potrzeby jednorocznych
 #' modeli maturalnych, gdzie zachodzi ten problem, że wyniki egzaminu
 #' gimnazjalnego nie są wystandaryzowane względem poszczególnych typów szkół
 #' ponadgimnazjalnych.

@@ -18,8 +18,8 @@
 #' (zwracanego przez funkcję \code{\link[EWDdane]{przygotuj_dane_do_ewd}})
 #' @param powiazaniaPrzedmiotow opcjonalnie lista, której elementy są wektorami
 #' tekstowymi zawierającymi sufiksy nazw przedmiotów, a nazwy tych elementów
-#' odopwiadają sufiksom modeli przekazanych argumentem \code{modele}; pozwala
-#' określić, jakie informacje o liczbie ucznióW powinny zostać zapisane
+#' odpowiadają sufiksom modeli przekazanych argumentem \code{modele}; pozwala
+#' określić, jakie informacje o liczbie uczniów powinny zostać zapisane
 #' w zwracanych wynikach; jeśli nie zostanie podany, funkcja spróbuje użyć
 #' domyślnego mapowania, zapisanego w jej kodzie;
 #' @return lista data frame'ów
@@ -490,7 +490,7 @@ sr_wy = function(model, ewd) {
 #' z reszt regresji MNK oraz średnie wyniki egzaminu na wyjściu i ich błędy
 #' standardowe obliczane jako błąd standardowy średniej z prostej próby losowej.
 #' @details
-#' Ponieważ obiekt z modelem regresji MNK nie zawiera informacji o przysziale
+#' Ponieważ obiekt z modelem regresji MNK nie zawiera informacji o przydziale
 #' uczniów do szkół, musi ona zostać podana oddzielnym parametrem
 #' (\code{id_szkoly}). Musi to być data frame, zawierający kolumnę z id szkoły
 #' (i najlepiej tylko nią jedną), utworzony przez usunięcie kolumn z tego samego
@@ -499,7 +499,7 @@ sr_wy = function(model, ewd) {
 #' @param model model klasy \code{lm}
 #' @param idSzkoly data frame zawierający kolumnę z identyfikatorami szkół
 #' @param noweDane opcjonalnie data frame zawierający nowe dane (tj. nie te,
-#' na podstawie których został wystymowany model), dla których mają zostać
+#' na podstawie których został wyestymowany model), dla których mają zostać
 #' obliczone przewidywania, reszty i w efekcie wartości wskaźników
 #' @return data frame zawierający oszacowania dla poszczególnych szkół: EWD,
 #' błędu standardowego EWD, średniego wyniku końcowego i jego błędu standardowego
@@ -550,12 +550,12 @@ ewd_es = function(model, idSzkoly, noweDane = NULL) {
 #' @details
 #' Heurystyka szukania jest następująca: 1) weź zmienne występujące w formule
 #' modelu, 2) usuń z nich: pierwszą (tj. zależną) oraz te, które wedle
-#' wszlekiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
-#' czy długość toku kształcenia, 3) sposród pozostałych wybierz tą, która
+#' wszelkiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
+#' czy długość toku kształcenia, 3) spośród pozostałych wybierz tą, która
 #' najczęściej występuje w nazwach kolumn model.matrix.
 #' @param zmEgzWe ciąg znaków - nazwa zmiennej z wynikami egzaminu "na wejściu"
-#' @param dane data frame zawierający dane (w szczególności zmieną z id szkoły i
-#' zmienną z wynikami egzaminu "na wejściu")
+#' @param dane data frame zawierający dane (w szczególności zmienną z id szkoły
+#' i zmienną z wynikami egzaminu "na wejściu")
 #' @return ciąg znaków (nazwa zmiennej)
 #' @importFrom stats sd
 #' @import plyr
@@ -583,8 +583,8 @@ sr_we = function(zmEgzWe, dane) {
 #' @details
 #' Heurystyka szukania jest następująca: 1) weź zmienne występujące w formule
 #' modelu, 2) usuń z nich: pierwszą (tj. zależną) oraz te, które wedle
-#' wszlekiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
-#' czy długość toku kształcenia, 3) sposród pozostałych wybierz tą, która
+#' wszelkiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
+#' czy długość toku kształcenia, 3) spośród pozostałych wybierz tą, która
 #' najczęściej występuje w nazwach kolumn model.matrix.
 #' @param model model regresji, typowo klasy \code{lm} lu \code{lmer}
 #' @return ciąg znaków (nazwa zmiennej)

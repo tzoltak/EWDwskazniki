@@ -165,7 +165,7 @@ panorama_ewd = function(sr, ewd, egzamin, typ_szkoly, wskaznik, lata,
 #' @title Wyliczanie EWD
 #' @description
 #' Funkcja zwraca "empiryczne prawdopodobieństwa" pozwalające tak dobrać
-#' wielkość wastwic, aby znajdował się w ich obrębie założony odsetek uczniów
+#' wielkość warstwic, aby znajdował się w ich obrębie założony odsetek uczniów
 #' (choć z założenia, że rozkład wyników na wyjściu i EWD jest dwuwymiarowym
 #' rozkładem normalnym wynikałaby nieco inna wielkość elips).
 #' @param wyniki wektor z wartościami średnich wyników na wyjściu poszczególnych

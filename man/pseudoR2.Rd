@@ -2,7 +2,7 @@
 % Please edit documentation in R/diagnostyka_wiele_fun_pom.R
 \name{pseudoR2}
 \alias{pseudoR2}
-\title{Wyliczenia do wspołczynnika R-kwadrat.}
+\title{Wyliczenia do wspolczynnika R-kwadrat.}
 \usage{
 pseudoR2(model)
 }
@@ -14,5 +14,5 @@ Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model
 }
 \description{
 Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'
-zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
+zwraca tablicę dekompozycji wariancji na efekty stałe i losowe.
 }

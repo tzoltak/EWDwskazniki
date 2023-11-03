@@ -9,8 +9,8 @@ sr_we(zmEgzWe, dane)
 \arguments{
 \item{zmEgzWe}{ciąg znaków - nazwa zmiennej z wynikami egzaminu "na wejściu"}
 
-\item{dane}{data frame zawierający dane (w szczególności zmieną z id szkoły i
-zmienną z wynikami egzaminu "na wejściu")}
+\item{dane}{data frame zawierający dane (w szczególności zmienną z id szkoły
+i zmienną z wynikami egzaminu "na wejściu")}
 }
 \value{
 ciąg znaków (nazwa zmiennej)
@@ -22,7 +22,7 @@ wyniki egzaminu "na wejściu".
 \details{
 Heurystyka szukania jest następująca: 1) weź zmienne występujące w formule
 modelu, 2) usuń z nich: pierwszą (tj. zależną) oraz te, które wedle
-wszlekiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
-czy długość toku kształcenia, 3) sposród pozostałych wybierz tą, która
+wszelkiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
+czy długość toku kształcenia, 3) spośród pozostałych wybierz tą, która
 najczęściej występuje w nazwach kolumn model.matrix.
 }

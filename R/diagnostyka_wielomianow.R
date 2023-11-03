@@ -3,16 +3,16 @@
 #' Funkcja oblicza link test, BIC oraz współczynnik R2 (w przypadku modeli 'lm')
 #' lub dekompozycje wariancji (dla modeli 'lmerMod'), sprawdza czy składowa
 #' wielomianowa modelu jest rosnąca oraz rysuje wykresy reszt modelu z wykresem
-#' przewidywań wielomianem i regesją nieparametryczną.
+#' przewidywań wielomianem i regresją nieparametryczną.
 #' @param model obiekt klasy 'lm' lub 'lmerMod'
-#' @param zmWielomian ciąg znaków lub formuła określający zmienną wielomianu
+#' @param zmWielomian nazwa zmiennej modelowanej wielomianem
 #' @param zmGrupujace opcjonalnie wektor ciągów znaków lub formuła określających
 #' zmienne modelu, na podstawie których określone są grupy, w których wykonywane
 #' są obliczenia oraz dla których są sporządzane wykresy
 #' @param folderWykresy opcjonalnie ścieżka do folderu, gdzie powinny być
 #' zapisane wykresy; jeżeli jest równa NULL to wykresy nie są zapisywane
-#' @param wykresyFun opcjonalnie  funkcja rysująca wykresy; domyślnie jest to
-#' \code{\link[grDevices]{png}}.
+#' @param wykresyFun opcjonalnie funkcja rysująca wykresy podana wewnątrz
+#' wywołania \code{\link{quote}}; domyślnie jest to \code{\link[grDevices]{png}}.
 #' @param wykresyParam opcjonalnie lista parametrów funkcji rysującej wykresy
 #' @param przew_nparPar opcjonalnie lista z parametrami funkcji
 #' \code{\link{przew_npar}}.
@@ -27,13 +27,14 @@
 #' @import plyr
 #' @export
 diagnostyka_wielomianow = function(model, zmWielomian, zmGrupujace = NULL,
-                                   folderWykresy = NULL, wykresyFun = png,
+                                   folderWykresy = NULL, wykresyFun = quote(png),
                                    wykresyParam = NULL, przew_nparPar = NULL,
                                    smooothScatterPar = NULL){
   zmWielomian = wyciagnij_nazwe_zmiennej(zmWielomian)
   zmGrupujace = wyciagnij_nazwe_zmiennej(zmGrupujace, czyJednaZmienna = FALSE)
   stopifnot(inherits(model, "lm") | inherits(model, "lmerMod"),
-            is.character(zmWielomian), is.function(wykresyFun),
+            is.character(zmWielomian), length(zmWielomian) == 1,
+            is.symbol(wykresyFun), is.function(eval(wykresyFun)),
             is.null(zmGrupujace) | is.character(zmGrupujace),
             is.null(folderWykresy) | is.character(folderWykresy),
             is.null(wykresyParam) | is.list(wykresyParam),

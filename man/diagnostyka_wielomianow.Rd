@@ -9,7 +9,7 @@ diagnostyka_wielomianow(
   zmWielomian,
   zmGrupujace = NULL,
   folderWykresy = NULL,
-  wykresyFun = png,
+  wykresyFun = quote(png),
   wykresyParam = NULL,
   przew_nparPar = NULL,
   smooothScatterPar = NULL
@@ -18,7 +18,7 @@ diagnostyka_wielomianow(
 \arguments{
 \item{model}{obiekt klasy 'lm' lub 'lmerMod'}
 
-\item{zmWielomian}{ciąg znaków lub formuła określający zmienną wielomianu}
+\item{zmWielomian}{nazwa zmiennej modelowanej wielomianem}
 
 \item{zmGrupujace}{opcjonalnie wektor ciągów znaków lub formuła określających
 zmienne modelu, na podstawie których określone są grupy, w których wykonywane
@@ -27,8 +27,8 @@ są obliczenia oraz dla których są sporządzane wykresy}
 \item{folderWykresy}{opcjonalnie ścieżka do folderu, gdzie powinny być
 zapisane wykresy; jeżeli jest równa NULL to wykresy nie są zapisywane}
 
-\item{wykresyFun}{opcjonalnie  funkcja rysująca wykresy; domyślnie jest to
-\code{\link[grDevices]{png}}.}
+\item{wykresyFun}{opcjonalnie funkcja rysująca wykresy podana wewnątrz
+wywołania \code{\link{quote}}; domyślnie jest to \code{\link[grDevices]{png}}.}
 
 \item{wykresyParam}{opcjonalnie lista parametrów funkcji rysującej wykresy}
 
@@ -45,5 +45,5 @@ funkcja zwraca listę z obliczeniami dla modelu
 Funkcja oblicza link test, BIC oraz współczynnik R2 (w przypadku modeli 'lm')
 lub dekompozycje wariancji (dla modeli 'lmerMod'), sprawdza czy składowa
 wielomianowa modelu jest rosnąca oraz rysuje wykresy reszt modelu z wykresem
-przewidywań wielomianem i regesją nieparametryczną.
+przewidywań wielomianem i regresją nieparametryczną.
 }

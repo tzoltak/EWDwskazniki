@@ -3,7 +3,7 @@
 #' Funkcja pomocnicza, która zwraca nazwy prawostronnych zmiennych formuły.
 #' Jeżeli formuła jest obustronna to funkcja zwraca błąd.
 #' @param formula parametr klasy 'formula'.
-#' @param nazwa ciąg znaków wykorzystywany w komunikcie błedu.
+#' @param nazwa ciąg znaków wykorzystywany w komunikacie błędu.
 #' @param czyJednaZmienna zmienna logiczna. Jeżeli wartość jest równa TRUE, to
 #' funkcja zwraca błąd dla formuł prawostronnych, które
 #' zawierają więcej niż jedną zmienną.
@@ -31,10 +31,10 @@ wyciagnij_nazwe_zmiennej <- function(formula,
   }
 }
 
-#' @title Wyliczenia do wspołczynnika R-kwadrat.
+#' @title Wyliczenia do wspolczynnika R-kwadrat.
 #' @description
 #' Funkcja dla modeli 'lm' zwraca współczynnik R-kwadrat, dla modeli 'lmerMod'
-#' zwraca tabicę dekompozycji wariancji na efekty stałe i losowe.
+#' zwraca tablicę dekompozycji wariancji na efekty stałe i losowe.
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
 #' @return Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model
 pseudoR2 <- function(model){

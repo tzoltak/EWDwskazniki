@@ -1,4 +1,13 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.7 (03.11.2023)
+
+- Kompatybilność:
+  - diagnostyka_wielomianow() wymaga, aby funkcja przekazywana argumentem
+    wykresyFun została otoczona wywołaniem quote(), co pozwala nie wpaść
+    w kłopoty przy późniejszym wywoływaniu dev.print() (problem pojawił się
+    w którejś z nowszych wersji R, wcześniej nie występował).
+
+--------------------
 Zmiany w EWDwskazniki 0.9.6 (23.05.2022)
 
 - Kompatybilność:
