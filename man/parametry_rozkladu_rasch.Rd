@@ -18,7 +18,7 @@ data frame
 }
 \description{
 Funkcja oblicza średnie i odchylenia standardowe zmiennych z wynikami
-egzaminóW wyskalowanymi modelami rascha. Typowo na potrzeby jednorocznych
+egzaminów wyskalowanymi modelami Rascha. Typowo na potrzeby jednorocznych
 modeli maturalnych, gdzie zachodzi ten problem, że wyniki egzaminu
 gimnazjalnego nie są wystandaryzowane względem poszczególnych typów szkół
 ponadgimnazjalnych.

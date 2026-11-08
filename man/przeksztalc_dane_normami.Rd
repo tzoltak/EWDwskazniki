@@ -25,7 +25,7 @@ maturalnych.
 W danych muszą znajdować się zmienne opisujące przydział obserwacji do grup
 (o nazwach postaci \code{grupa_s}, gdzie 's' to kod rodzaju egzaminu:
 's' - sprawdzian, 'g' - egz. gimn., 'm' - matura) i surowe wyniki skal
-(o nazwach postaci \code{konstrukt_suma}, gdzie 'konstruktR' to nazwa
+(o nazwach postaci \code{konstrukt_suma}, gdzie 'konstrukt' to nazwa
 konstruktu estymowanego w ramach skali - modelem raschowym). Jeśli w danych
 znajdują się już zmienne opisujące wyniki wyskalowane (o nazwach postaci
 \code{konstrukt_irt}), zostaną one zastąpione.

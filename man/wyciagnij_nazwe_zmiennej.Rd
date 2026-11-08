@@ -13,7 +13,7 @@ wyciagnij_nazwe_zmiennej(
 \arguments{
 \item{formula}{parametr klasy 'formula'.}
 
-\item{nazwa}{ciąg znaków wykorzystywany w komunikcie błedu.}
+\item{nazwa}{ciąg znaków wykorzystywany w komunikacie błędu.}
 
 \item{czyJednaZmienna}{zmienna logiczna. Jeżeli wartość jest równa TRUE, to
 funkcja zwraca błąd dla formuł prawostronnych, które

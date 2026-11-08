@@ -31,8 +31,8 @@ typowo atrybut \code{skale} obiektu klasy \code{daneWyskalowane}
 
 \item{powiazaniaPrzedmiotow}{opcjonalnie lista, której elementy są wektorami
 tekstowymi zawierającymi sufiksy nazw przedmiotów, a nazwy tych elementów
-odopwiadają sufiksom modeli przekazanych argumentem \code{modele}; pozwala
-określić, jakie informacje o liczbie ucznióW powinny zostać zapisane
+odpowiadają sufiksom modeli przekazanych argumentem \code{modele}; pozwala
+określić, jakie informacje o liczbie uczniów powinny zostać zapisane
 w zwracanych wynikach; jeśli nie zostanie podany, funkcja spróbuje użyć
 domyślnego mapowania, zapisanego w jej kodzie;}
 }

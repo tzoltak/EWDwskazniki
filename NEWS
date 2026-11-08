@@ -1,4 +1,31 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.8 (08.11.2026)
+
+- Kompatybilność:
+  - wprowadzono dokumentowanie explicite definiowania metod S3, a w konsekwencji
+    również zestawy argumentów tychże metod (aby były zgodne z funkcjami
+    generycznymi);
+  - zastąpiono przyrównania `class(coś)` do ciągu znaków wywołaniami
+    `inherits()`;
+  - inne drobne poprawki w dokumentacji;
+  - zmieniono zawartość pliku LICENCE na odpowiadającą współczesnym wymaganiom.
+
+--------------------
+Zmiany w EWDwskazniki 0.9.7 (03.11.2023)
+
+- Kompatybilność:
+  - diagnostyka_wielomianow() wymaga, aby funkcja przekazywana argumentem
+    wykresyFun została otoczona wywołaniem quote(), co pozwala nie wpaść
+    w kłopoty przy późniejszym wywoływaniu dev.print() (problem pojawił się
+    w którejś z nowszych wersji R, wcześniej nie występował).
+
+--------------------
+Zmiany w EWDwskazniki 0.9.6 (23.05.2022)
+
+- Kompatybilność:
+  - przygotuj_wsk_ewd() radzi sobie również z modelami jednorocznymi.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.5 (20.12.2021)
 
 - Poprawione błędy:

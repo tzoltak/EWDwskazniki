@@ -18,8 +18,8 @@ w podziale na grupy, ale bez podawania statystyk dla całej zbiorowości}
 grupującej (może być tylko jedna!), dla której statystyki mają być zwrócone
 zarówno w podziale na grupy, jak i dla całej zbiorowości}
 
-\item{nazwaPierwKol}{ciąg znaków - nazwa pierwszej kolumny zwracenego data
-frame'a, zawierającej nazwy zmiennych, dla których obliczono statystyki}
+\item{nazwaPierwKol}{ciąg znaków - nazwa pierwszej kolumny zwracanej ramki
+danych, zawierającej nazwy zmiennych, dla których obliczono statystyki}
 }
 \value{
 data frame

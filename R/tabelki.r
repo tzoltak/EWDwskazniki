@@ -97,8 +97,8 @@ tabelka_ld = function(x, nazwyZmWynikiEgzWy, kodyCzesciEgzWe,
 #' @param grZLacznie ciąg znaków lub NULL, gdy nie dotyczy - nazwa zmiennej
 #' grupującej (może być tylko jedna!), dla której statystyki mają być zwrócone
 #' zarówno w podziale na grupy, jak i dla całej zbiorowości
-#' @param nazwaPierwKol ciąg znaków - nazwa pierwszej kolumny zwracenego data
-#' frame'a, zawierającej nazwy zmiennych, dla których obliczono statystyki
+#' @param nazwaPierwKol ciąg znaków - nazwa pierwszej kolumny zwracanej ramki
+#' danych, zawierającej nazwy zmiennych, dla których obliczono statystyki
 #' @details
 #' W \code{x} muszą znajdować się zarówno zmienne, dla których mają zostać
 #' obliczone statystyki, jak i zmienne grupujące, których nazwy podają parametry

@@ -15,14 +15,17 @@ konwertujNalmeEWD <- function(objectLME4){
   class(ret) = "lmeEWD"
   ret
 }
-sigma.lmeEWD <- function(x){
-  x$sigma
+#' @exportS3Method lme4::sigma
+sigma.lmeEWD <- function(object, ...){
+  object$sigma
 }
-VarCorr.lmeEWD <- function(x){
+#' @exportS3Method lme4::VarCorr
+VarCorr.lmeEWD <- function(x, sigma, ...){
   x$VarCorr
 }
-fixef.lmeEWD <- function(x){
-  x$fixef
+#' @exportS3Method lme4::fixef
+fixef.lmeEWD <- function(object, ...){
+  object$fixef
 }
 #' @title Przewidywanie dla obiektu 'lmeEWD'
 #' @description

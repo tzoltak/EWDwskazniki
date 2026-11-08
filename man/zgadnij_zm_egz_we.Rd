@@ -19,7 +19,7 @@ wyniki egzaminu "na wejściu".
 \details{
 Heurystyka szukania jest następująca: 1) weź zmienne występujące w formule
 modelu, 2) usuń z nich: pierwszą (tj. zależną) oraz te, które wedle
-wszlekiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
-czy długość toku kształcenia, 3) sposród pozostałych wybierz tą, która
+wszelkiego prawdopodobieństwa opisują płeć, dysleksję, rok zdawania egzaminu
+czy długość toku kształcenia, 3) spośród pozostałych wybierz tą, która
 najczęściej występuje w nazwach kolumn model.matrix.
 }

@@ -12,7 +12,7 @@ ewd_es(model, idSzkoly, noweDane = NULL)
 \item{idSzkoly}{data frame zawierający kolumnę z identyfikatorami szkół}
 
 \item{noweDane}{opcjonalnie data frame zawierający nowe dane (tj. nie te,
-na podstawie których został wystymowany model), dla których mają zostać
+na podstawie których został wyestymowany model), dla których mają zostać
 obliczone przewidywania, reszty i w efekcie wartości wskaźników}
 }
 \value{
@@ -25,7 +25,7 @@ z reszt regresji MNK oraz średnie wyniki egzaminu na wyjściu i ich błędy
 standardowe obliczane jako błąd standardowy średniej z prostej próby losowej.
 }
 \details{
-Ponieważ obiekt z modelem regresji MNK nie zawiera informacji o przysziale
+Ponieważ obiekt z modelem regresji MNK nie zawiera informacji o przydziale
 uczniów do szkół, musi ona zostać podana oddzielnym parametrem
 (\code{id_szkoly}). Musi to być data frame, zawierający kolumnę z id szkoły
 (i najlepiej tylko nią jedną), utworzony przez usunięcie kolumn z tego samego
