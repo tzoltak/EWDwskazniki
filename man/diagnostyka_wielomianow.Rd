@@ -33,7 +33,7 @@ wywołania \code{\link{quote}}; domyślnie jest to \code{\link[grDevices]{png}}.
 \item{wykresyParam}{opcjonalnie lista parametrów funkcji rysującej wykresy}
 
 \item{przew_nparPar}{opcjonalnie lista z parametrami funkcji
-\code{\link{przew_npar}}.}
+\code{\link[EWDogolny]{przew_npar}}.}
 
 \item{smooothScatterPar}{opcjonalnie lista z parametrami funkcji
 \code{\link[graphics]{smoothScatter}}.}

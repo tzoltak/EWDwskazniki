@@ -15,7 +15,7 @@ wyciagnij_nazwe_zmiennej <- function(formula,
                                      czyJednaZmienna = TRUE){
   if (is.null(formula)) {
     return(formula)
-  } else if (class(formula) == "formula") {
+  } else if (inherits(formula, "formula")) {
     if (attributes(terms(formula) )$response != 0) {
       stop(paste0("Formuła ", nazwa, " nie jest prawostronna."))
     }
@@ -24,7 +24,7 @@ wyciagnij_nazwe_zmiennej <- function(formula,
       stop(paste0("Niepoprawna liczba zmiennych w formule ", nazwa, "."))
     }
     return(zmienne)
-  } else if (class(formula) == "character") {
+  } else if (inherits(formula, "character")) {
     return(formula)
   } else {
     stop("Zmienna '", nazwa, "' nie jest ani obiektem klasy 'character', ani 'formula'." )
@@ -37,16 +37,18 @@ wyciagnij_nazwe_zmiennej <- function(formula,
 #' zwraca tablicę dekompozycji wariancji na efekty stałe i losowe.
 #' @param model parametr klasy 'lmerMod' lub 'lm'.
 #' @return Funkcja zwraca liczbę lub macierz w zależności od klasy obiektu model
+#' @export
 pseudoR2 <- function(model){
   return(UseMethod("pseudoR2"))
 }
-
+#' @exportS3Method EWDwskazniki::pseudoR2
 pseudoR2.lm <- function(model){
   return(summary(model)$r.squared)
 }
 
 #' @importFrom stats cov.wt model.frame predict
 #' @import plyr
+#' @exportS3Method EWDwskazniki::pseudoR2
 pseudoR2.lmerMod <- function(model){
   efLos = ranef(model)
   ret = c(sapply(VarCorr(model), function(x) x[[1]]),
@@ -71,12 +73,12 @@ pseudoR2.lmerMod <- function(model){
   colnames(ret) <- c("Ef. Los", "Ef. St.", "Suma")
   return(ret)
 }
-
-fixef.lm <- function(model){
-  return(coef(model))
+#' @exportS3Method lme4::fixef
+fixef.lm <- function(object, ...){
+  return(coef(object))
 }
-
-ranef.lm <- function(model){
+#' @exportS3Method lme4::ranef
+ranef.lm <- function(object, ...){
   return(list())
 }
 

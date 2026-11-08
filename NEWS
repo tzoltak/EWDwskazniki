@@ -1,4 +1,16 @@
 --------------------
+Zmiany w EWDwskazniki 0.9.8 (08.11.2026)
+
+- Kompatybilność:
+  - wprowadzono dokumentowanie explicite definiowania metod S3, a w konsekwencji
+    również zestawy argumentów tychże metod (aby były zgodne z funkcjami
+    generycznymi);
+  - zastąpiono przyrównania `class(coś)` do ciągu znaków wywołaniami
+    `inherits()`;
+  - inne drobne poprawki w dokumentacji;
+  - zmieniono zawartość pliku LICENCE na odpowiadającą współczesnym wymaganiom.
+
+--------------------
 Zmiany w EWDwskazniki 0.9.7 (03.11.2023)
 
 - Kompatybilność:

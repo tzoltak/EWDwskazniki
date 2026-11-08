@@ -15,7 +15,7 @@
 #' wywołania \code{\link{quote}}; domyślnie jest to \code{\link[grDevices]{png}}.
 #' @param wykresyParam opcjonalnie lista parametrów funkcji rysującej wykresy
 #' @param przew_nparPar opcjonalnie lista z parametrami funkcji
-#' \code{\link{przew_npar}}.
+#' \code{\link[EWDogolny]{przew_npar}}.
 #' @param smooothScatterPar opcjonalnie lista z parametrami funkcji
 #' \code{\link[graphics]{smoothScatter}}.
 #' @return funkcja zwraca listę z obliczeniami dla modelu
